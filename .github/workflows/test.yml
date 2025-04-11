@@ -28,5 +28,8 @@ jobs:
         with:
           deno-version: v2.1.10
 
+      - name: Run linter
+        run: npm install && deno task lint
+
       - name: Run tests
         run: deno task test
