@@ -24,12 +24,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Deno
-        uses: denoland/setup-deno@v2.1.10
+        uses: denoland/setup-deno@v2
         with:
           deno-version: v2.1.10
 
       - name: Run linter
-        run: deno lint
+        run: npm install && deno task lint
 
       - name: Run tests
-        run: deno test -A
+        run: deno task test
