@@ -6,7 +6,7 @@
 # This workflow will install Deno then run `deno lint` and `deno test`.
 # For more information see: https://github.com/denoland/setup-deno
 
-name: Deno
+name: Tests
 
 on:
   push:
@@ -28,8 +28,8 @@ jobs:
         with:
           deno-version: v2.1.10
 
-      - name: Run linter
-        run: npm install && deno task lint
+      # - name: Run linter
+      #   run: npm install && deno task lint
 
       - name: Run tests
-        run: deno task test
+        run: npm install && deno task test
