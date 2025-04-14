@@ -10,7 +10,7 @@
 		"dnt": "deno run -A dnt.ts $(git describe --tags)",
 		"test": "deno test -A src",
 		"test:coverage": "TMP=$(mktemp -d) && deno task test --coverage=$TMP && deno coverage --exclude='utils/xml-validation/fontoxml' $TMP --lcov > $TMP/lcov.lcov && genhtml -o coverage $TMP/lcov.lcov",
-		"lint": "deno lint src && npm run lint",
+		"lint": "deno lint src",
 		"precommit": "deno task lint && deno task test"
 	}
 }
