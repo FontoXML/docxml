@@ -1,7 +1,11 @@
 {
 	"$schema": "https://deno.land/x/deno@v1.22.1/cli/schemas/config-file.v1.json",
+	"version": "2.2.4",
 	"compilerOptions": {
-		"lib": ["deno.ns"]
+		"strict": true, 
+		"lib": ["deno.ns", "dom", "dom.iterable"], 
+		"useUnknownInCatchVariables": true, 
+		"noImplicitAny": true
 	},
 	"tasks": {
 		"dnt": "deno run -A dnt.ts $(git describe --tags)",
