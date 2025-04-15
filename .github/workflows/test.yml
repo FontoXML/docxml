@@ -26,7 +26,10 @@ jobs:
       - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.1.10
+          deno-version: "2.1.12"
+
+      - name: Run linter
+        run: deno task lint
 
       - name: Run tests
-        run: npm install && deno task test
+        run: deno task test

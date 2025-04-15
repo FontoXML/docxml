@@ -1,9 +1,0 @@
-{
-	"private": true,
-	"scripts": {
-		"lint": "eslint . --ext .ts,.tsx"
-	},
-	"devDependencies": {
-		"@types/node": "^22.13.10"
-	}
-}
