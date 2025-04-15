@@ -1,5 +1,5 @@
 {
-	"version": "2.2.4",
+	"version": "2.1.12",
 	"compilerOptions": {
 		"strict": true, 
 		"lib": ["deno.ns", "dom", "dom.iterable"], 
