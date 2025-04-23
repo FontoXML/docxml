@@ -23,15 +23,15 @@ describe('Section formatting', () => {
 				w:h="1600"
 				w:orient="landscape"
 			/>
-					<w:pgMar
-						w:top="1000"
-						w:right="1000"
-						w:bottom="1000"
-						w:left="1000"
-						w:header="1000"
-						w:footer="1000"
-						w:gutter="1000"
-					/>
+			<w:pgMar
+				w:top="1000"
+				w:right="1000"
+				w:bottom="1000"
+				w:left="1000"
+				w:header="1000"
+				w:footer="1000"
+				w:gutter="1000"
+			/>
 		</w:sectPr>`,
 		{
 			pageWidth: twip(1200),
@@ -47,6 +47,48 @@ describe('Section formatting', () => {
 				gutter: twip(1000),
 			},
 		},
+	);
+});
+
+describe('Section column formatting for equally sized columns', () => { 
+	test(
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:cols w:num="3" w:equalwidth="1" w:sep="0" w:space="720"/> 
+		</w:sectPr>`,
+		{
+			columns: {
+				numberOfColumns: 3,
+				equalWidth: true,
+				separator: false,
+				columnSpacing: twip(720)
+			}
+		}
+	);
+});
+
+
+
+describe('Section column formatting for differently sized columns', () => { 
+	test(
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:cols w:num="3" w:equalwidth="0" w:sep="0">
+				<w:col w:w="1440" w:space="720"/> 
+				<w:col w:w="1440" w:space="720" /> 
+				<w:col w:w="2880" /> 
+			</w:cols> 
+		</w:sectPr>`,
+		{
+			columns: {
+				numberOfColumns: 3,
+				equalWidth: false,
+				separator: true,
+				columns: [
+					{columnSize: twip(1440), columnSpacing: twip(720)},
+					{columnSize: twip(1440), columnSpacing: twip(720)},
+					{columnSize: twip(1440), columnSpacing: null}
+				]
+			}
+		}
 	);
 });
 

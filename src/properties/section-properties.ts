@@ -11,6 +11,17 @@ import { evaluateXPathToMap } from '../utilities/xquery.ts';
  */
 export type SectionProperties = {
 	/**
+	 * The column layout for a particular section of the document
+	 */
+	columns?: {
+		numberOfColumns: null | number;
+		equalWidth: null | boolean; 
+		separator: null | boolean;
+		columnSpacing?: null | Length;
+		columns?: {columnSize: Length, columnSpacing: Length | null }[]
+	}; 
+
+	/**
 	 * A reference to the header portion on every page in this section.
 	 */
 	headers?: null | string | { first?: string | null; even?: string | null; odd?: string | null };
@@ -54,41 +65,70 @@ export type SectionProperties = {
 export function sectionPropertiesFromNode(node?: Node | null): SectionProperties {
 	if (!node) {
 		return {};
-	}
+	}; 
 	const data = evaluateXPathToMap<SectionProperties>(
-		`map {
-			"headers": map {
-				"first": ./${QNS.w}headerReference[@${QNS.w}type = 'first']/@${QNS.r}id/string(),
-				"even": ./${QNS.w}headerReference[@${QNS.w}type = 'even']/@${QNS.r}id/string(),
-				"odd": ./${QNS.w}headerReference[@${QNS.w}type = 'default']/@${QNS.r}id/string()
-			},
-			"footers": map {
-				"first": ./${QNS.w}footerReference[@${QNS.w}type = 'first']/@${QNS.r}id/string(),
-				"even": ./${QNS.w}footerReference[@${QNS.w}type = 'even']/@${QNS.r}id/string(),
-				"odd": ./${QNS.w}footerReference[@${QNS.w}type = 'default']/@${QNS.r}id/string()
-			},
-			"pageWidth": docxml:length(${QNS.w}pgSz/@${QNS.w}w, 'twip'),
-			"pageHeight": docxml:length(${QNS.w}pgSz/@${QNS.w}h, 'twip'),
-			"pageOrientation": ./${QNS.w}pgSz/@${QNS.w}orient/string(),
-			"pageMargin": map {
-				"top": docxml:length(./${QNS.w}pgMar/@${QNS.w}top, 'twip'),
-				"right": docxml:length(./${QNS.w}pgMar/@${QNS.w}right, 'twip'),
-				"bottom": docxml:length(./${QNS.w}pgMar/@${QNS.w}bottom, 'twip'),
-				"left": docxml:length(./${QNS.w}pgMar/@${QNS.w}left, 'twip'),
-				"header": docxml:length(./${QNS.w}pgMar/@${QNS.w}header, 'twip'),
-				"footer": docxml:length(./${QNS.w}pgMar/@${QNS.w}footer, 'twip'),
-				"gutter": docxml:length(./${QNS.w}pgMar/@${QNS.w}gutter, 'twip')
-			},
-			"isTitlePage": exists(./${QNS.w}titlePg) and (not(./${QNS.w}titlePg/@${QNS.w}val) or docxml:st-on-off(./${QNS.w}titlePg/@${QNS.w}val))
-		}`,
+		`let $propsMap := map {
+				"headers": map {
+					"first": ./${QNS.w}headerReference[@${QNS.w}type = 'first']/@${QNS.r}id/string(),
+					"even": ./${QNS.w}headerReference[@${QNS.w}type = 'even']/@${QNS.r}id/string(),
+					"odd": ./${QNS.w}headerReference[@${QNS.w}type = 'default']/@${QNS.r}id/string()
+				},
+				"footers": map {
+					"first": ./${QNS.w}footerReference[@${QNS.w}type = 'first']/@${QNS.r}id/string(),
+					"even": ./${QNS.w}footerReference[@${QNS.w}type = 'even']/@${QNS.r}id/string(),
+					"odd": ./${QNS.w}footerReference[@${QNS.w}type = 'default']/@${QNS.r}id/string()
+				},
+				"columns": map {
+					"numberOfColumns": ./${QNS.w}cols/@${QNS.w}num/number(), 
+					"separator": docxml:st-on-off(./${QNS.w}cols/@${QNS.w}sep),
+					"equalWidth": docxml:st-on-off(./${QNS.w}cols/@${QNS.w}equalWidth)
+				},
+				"pageWidth": docxml:length(${QNS.w}pgSz/@${QNS.w}w, 'twip'),
+				"pageHeight": docxml:length(${QNS.w}pgSz/@${QNS.w}h, 'twip'),
+				"pageOrientation": ./${QNS.w}pgSz/@${QNS.w}orient/string(),
+				"pageMargin": map {
+					"top": docxml:length(./${QNS.w}pgMar/@${QNS.w}top, 'twip'),
+					"right": docxml:length(./${QNS.w}pgMar/@${QNS.w}right, 'twip'),
+					"bottom": docxml:length(./${QNS.w}pgMar/@${QNS.w}bottom, 'twip'),
+					"left": docxml:length(./${QNS.w}pgMar/@${QNS.w}left, 'twip'),
+					"header": docxml:length(./${QNS.w}pgMar/@${QNS.w}header, 'twip'),
+					"footer": docxml:length(./${QNS.w}pgMar/@${QNS.w}footer, 'twip'),
+					"gutter": docxml:length(./${QNS.w}pgMar/@${QNS.w}gutter, 'twip')
+				},
+				"isTitlePage": exists(./${QNS.w}titlePg) and (not(./${QNS.w}titlePg/@${QNS.w}val) or docxml:st-on-off(./${QNS.w}titlePg/@${QNS.w}val))
+		}
+		let $colSpacing := if (exists(./${QNS.w}cols/@${QNS.w}space)) then (docxml:length(./${QNS.w}cols/@${QNS.w}space, 'twip')) else ()
+		let $cols := ./${QNS.w}cols/${QNS.w}col
+		let $colMap := 
+			if (exists($cols))
+			then (
+				for-each(
+					$cols, 
+					function($c) {
+						map { 
+							"columnsSize": docxml:length($c/@${QNS.w}w, 'twip'), 
+							"columnSpacing": docxml:length($c/@${QNS.w}space, 'twip')
+						}
+					}
+				)
+			)
+			else()
+
+		return (
+			if (exists($colSpacing))
+			then (
+				map:put($propsMap('columns'), 'columnSpacing', $colSpacing)
+			)
+			else(),
+			map:put($propsMap('columns'), 'columns', $colMap)
+		)`,
 		node,
 	);
-
 	return data;
 }
 
 export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
-	return create(
+	const query = create(
 		`element ${QNS.w}sectPr {
 			if (exists($headers('first'))) then element ${QNS.w}headerReference {
 				attribute ${QNS.r}id { $headers('first') },
@@ -114,6 +154,24 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 				attribute ${QNS.r}id { $footers('odd') },
 				attribute ${QNS.w}type { 'default' }
 			} else (),
+			if (exists($columns)) then element ${QNS.w}cols {
+				attribute ${QNS.w}sep { $columns('separator') },
+				attribute ${QNS.w}equalWidth { $columns('equalWidth') },
+				attribute ${QNS.w}num { $columns('numberOfColumns') },
+				if (exists($columns('columnSpacing')))
+				then (
+					attribute ${QNS.w}columnSpacing { $columns('columnSpacing')}
+				)
+				else (),
+				if (exists($columns('columns')))
+				then (
+					element columns {
+						attribute ${QNS.w}w { round($columns('columns')('columnSize')('twip')) },
+						attribute ${QNS.w}space { round($columns('columns')('columnSpacing')('twip')) } 
+					}
+				)
+				else()
+			} else (), 
 			if (exists($pageWidth) or exists($pageHeight) or $pageOrientation) then element ${QNS.w}pgSz {
 				if (exists($pageWidth)) then attribute ${QNS.w}w {
 					round($pageWidth('twip'))
@@ -157,6 +215,13 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 				typeof data.footers === 'string'
 					? { first: data.footers, even: data.footers, odd: data.footers }
 					: data.footers || {},
+			columns: {
+				numberOfColumns: data.columns?.numberOfColumns,
+				separator: data.columns?.separator,
+				equalWidth: data.columns?.equalWidth,
+				columnSpacing: data.columns?.columnSpacing, 
+				columns: data.columns?.columns, 
+			},
 			pageWidth: data.pageWidth || null,
 			pageHeight: data.pageHeight || null,
 			pageMargin: data.pageMargin || null,
@@ -164,4 +229,5 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 			isTitlePage: data.isTitlePage || null,
 		},
 	);
+	return query; 
 }
