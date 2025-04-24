@@ -83,7 +83,12 @@ export function sectionPropertiesFromNode(node?: Node | null): SectionProperties
 				"numberOfColumns": ./${QNS.w}cols/@${QNS.w}num/number(), 
 				"separator": docxml:st-on-off(./${QNS.w}cols/@${QNS.w}sep),
 				"equalWidth": docxml:st-on-off(./${QNS.w}cols/@${QNS.w}equalwidth),
-				"columns": array{}
+				"columns": array{
+						./${QNS.w}cols/${QNS.w}col/map{ 
+						"columnWidth": if (@${QNS.w}w) then docxml:length(@${QNS.w}w, 'twip') else (), 
+						"columnSpace": if (@${QNS.w}space) then docxml:length(@${QNS.w}space, 'twip') else ()
+					}
+				}
 			},
 			"pageWidth": docxml:length(${QNS.w}pgSz/@${QNS.w}w, 'twip'),
 			"pageHeight": docxml:length(${QNS.w}pgSz/@${QNS.w}h, 'twip'),
@@ -101,13 +106,6 @@ export function sectionPropertiesFromNode(node?: Node | null): SectionProperties
 		}`,
 		node,
 	);
-
-	evaluateXPathToArray(`array{./${QNS.w}cols/${QNS.w}col/map{ 
-		"columnWidth": if (@${QNS.w}w) then docxml:length(@${QNS.w}w, 'twip') else (), 
-		"columnSpace": if (@${QNS.w}space) then docxml:length(@${QNS.w}space, 'twip') else ()
-	}}`, node).forEach(({columnWidth, columnSpace}) => data.columns?.columns?.push(
-		{columnWidth: columnWidth || null, columnSpace: columnSpace || null}
-	)); 
 
 	// console.log(data); 
 	return data;
@@ -146,7 +144,15 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 			if (exists($columns) and $columns('numberOfColumns') > 0) then element ${QNS.w}cols {
 				attribute ${QNS.w}sep { $columns('separator') },
 				attribute ${QNS.w}equalwidth { $columns('equalWidth') },
-				attribute ${QNS.w}num { $columns('numberOfColumns') }
+				attribute ${QNS.w}num { $columns('numberOfColumns') },
+
+				if (docxml:st-on-off(string($columns('equalWidth')))) then ()
+				else for $column in $columns('columns')?*
+					return element ${QNS.w}col {
+						attribute ${QNS.w}w { round($column("columnWidth")("twip")) },
+						if (not(exists($column("columnSpace")))) then ()
+							else attribute ${QNS.w}space { round($column("columnSpace")("twip")) }
+					}
 			} else (), 
 			if (exists($pageWidth) or exists($pageHeight) or $pageOrientation) then element ${QNS.w}pgSz {
 				if (exists($pageWidth)) then attribute ${QNS.w}w {
@@ -191,36 +197,14 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 				typeof data.footers === 'string'
 					? { first: data.footers, even: data.footers, odd: data.footers }
 					: data.footers || {},
-			columns: {
-				numberOfColumns: data.columns?.numberOfColumns,
-				separator: data.columns?.separator,
-				equalWidth: data.columns?.equalWidth			},
+			columns: data.columns || {},
 			pageWidth: data.pageWidth || null,
 			pageHeight: data.pageHeight || null,
 			pageMargin: data.pageMargin || null,
 			pageOrientation: data.pageOrientation || null,
 			isTitlePage: data.isTitlePage || null,
 		}
-	); 
-	data.columns?.columns?.forEach((col) => { 
-		// console.log("COL"); 
-		if (col.columnWidth != undefined) { 
-			update(
-				newNode, 
-				`let $cols := ./${QNS.w}sectPr/${QNS.w}cols
-				return (
-					if (exists($cols))
-					then (
-						insert node element ${QNS.w}col {
-							attribute ${QNS.w}w { round(${col.columnWidth?.twip.toString() }) },
-							attribute ${QNS.w}space { round(${col.columnSpace?.twip.toString() }) }
-						} as last into $cols
-					) else () 
-				)
-				`
-			)
-		}
-	});
+	);
 
 	return newNode; 
 }
