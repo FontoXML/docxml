@@ -126,6 +126,8 @@ export function createXmlRoundRobinTest<ObjectShape extends { [key: string]: unk
 	): void {
 		const value = p1[prop as keyof typeof p1];
 		const expectation = e1[prop as keyof typeof e1];
+		console.log("P1: ", p1); 
+		console.log("P2: ", p2); 
 		const reparsed = p2[prop as keyof typeof p2];
 
 		if (expectation && typeof expectation === 'object') {

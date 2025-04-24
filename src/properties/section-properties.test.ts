@@ -60,7 +60,7 @@ describe('Section column formatting for equally sized columns', () => {
 				numberOfColumns: 3,
 				equalWidth: true,
 				separator: false,
-				columnSpacing: twip(720)
+				columns: []
 			}
 		}
 	);
@@ -71,7 +71,7 @@ describe('Section column formatting for equally sized columns', () => {
 describe('Section column formatting for differently sized columns', () => { 
 	test(
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
-			<w:cols w:num="3" w:equalwidth="0" w:sep="0">
+			<w:cols w:num="3" w:equalwidth="0" w:sep="1">
 				<w:col w:w="1440" w:space="720"/> 
 				<w:col w:w="1440" w:space="720" /> 
 				<w:col w:w="2880" /> 
@@ -83,9 +83,9 @@ describe('Section column formatting for differently sized columns', () => {
 				equalWidth: false,
 				separator: true,
 				columns: [
-					{columnSize: twip(1440), columnSpacing: twip(720)},
-					{columnSize: twip(1440), columnSpacing: twip(720)},
-					{columnSize: twip(1440), columnSpacing: null}
+					{columnWidth: twip(1440), columnSpace: twip(720)},
+					{columnWidth: twip(1440), columnSpace: twip(720)},
+					{columnWidth: twip(2880)}
 				]
 			}
 		}
