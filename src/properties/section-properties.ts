@@ -147,7 +147,7 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 				attribute ${QNS.w}num { $columns('numberOfColumns') },
 
 				if (docxml:st-on-off(string($columns('equalWidth')))) then ()
-				else for $column in $columns('columns')?*
+				else for $column in array:flatten($columns('columns'))
 					return element ${QNS.w}col {
 						attribute ${QNS.w}w { round($column("columnWidth")("twip")) },
 						if (not(exists($column("columnSpace")))) then ()
