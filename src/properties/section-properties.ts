@@ -1,8 +1,7 @@
-import { create, update, serialize } from '../utilities/dom.ts';
+import { create } from '../utilities/dom.ts';
 import { Length } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
-import * as slimdom from 'https://esm.sh/slimdom@4.0.2?pin=v121'; 
-import { evaluateXPathToArray, evaluateXPathToFirstNode, evaluateXPathToMap } from '../utilities/xquery.ts';
+import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
 /**
  * All the formatting options that can be given on a text run (inline text).
