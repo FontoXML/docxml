@@ -144,14 +144,14 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 				attribute ${QNS.w}sep { $columns('separator') },
 				attribute ${QNS.w}equalwidth { $columns('equalWidth') },
 				attribute ${QNS.w}num { $columns('numberOfColumns') },
-				if (docxml:st-on-off(string($columns('equalWidth')))) then ()
-				else for $column in array:flatten($columns('columns'))
-					return element ${QNS.w}col {
-						attribute ${QNS.w}w { round($column("columnWidth")("twip")) },
-						if (not(exists($column("columnSpace")))) then ()
-							else attribute ${QNS.w}space { round($column("columnSpace")("twip")) }
-					}
-				)
+ 
+ 				if (docxml:st-on-off(string($columns('equalWidth')))) then ()
+ 				else for $column in array:flatten($columns('columns'))
+ 					return element ${QNS.w}col {
+ 						attribute ${QNS.w}w { round($column("columnWidth")("twip")) },
+ 						if (not(exists($column("columnSpace")))) then ()
+ 							else attribute ${QNS.w}space { round($column("columnSpace")("twip")) }
+ 					}
 			} else (), 
 			if (exists($pageWidth) or exists($pageHeight) or $pageOrientation) then element ${QNS.w}pgSz {
 				if (exists($pageWidth)) then attribute ${QNS.w}w {
