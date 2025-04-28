@@ -3,7 +3,9 @@ import { Paragraph } from '../components/Paragraph.ts';
 import { UnhandledXmlFile } from '../classes/XmlFile.ts';
 import { FileMime } from '../enums.ts';
 import { path } from "https://deno.land/x/dnt@0.25.2/lib/transform.deps.ts";
-import { ContentTypesXml, RelationshipsXml } from "../../mod.ts";
+import { RelationshipsXml } from "../../mod.ts";
+import { ContentTypesXml } from "../../mod.ts";
+import { FileLocation } from "../enums.ts";
 
 type ReferenceMarker = { 
 
@@ -21,12 +23,12 @@ export class FootnotesXml extends UnhandledXmlFile {
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
-	public static override async fromArchive(archive: Archive, location: string): Promise<FootnotesXml> {
-		const dom = await archive.readXml(location); 
+	public static override async fromArchive(archive: Archive): Promise<FootnotesXml> {
+		const dom = await archive.readXml(FileLocation.footnotes); 
 		const relsLocation = `${path.dirname(location)}/_rels/document.xml.rels`;
 		console.log(relsLocation); 
 		if (archive.hasFile(relsLocation)) { 
-			const rels = RelationshipsXml.fromArchive(archive, FootnotesXml, location)
+			console.log("YES"); 
 		}
 		else { 
 			console.log("NOPE") 

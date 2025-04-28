@@ -10,7 +10,7 @@ describe('Footnotes', () => {
 
     beforeAll(async () => { 
         const testArchive = await archive('test/simple.docx'); 
-        footnotes = await FootnotesXml.fromArchive(testArchive, 'word/footnotes.xml')
+        await FootnotesXml.fromArchive(testArchive);
     }); 
 
     const footnote = parse(`

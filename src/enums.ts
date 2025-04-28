@@ -7,6 +7,8 @@ export enum FileLocation {
 
 	comments = 'word/comments.xml',
 	coreProperties = 'docProps/core.xml',
+	endnotes = 'word/endnotes.xml',
+	footnotes = 'word/footnotes.xml',
 	mainDocument = 'word/document.xml',
 	numbering = 'word/numbering.xml',
 	settings = 'word/settings.xml',
