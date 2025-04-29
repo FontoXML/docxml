@@ -1,0 +1,13 @@
+{
+    "imports" : { 
+        "dnt": "jsr:@deno/dnt@0.41.3",
+        "slimdom": "npm:slimdom@4.3.5",
+        "std/assert": "jsr:@std/assert", 
+        "std/expect": "jsr:@std/expect", 
+        "std/path": "jsr:@std/path@1.0.9",
+        "std/testing/bdd": "jsr:@std/testing@1.0.9/bdd",
+        "std/testing/unstable-bdd": "jsr:@std/testing@1.0.9/unstable-bdd",
+        "std/fmt": "jsr:@std/fmt@1.0.7",
+        "xml_renderer": "npm:xml-renderer@4.0.5"
+    }
+}

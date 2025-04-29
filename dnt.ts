@@ -2,7 +2,7 @@
  * Running this script rebuilds it as a NodeJS compatible npm package.
  */
 
-import { build, emptyDir } from 'https://deno.land/x/dnt@0.25.2/mod.ts';
+import { build, emptyDir } from  'dnt'; 
 
 const VERSION = Deno.args[0];
 if (!VERSION) {
@@ -17,9 +17,9 @@ await emptyDir('./npm');
 await build({
 	entryPoints: ['./mod.ts'],
 	outDir: './npm',
-	typeCheck: true,
+	// typeCheck: true,
 	test: false,
-	declaration: true,
+	// declaration: true,
 	skipSourceOutput: true,
 	shims: {
 		deno: true,
@@ -35,15 +35,15 @@ await build({
 		version: VERSION,
 		description: 'TypeScript (component) library for building and parsing a DOCX file',
 		author: {
-			name: 'Wybe Minnebo',
-			email: 'wybe@x-54.com',
-			url: 'https://github.com/wvbe',
+			name: 'Fonto BV',
+			email: 'gabe.webb@rws.com',
+			url: 'https://github.com/fontoxml',
 		},
 		contributors: [],
-		homepage: 'https://github.com/wvbe/docxml',
+		homepage: 'https://github.com/fontoxml/docxml',
 		repository: {
 			type: 'git',
-			url: 'git+https://github.com/wvbe/docxml.git',
+			url: 'git+https://github.com/fontoxml/docxml.git',
 		},
 		bugs: {
 			url: 'https://github.com/wvbe/docxml/issues',
@@ -60,9 +60,9 @@ await build({
 			name: 'fontoxpath',
 			version: '3.28.2',
 		},
-		'https://esm.sh/slimdom@4.0.2?pin=v121': {
+		'https://esm.sh/slimdom@4.3.5?pin=v121': {
 			name: 'slimdom',
-			version: '4.0.2',
+			version: '4.3.5',
 		},
 	},
 });

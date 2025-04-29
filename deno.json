@@ -6,6 +6,7 @@
 		"useUnknownInCatchVariables": true, 
 		"noImplicitAny": true
 	},
+	"importMap": "imports.json", 
 	"tasks": {
 		"dnt": "deno run -A dnt.ts $(git describe --tags)",
 		"test": "deno test -A src",
