@@ -60,7 +60,8 @@ describe('Section column formatting for equally sized columns', () => {
 				numberOfColumns: 3,
 				equalWidth: true,
 				separator: false,
-				columns: []
+				columnSpace: twip(720),
+				columnDefs: []
 			}
 		}
 	);
@@ -71,7 +72,7 @@ describe('Section column formatting for equally sized columns', () => {
 describe('Section column formatting for differently sized columns', () => { 
 	test(
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
-			<w:cols w:num="3" w:equalwidth="0" w:sep="1">
+			<w:cols w:num="3" w:equalwidth="0" w:sep="1" w:space="720" >
 				<w:col w:w="1440" w:space="720"/> 
 				<w:col w:w="1440" w:space="720" /> 
 				<w:col w:w="2880" /> 
@@ -82,7 +83,8 @@ describe('Section column formatting for differently sized columns', () => {
 				numberOfColumns: 3,
 				equalWidth: false,
 				separator: true,
-				columns: [
+				columnSpace: twip(720),
+				columnDefs: [
 					{columnWidth: twip(1440), columnSpace: twip(720)},
 					{columnWidth: twip(1440), columnSpace: twip(720)},
 					{columnWidth: twip(2880)}
@@ -91,6 +93,22 @@ describe('Section column formatting for differently sized columns', () => {
 		}
 	);
 });
+
+describe('Section column formatting for with missing properties', () => { 
+
+	expect(
+		sectionPropertiesToNode(
+		{ 
+			columns: { 
+				numberOfColumns: 3, 
+				equalWidth: false
+			}
+		})).toBe(
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:cols w:num="3" w:equalwidth="false" />
+		</w:sectPr>`
+	)
+}); 
 
 describe('Section header/footer references', () => {
 	test(

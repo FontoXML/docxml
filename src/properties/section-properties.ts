@@ -4,20 +4,33 @@ import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
 /**
- * All the formatting options that can be given on a text run (inline text).
- *
- * Serializes to the <w:rPr> element.
- *   https://c-rex.net/projects/samples/ooxml/e1/Part4/OOXML_P4_DOCX_rPr_topic_ID0EIEKM.html
+ * Formatting options that are applied on the Section level. 
+ * For more on how OOXML secitons are structured: http://officeopenxml.com/WPsection.php
  */
+
 export type SectionProperties = {
 	/**
-	 * The column layout for a particular section of the document
+	 * The column layout for this section. 
 	 */
 	columns?: {
-		numberOfColumns: null | number;
-		equalWidth: null | boolean; 
-		separator: null | boolean;
-		columns?: {columnWidth: Length | null, columnSpace?: Length | null}[] | null; 
+		/**
+		 * The number of columns in a section of text. If  this property is present it must 
+		 * be an integer greater than 0 and less than or equal to 45.
+		 */
+		numberOfColumns?: number;
+		equalWidth?: boolean;
+		separator?: boolean;
+		/**
+		 * The width of a column of text. If an array of columns is provided in the `columnDefs` 
+		 * property, then this value is ignored.
+		 */
+		columnSpace?: Length; 
+		/**
+		 * To create sections that use columns of different widths or uneven spacing, you can define
+		 * columns as an array of objects. This is _only_ used by Word if the `equalWidth` 
+		 * property is not true. 
+		 */
+		columnDefs?: {columnWidth?: Length, columnSpace?: Length }[]; 
 	}; 
 
 	/**
@@ -53,8 +66,7 @@ export type SectionProperties = {
 		header?: null | Length;
 		footer?: null | Length;
 		gutter?: null | Length;
-	};
-
+	}
 	/**
 	 * Specifies whether sections in the document shall have different headers and footers for even and odd pages.
 	 */
@@ -66,7 +78,7 @@ export function sectionPropertiesFromNode(node?: Node | null): SectionProperties
 		return {};
 	};
 
-	const data = evaluateXPathToMap<SectionProperties>(
+	return evaluateXPathToMap<SectionProperties>(
 		`map {
 			"headers": map {
 				"first": ./${QNS.w}headerReference[@${QNS.w}type = 'first']/@${QNS.r}id/string(),
@@ -80,12 +92,13 @@ export function sectionPropertiesFromNode(node?: Node | null): SectionProperties
 			},
 			"columns": map {
 				"numberOfColumns": ./${QNS.w}cols/@${QNS.w}num/number(), 
-				"separator": docxml:st-on-off(./${QNS.w}cols/@${QNS.w}sep),
 				"equalWidth": docxml:st-on-off(./${QNS.w}cols/@${QNS.w}equalwidth),
-				"columns": array{
+				"separator": docxml:st-on-off(./${QNS.w}cols/@${QNS.w}sep),
+				"columnSpace": docxml:length(./${QNS.w}cols/@${QNS.w}space, 'twip'),
+				"columnDefs": array{
 						./${QNS.w}cols/${QNS.w}col/map{ 
-						"columnWidth": if (@${QNS.w}w) then docxml:length(@${QNS.w}w, 'twip') else (), 
-						"columnSpace": if (@${QNS.w}space) then docxml:length(@${QNS.w}space, 'twip') else ()
+							"columnWidth": docxml:length(@${QNS.w}w, 'twip'), 
+							"columnSpace": docxml:length(@${QNS.w}space, 'twip')
 					}
 				}
 			},
@@ -105,16 +118,11 @@ export function sectionPropertiesFromNode(node?: Node | null): SectionProperties
 		}`,
 		node,
 	);
-
-	// console.log(data); 
-	return data;
 }
 
 export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 
-	// console.log(data.columns?.columns?.forEach((col) => { console.log(col.columnWidth)}))
-
-	const newNode = create(
+	return create(
 		`element ${QNS.w}sectPr {
 			if (exists($headers('first'))) then element ${QNS.w}headerReference {
 				attribute ${QNS.r}id { $headers('first') },
@@ -144,13 +152,13 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 				attribute ${QNS.w}sep { $columns('separator') },
 				attribute ${QNS.w}equalwidth { $columns('equalWidth') },
 				attribute ${QNS.w}num { $columns('numberOfColumns') },
- 
+				attribute ${QNS.w}space { round($columns('columnSpace')('twip')) },
  				if (docxml:st-on-off(string($columns('equalWidth')))) then ()
- 				else for $column in array:flatten($columns('columns'))
+ 				else for $column in array:flatten($columns('columnDefs'))
  					return element ${QNS.w}col {
- 						attribute ${QNS.w}w { round($column("columnWidth")("twip")) },
- 						if (not(exists($column("columnSpace")))) then ()
- 							else attribute ${QNS.w}space { round($column("columnSpace")("twip")) }
+ 						attribute ${QNS.w}w { round($column('columnWidth')('twip')) },
+ 						if (not(exists($column('columnSpace')))) then ()
+ 							else attribute ${QNS.w}space { round($column('columnSpace')('twip')) }
  					}
 			} else (), 
 			if (exists($pageWidth) or exists($pageHeight) or $pageOrientation) then element ${QNS.w}pgSz {
@@ -204,6 +212,4 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 			isTitlePage: data.isTitlePage || null,
 		}
 	);
-
-	return newNode; 
 }
