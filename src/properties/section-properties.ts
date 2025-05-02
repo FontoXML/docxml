@@ -30,7 +30,7 @@ export type SectionProperties = {
 		 * columns as an array of objects. This is _only_ used by Word if the `equalWidth` 
 		 * property is not true. 
 		 */
-		columnDefs?: {columnWidth?: Length, columnSpace?: Length }[]; 
+		columnDefs?: {columnWidth: Length, columnSpace?: Length }[]; 
 	}; 
 
 	/**
@@ -91,9 +91,9 @@ export function sectionPropertiesFromNode(node?: Node | null): SectionProperties
 				"odd": ./${QNS.w}footerReference[@${QNS.w}type = 'default']/@${QNS.r}id/string()
 			},
 			"columns": map {
-				"numberOfColumns": ./${QNS.w}cols/@${QNS.w}num/number(), 
+				"numberOfColumns": ./${QNS.w}cols/@${QNS.w}num/number(),
 				"equalWidth": docxml:st-on-off(./${QNS.w}cols/@${QNS.w}equalwidth),
-				"separator": docxml:st-on-off(./${QNS.w}cols/@${QNS.w}sep),
+				"separator": if (exists(./${QNS.w}cols/@${QNS.w}sep)) then docxml:st-on-off(./${QNS.w}cols/@${QNS.w}sep) else (),
 				"columnSpace": docxml:length(./${QNS.w}cols/@${QNS.w}space, 'twip'),
 				"columnDefs": array{
 						./${QNS.w}cols/${QNS.w}col/map{ 
@@ -148,11 +148,19 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 				attribute ${QNS.r}id { $footers('odd') },
 				attribute ${QNS.w}type { 'default' }
 			} else (),
-			if (exists($columns) and $columns('numberOfColumns') > 0) then element ${QNS.w}cols {
-				attribute ${QNS.w}sep { $columns('separator') },
-				attribute ${QNS.w}equalwidth { $columns('equalWidth') },
-				attribute ${QNS.w}num { $columns('numberOfColumns') },
-				attribute ${QNS.w}space { round($columns('columnSpace')('twip')) },
+			if (exists($columns)) then element ${QNS.w}cols {
+				if (exists($columns('separator'))) then attribute ${QNS.w}sep { 
+					$columns('separator') } 
+				else (),
+				if (exists($columns('equalWidth'))) then attribute ${QNS.w}equalwidth {
+					$columns('equalWidth') 
+				} else (),
+				if (exists($columns('numberOfColumns'))) then attribute ${QNS.w}num {
+					$columns('numberOfColumns') 
+				} else (),
+				if (exists($columns('columnSpace'))) then attribute ${QNS.w}space {
+					round($columns('columnSpace')('twip')) 
+				} else (),
  				if (docxml:st-on-off(string($columns('equalWidth')))) then ()
  				else for $column in array:flatten($columns('columnDefs'))
  					return element ${QNS.w}col {
