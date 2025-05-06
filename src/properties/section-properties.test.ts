@@ -1,26 +1,26 @@
-import { describe } from 'std/testing/bdd'; 
-
+import { describe } from 'std/testing/bdd';
 
 import { twip } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
-import { createXmlRoundRobinTest, createObjectRoundRobinTest } from '../utilities/tests.ts';
+import {
+	createObjectRoundRobinTest,
+	createXmlRoundRobinTest,
+} from '../utilities/tests.ts';
 import {
 	SectionProperties,
 	sectionPropertiesFromNode,
 	sectionPropertiesToNode,
 } from './section-properties.ts';
-import { Node } from "https://esm.sh/v121/fontoxpath@3.28.2/dist/fontoxpath.d.ts";
 
 const test = createXmlRoundRobinTest<SectionProperties>(
 	sectionPropertiesFromNode,
-	sectionPropertiesToNode,
+	sectionPropertiesToNode
 );
-
 
 const reverseTest = createObjectRoundRobinTest<SectionProperties>(
 	sectionPropertiesToNode,
 	sectionPropertiesFromNode
-); 
+);
 
 describe('Section formatting', () => {
 	test(
@@ -53,11 +53,11 @@ describe('Section formatting', () => {
 				footer: twip(1000),
 				gutter: twip(1000),
 			},
-		},
+		}
 	);
 });
 
-describe('Section column formatting for equally sized columns', () => { 
+describe('Section column formatting for equally sized columns', () => {
 	test(
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
 			<w:cols w:num="3" w:equalwidth="1" w:sep="0" w:space="720"/> 
@@ -68,15 +68,13 @@ describe('Section column formatting for equally sized columns', () => {
 				equalWidth: true,
 				separator: false,
 				columnSpace: twip(720),
-				columnDefs: []
-			}
+				columnDefs: [],
+			},
 		}
 	);
 });
 
-
-
-describe('Section column formatting for differently sized columns', () => { 
+describe('Section column formatting for differently sized columns', () => {
 	test(
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
 			<w:cols w:num="3" w:equalwidth="0" w:sep="1" w:space="720" >
@@ -92,29 +90,45 @@ describe('Section column formatting for differently sized columns', () => {
 				separator: true,
 				columnSpace: twip(720),
 				columnDefs: [
-					{columnWidth: twip(1440), columnSpace: twip(720)},
-					{columnWidth: twip(1440), columnSpace: twip(720)},
-					{columnWidth: twip(2880)}
-				]
-			}
+					{ columnWidth: twip(1440), columnSpace: twip(720) },
+					{ columnWidth: twip(1440), columnSpace: twip(720) },
+					{ columnWidth: twip(2880) },
+				],
+			},
 		}
 	);
 });
 
-describe('Section column formatting for with missing properties', () => { 
-
-		reverseTest(
-		{ 
-			columns: { 
+describe('Section column formatting for with missing properties', () => {
+	reverseTest(
+		{
+			columns: {
 				numberOfColumns: 3,
-				equalWidth: true
-			}
-		}, 
+				equalWidth: true,
+			},
+		},
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
 			<w:cols w:num="3" w:equalwidth="1" /> 
 		</w:sectPr>`
-	)
-}); 
+	);
+
+	reverseTest(
+		{
+			columns: {
+				columnDefs: [
+					{ columnWidth: twip(1440), columnSpace: twip(720) },
+					{ columnWidth: twip(1440) },
+				],
+			},
+		},
+		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:cols w:num="2" w:equalwidth="0"> 
+				<w:col w:w="1440" w:space="720" /> 
+				<w:col w:w="1440"/> 
+			</w:cols>
+		</w:sectPr>`
+	);
+});
 
 describe('Section header/footer references', () => {
 	test(
@@ -134,7 +148,7 @@ describe('Section header/footer references', () => {
 				even: null,
 				odd: null,
 			},
-		},
+		}
 	);
 });
 
@@ -144,7 +158,7 @@ describe('Section titlePg', () => {
 		</w:sectPr>`,
 		{
 			isTitlePage: false,
-		},
+		}
 	);
 	test(
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
@@ -152,7 +166,7 @@ describe('Section titlePg', () => {
 		</w:sectPr>`,
 		{
 			isTitlePage: true,
-		},
+		}
 	);
 	test(
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
@@ -160,7 +174,7 @@ describe('Section titlePg', () => {
 		</w:sectPr>`,
 		{
 			isTitlePage: true,
-		},
+		}
 	);
 	test(
 		`<w:sectPr ${ALL_NAMESPACE_DECLARATIONS}>
@@ -168,6 +182,6 @@ describe('Section titlePg', () => {
 		</w:sectPr>`,
 		{
 			isTitlePage: false,
-		},
+		}
 	);
 });

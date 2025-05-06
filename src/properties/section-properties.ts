@@ -154,7 +154,13 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 				else (),
 				if (exists($columns('equalWidth'))) then attribute ${QNS.w}equalwidth {
 					$columns('equalWidth') 
-				} else (),
+				} else (
+					if (count($columns('columnDefs')) > 1)
+					then (
+						attribute ${QNS.w}equalwidth { false }
+					)
+					else () 
+				),
 				if (exists($columns('numberOfColumns'))) then attribute ${QNS.w}num {
 					$columns('numberOfColumns') 
 				} else (),
