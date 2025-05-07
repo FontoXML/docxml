@@ -16,7 +16,7 @@ docx.document.set(
 	<Paragraph>
 		NSYNC is the <CommentRangeStart id={comment} />
 		<Comment id={comment} />
-		grea test
+		greatest
 		<CommentRangeEnd id={comment} /> band in history.
 	</Paragraph>,
 );
