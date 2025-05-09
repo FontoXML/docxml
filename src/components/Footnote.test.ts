@@ -1,7 +1,5 @@
 import { describe, it } from "std/testing/bdd";
-import { FootnoteReference } from "./Footnote.ts";
-import * as slimdom from 'slimdom'; 
-import { evaluateXPathToString } from "../utilities/xquery.ts";
+import { FootnoteReference } from "./Footnote.ts";import { evaluateXPathToString } from "../utilities/xquery.ts";
 
 describe(`Test footnote references in documents`, () => { 
     

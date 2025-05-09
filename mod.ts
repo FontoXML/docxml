@@ -61,6 +61,7 @@ export {
 	type FieldRangeStartChild,
 	type FieldRangeStartProps,
 } from './src/components/FieldRangeStart.ts';
+export { FootnoteReference } from './src/components/Footnote.ts';
 export {
 	Hyperlink,
 	type HyperlinkChild,
@@ -124,7 +125,6 @@ export {
 	type WatermarkTextChild,
 	type WatermarkTextProps,
 } from './src/components/WatermarkText.ts';
-export { FileMime } from './src/enums.ts';
 
 // Shared properties
 export {
@@ -157,6 +157,7 @@ export {
 	type DocumentChild,
 	type DocumentXml,
 } from './src/files/DocumentXml.ts';
+export { type FootnotesXml } from './src/files/FootnotesXml.ts';
 export {
 	type FooterXml,
 	type HeaderFooterChild,
