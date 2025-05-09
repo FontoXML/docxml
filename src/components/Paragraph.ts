@@ -13,15 +13,22 @@ import './Text.ts';
 import './TextAddition.ts';
 import './TextDeletion.ts';
 
-import type { Hyperlink } from '../../mod.ts';
-import { type ComponentAncestor, Component, type ComponentContext } from '../classes/Component.ts';
-import type { ParagraphProperties } from '../properties/paragraph-properties.ts';
+import { type Hyperlink } from '../../mod.ts';
 import {
+	type ComponentAncestor,
+	Component,
+	ComponentContext,
+} from '../classes/Component.ts';
+import {
+	type ParagraphProperties,
 	paragraphPropertiesFromNode,
 	paragraphPropertiesToNode,
 } from '../properties/paragraph-properties.ts';
-import type { SectionProperties } from '../properties/section-properties.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import { type SectionProperties } from '../properties/section-properties.ts';
+import {
+	createChildComponentsFromNodes,
+	registerComponent,
+} from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
@@ -48,7 +55,8 @@ export type ParagraphChild =
 	| BookmarkRangeStart
 	| BookmarkRangeEnd
 	| Hyperlink
-	| Field;
+	| Field
+	| FootnoteReference;
 
 /**
  * A type describing the props accepted by {@link Paragraph}.
@@ -76,6 +84,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'TextAddition',
 		'TextDeletion',
 		'Field',
+		'FootnoteReference',
 	];
 	public static override readonly mixed: boolean = false;
 	#sectionProperties: SectionProperties | null = null;
@@ -101,9 +110,12 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 				}
 			`,
 			{
-				pPr: paragraphPropertiesToNode(this.props, this.#sectionProperties),
+				pPr: paragraphPropertiesToNode(
+					this.props,
+					this.#sectionProperties
+				),
 				children: await this.childrenToNode(ancestry),
-			},
+			}
 		);
 	}
 
@@ -136,11 +148,12 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 						${QNS.w}commentRangeStart |
 						${QNS.w}commentRangeEnd |
 						${QNS.w}bookmarkStart |
-						${QNS.w}bookmarkEnd
+						${QNS.w}bookmarkEnd | 
+						${QNS.w}footnoteReference
 					) }
 				}
 			`,
-			node,
+			node
 		);
 
 		return new Paragraph(
@@ -148,7 +161,11 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 				...paragraphPropertiesFromNode(ppr),
 				...props,
 			},
-			...createChildComponentsFromNodes<ParagraphChild>(this.children, children, context),
+			...createChildComponentsFromNodes<ParagraphChild>(
+				this.children,
+				children,
+				context
+			)
 		);
 	}
 }

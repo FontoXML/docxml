@@ -1,7 +1,9 @@
 import { Component } from '../classes/Component.ts';
+import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
+
 export type FootnoteReferenceProps = {
 	id: number;
 };
@@ -38,3 +40,5 @@ export class FootnoteReference extends Component<FootnoteReferenceProps> {
 		);
 	}
 }
+
+registerComponent(FootnoteReference);
