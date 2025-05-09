@@ -9,7 +9,7 @@ const footnote1 = docxFile.document.footnotes.add(
 	'separator'
 );
 const footnote2 = docxFile.document.footnotes.add(
-	new Paragraph({}, new Text({}, 'Hello this is a footnote.')),
+	new Paragraph({}, new Text({}, 'And this is an additional footnote.')),
 	'separator'
 );
 

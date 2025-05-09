@@ -22,7 +22,7 @@ export enum FootnoteType {
 export type Footnote = {
 	id: number;
 	content: Paragraph[];
-	type: "separator" | "continuationSeparator"; 
+	type: 'separator' | 'continuationSeparator';
 };
 
 export class FootnotesXml extends XmlFile {
@@ -56,11 +56,23 @@ export class FootnotesXml extends XmlFile {
 					return element w:footnote {
 						attribute w:type { $footnote('type') },
 						attribute w:id { $footnote('id') },
-						$footnote('content')
+						element w:p {
+							element w:pPr { 
+								element w:pStyle { 
+									attribute w:val { "FootnoteText" }
+								}
+							}, 
+							element w:r { 
+								element w:footnoteRef {}
+							}, 
+							element w:r { 
+								for $run in array:flatten($footnote('content'))
+								return array:flatten($run/*)
+							}
+						}
 					}
 				} 
-			</w:footnotes>
-		`,
+			</w:footnotes>`,
 			{
 				footnotes: await Promise.all(
 					this.#footnotes.array().map(async (footnote) => ({
