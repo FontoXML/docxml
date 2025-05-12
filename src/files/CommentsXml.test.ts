@@ -9,7 +9,7 @@ import { archive } from '../utilities/tests.ts';
 import { CommentsXml } from './CommentsXml.ts';
 import { ContentTypesXml } from './ContentTypesXml.ts';
 
-describe('Relationships', () => {
+describe('Comments', () => {
 	let contentTypes: ContentTypesXml;
 	let comments: CommentsXml;
 	beforeEach(async () => {
