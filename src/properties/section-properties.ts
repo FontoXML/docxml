@@ -4,43 +4,55 @@ import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
 /**
- * Formatting options that are applied on the Section level. 
+ * Formatting options that are applied on the Section level.
  * For more on how OOXML secitons are structured: http://officeopenxml.com/WPsection.php
  */
 
 export type SectionProperties = {
 	/**
-	 * The column layout for this section. 
+	 * The column layout for this section.
 	 */
 	columns?: {
 		/**
-		 * The number of columns in a section of text. If  this property is present it must 
+		 * The number of columns in a section of text. If  this property is present it must
 		 * be an integer greater than 0 and less than or equal to 45.
 		 */
 		numberOfColumns?: number;
+		/**
+		 * Specifies whether all columns are of equal width.
+		 */
 		equalWidth?: boolean;
+		/**
+		 * Specifies whether a vertical line is to be drawn between each column. If set to true, then the line is drawn in the center of the space between the columns.
+		 */
 		separator?: boolean;
 		/**
-		 * The width of a column of text. If an array of columns is provided in the `columnDefs` 
+		 * The width of a column of text. If an array of columns is provided in the `columnDefs`
 		 * property, then this value is ignored.
 		 */
-		columnSpace?: Length; 
+		columnSpace?: Length;
 		/**
 		 * To create sections that use columns of different widths or uneven spacing, you can define
-		 * columns as an array of objects. This is _only_ used by Word if the `equalWidth` 
-		 * property is not true. 
+		 * columns as an array of objects. This is _only_ used by Word if the `equalWidth`
+		 * property is not true.
 		 */
-		columnDefs?: {columnWidth: Length, columnSpace?: Length }[]; 
-	}; 
+		columnDefs?: { columnWidth: Length; columnSpace?: Length }[];
+	};
 
 	/**
 	 * A reference to the header portion on every page in this section.
 	 */
-	headers?: null | string | { first?: string | null; even?: string | null; odd?: string | null };
+	headers?:
+		| null
+		| string
+		| { first?: string | null; even?: string | null; odd?: string | null };
 	/**
 	 * A reference to the footer portion on every page in this section.
 	 */
-	footers?: null | string | { first?: string | null; even?: string | null; odd?: string | null };
+	footers?:
+		| null
+		| string
+		| { first?: string | null; even?: string | null; odd?: string | null };
 	/**
 	 * The width of any page in this section.
 	 */
@@ -66,17 +78,19 @@ export type SectionProperties = {
 		header?: null | Length;
 		footer?: null | Length;
 		gutter?: null | Length;
-	}
+	};
 	/**
 	 * Specifies whether sections in the document shall have different headers and footers for even and odd pages.
 	 */
 	isTitlePage?: null | boolean;
 };
 
-export function sectionPropertiesFromNode(node?: Node | null): SectionProperties {
+export function sectionPropertiesFromNode(
+	node?: Node | null
+): SectionProperties {
 	if (!node) {
 		return {};
-	};
+	}
 
 	return evaluateXPathToMap<SectionProperties>(
 		`map {
@@ -116,12 +130,11 @@ export function sectionPropertiesFromNode(node?: Node | null): SectionProperties
 			},
 			"isTitlePage": exists(./${QNS.w}titlePg) and (not(./${QNS.w}titlePg/@${QNS.w}val) or docxml:st-on-off(./${QNS.w}titlePg/@${QNS.w}val))
 		}`,
-		node,
+		node
 	);
 }
 
 export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
-
 	return create(
 		`element ${QNS.w}sectPr {
 			if (exists($headers('first'))) then element ${QNS.w}headerReference {
@@ -212,11 +225,19 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 		{
 			headers:
 				typeof data.headers === 'string'
-					? { first: data.headers, even: data.headers, odd: data.headers }
+					? {
+							first: data.headers,
+							even: data.headers,
+							odd: data.headers,
+					  }
 					: data.headers || {},
 			footers:
 				typeof data.footers === 'string'
-					? { first: data.footers, even: data.footers, odd: data.footers }
+					? {
+							first: data.footers,
+							even: data.footers,
+							odd: data.footers,
+					  }
 					: data.footers || {},
 			columns: data.columns || {},
 			pageWidth: data.pageWidth || null,
