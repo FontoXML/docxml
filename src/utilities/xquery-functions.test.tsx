@@ -1,6 +1,6 @@
 /** @jsx Docx.jsx */
-import { expect } from 'std/expect'; 
-import { describe, it } from 'std/testing/bdd'; 
+import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
+
 import { Cell } from '../components/Cell.ts';
 import { Row } from '../components/Row.ts';
 import { Table } from '../components/Table.ts';
@@ -79,3 +79,4 @@ describe('XQuery functions', () => {
 	});
 });
 
+run();

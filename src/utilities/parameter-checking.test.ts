@@ -1,5 +1,4 @@
-import { expect } from 'std/expect'; 
-import { describe, it } from 'std/testing/bdd';
+import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { checkForForbiddenParameters, isValidNumber } from './parameter-checking.ts';
 
@@ -60,3 +59,5 @@ describe('Checking for bad object parameters', () => {
 		).toThrow()
 	});
 });
+
+run();

@@ -1,4 +1,4 @@
-import { describe } from 'std/testing/bdd';
+import { describe, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { parse } from '../utilities/dom.ts';
 import { opt } from '../utilities/length.ts';
@@ -175,4 +175,6 @@ describe('Table cell formatting', () => {
 			);
 		});
 	});
-}); 
+});
+
+run();

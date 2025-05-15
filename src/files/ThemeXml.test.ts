@@ -1,5 +1,4 @@
-import { expect } from 'std/expect'; 
-import { describe, it } from 'std/testing/bdd'; 
+import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 import { parse, serialize } from '../utilities/dom.ts';
 import { Archive } from '../classes/Archive.ts';
 import { ThemeXml, FontScheme, LatinFont, Font } from './ThemeXml.ts';
@@ -68,3 +67,5 @@ describe('Themes', () => {
 		expect(serialize(themeXml.toNode())).toEqual(fakeThemeXml.replace(/\n|\t/g, ''));
 	});
 });
+
+run();

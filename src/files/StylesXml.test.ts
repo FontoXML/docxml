@@ -1,5 +1,4 @@
-import { expect } from 'std/expect'; 
-import { describe, it } from 'std/testing/bdd'; 
+import { describe, expect, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { serialize } from '../utilities/dom.ts';
 import { StylesXml } from './StylesXml.ts';
@@ -82,3 +81,5 @@ describe('Styles', () => {
 		});
 	});
 });
+
+run();

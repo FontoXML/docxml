@@ -2,9 +2,8 @@
  * @file
  * All the helper functions for test purposes only.
  */
-import * as path from 'std/path'; 
-import { expect} from 'std/expect'; 
-import { describe, it } from 'std/testing/bdd';
+import * as path from 'https://deno.land/std@0.187.0/path/mod.ts';
+import { describe, expect, it } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { Archive } from '../classes/Archive.ts';
 import { XmlFile } from '../classes/XmlFile.ts';

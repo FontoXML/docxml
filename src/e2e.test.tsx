@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { describe, it } from 'std/testing/bdd'; 
+import { describe, it, run } from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Docx, { jsx, Paragraph, RelationshipType, Section, Text, twip } from '../mod.ts';
@@ -113,4 +113,6 @@ describe('End-to-end', () => {
 				`,
 			));
 	});
-}); 
+});
+
+run();
