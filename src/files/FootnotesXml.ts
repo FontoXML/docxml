@@ -20,7 +20,7 @@ export type Footnote = {
 
 export class FootnotesXml extends XmlFile {
 	public static override contentType = FileMime.footnotes;
-	#footnotes = new NumberMap<Footnote>();
+	#footnotes = new NumberMap<Footnote>(1);
 
 	public override isEmpty(): boolean {
 		return !this.#footnotes.size;
@@ -50,40 +50,67 @@ export class FootnotesXml extends XmlFile {
 			<w:footnotes ${ALL_NAMESPACE_DECLARATIONS}>
 				{ for $footnote in array:flatten($footnotes)
 					return element w:footnote {
-						attribute w:type { $footnote('type') },
+						if ($footnote('type') = 'normal') then ()
+						else attribute w:type { $footnote('type') },
 						attribute w:id { $footnote('id') },
-						element w:p {
-							element w:pPr { 
-								element w:pStyle { 
-									attribute w:val { "FootnoteText" }
-								}
-							}, 
-							element w:r { 
-								element w:rPr { 
-									element w:rStyle { 
-										attribute w:val { "FootnoteReference" }
+						if (array:size($footnote('content')) > 0)
+						then (
+							element w:p {
+								element w:pPr { 
+									element w:pStyle { 
+										attribute w:val { "FootnoteText" }
 									}
-								},
-								element w:footnoteRef {}
-							}, 
-							element w:r { 
+								}, 
+								element w:r {
+									element w:rPr { 
+										element w:rStyle { 
+											attribute w:val { "FootnoteReference" }
+										}
+									},
+									element w:footnoteRef {}
+								}, 
 								for $run in array:flatten($footnote('content'))
-								return array:flatten($run/*)
+									return array:flatten($run/*)
 							}
-						}
+						)
+						else if ( $footnote('type') = "separator" ) then (
+							element w:p {
+								element w:r {
+									element w:separator {}
+								}
+							}
+						) else (
+							element w:p {
+								element w:r {
+									element w:continuationSeparator {}
+								}
+							}
+						)
 					}
 				} 
 			</w:footnotes>`,
 			{
-				footnotes: await Promise.all(
-					this.#footnotes.array().map(async (footnote) => ({
-						type: footnote.type,
-						id: footnote.id,
-						content: await Promise.all(
-							footnote.content.map((p) => p.toNode([]))
-						),
-					}))
-				),
+				footnotes: [
+					{
+						type: 'separator',
+						id: -1,
+						content: [],
+					},
+					{
+						type: 'continuationSeparator',
+						id: 0,
+						content: [],
+					},
+					...(await Promise.all(
+						this.#footnotes.array().map(async (footnote) => ({
+							type: footnote.type,
+							id: footnote.id,
+							content: await Promise.all(
+								footnote.content.map((p) => p.toNode([]))
+							),
+						}))
+					)),
+				],
 			},
 			true
 		);

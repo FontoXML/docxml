@@ -190,11 +190,17 @@ export class SettingsXml extends XmlFileWithContentTypes {
 							element ${QNS.w}pos{ 
 								attribute ${QNS.w}val { $footnoteProperties('position')}
 							}, 
-							element ${QNS.w}numStart { 
+							element ${QNS.w}start { 
 								attribute ${QNS.w}val { "1" }
 							},
 							element ${QNS.w}numRestart { 
 								attribute ${QNS.w}val { $footnoteProperties('restart')}
+							},
+							element ${QNS.w}footnote { 
+								attribute ${QNS.w}id { "-1" }
+							},
+							element ${QNS.w}footnote { 
+								attribute ${QNS.w}id { "0" }
 							}
 						}, 
 						element ${QNS.w}themeFontLang { 

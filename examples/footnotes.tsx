@@ -1,5 +1,5 @@
 /** @jsx  Docx.jsx */
-import Docx, { FootnoteReference, Paragraph } from '../mod.ts';
+import Docx, { FootnoteReference, Paragraph, Section } from '../mod.ts';
 import { Text } from '../src/components/Text.ts';
 
 const docxFile = Docx.fromNothing();
@@ -12,6 +12,15 @@ const footnote2 = docxFile.document.footnotes.add(
 	'normal'
 );
 
+docxFile.document.styles.add({
+	id: 'FootnoteReference',
+	name: 'FootnoteReference',
+	type: 'character',
+	text: {
+		verticalAlign: 'superscript',
+	},
+});
+
 docxFile.document.settings.set('footnoteProperties', {
 	numberingFormat: 'lowerRoman',
 	position: 'beneathText',
@@ -19,11 +28,13 @@ docxFile.document.settings.set('footnoteProperties', {
 });
 
 docxFile.document.set(
-	<Paragraph>
-		This is my first paragraph of text.{' '}
-		<FootnoteReference id={footnote1.id} />
-		<FootnoteReference id={footnote2.id} />
-	</Paragraph>
+	<Section>
+		<Paragraph>
+			This is my first paragraph of text.
+			<FootnoteReference id={footnote1.id} />
+			<FootnoteReference id={footnote2.id} />
+		</Paragraph>
+	</Section>
 );
 
 await docxFile.toFile('footnotes.docx');

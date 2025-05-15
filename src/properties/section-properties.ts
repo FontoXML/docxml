@@ -137,6 +137,12 @@ export function sectionPropertiesFromNode(
 export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 	return create(
 		`element ${QNS.w}sectPr {
+			element ${QNS.w}footnotePr {
+				element ${QNS.w}numFmt { 
+					attribute ${QNS.w}val { "chicago" }
+				}
+			}, 
+
 			if (exists($headers('first'))) then element ${QNS.w}headerReference {
 				attribute ${QNS.r}id { $headers('first') },
 				attribute ${QNS.w}type { 'first' }
