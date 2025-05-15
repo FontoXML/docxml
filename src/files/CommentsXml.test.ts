@@ -1,5 +1,10 @@
-import { expect } from 'std/expect';
-import { beforeEach, describe, it } from 'std/testing/bdd';
+import {
+	beforeEach,
+	describe,
+	expect,
+	it,
+	run,
+} from 'https://deno.land/x/tincan@1.0.1/mod.ts';
 
 import { Paragraph } from '../components/Paragraph.ts';
 import { Text } from '../components/Text.ts';
@@ -106,3 +111,5 @@ describe('Comments', () => {
 		);
 	});
 });
+
+run();
