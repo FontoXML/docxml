@@ -32,15 +32,16 @@ import {
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
-import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
-import type { Comment } from './Comment.ts';
-import type { CommentRangeEnd } from './CommentRangeEnd.ts';
-import type { CommentRangeStart } from './CommentRangeStart.ts';
-import type { Field } from './Field.ts';
-import type { Text } from './Text.ts';
-import type { TextAddition } from './TextAddition.ts';
-import type { TextDeletion } from './TextDeletion.ts';
+import { type BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
+import { type BookmarkRangeStart } from './BookmarkRangeStart.ts';
+import { type Comment } from './Comment.ts';
+import { type CommentRangeEnd } from './CommentRangeEnd.ts';
+import { type CommentRangeStart } from './CommentRangeStart.ts';
+import { type Field } from './Field.ts';
+import { FootnoteReference } from './Footnote.ts';
+import { type Text } from './Text.ts';
+import { type TextAddition } from './TextAddition.ts';
+import { type TextDeletion } from './TextDeletion.ts';
 
 /**
  * A type describing the components accepted as children of {@link Paragraph}.

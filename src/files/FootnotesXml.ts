@@ -1,4 +1,3 @@
-import * as slimdom from 'slimdom';
 import * as path from 'std/path';
 import { Archive } from '../classes/Archive.ts';
 import { NumberMap } from '../classes/NumberMap.ts';
@@ -7,22 +6,16 @@ import { Paragraph } from '../components/Paragraph.ts';
 import { FileMime } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
-import {
-	evaluateXPathToArray,
-	evaluateXPathToNodes,
-} from '../utilities/xquery.ts';
+import { evaluateXPathToArray } from '../utilities/xquery.ts';
 import { ContentTypesXml } from './ContentTypesXml.ts';
 import { RelationshipsXml } from './RelationshipsXml.ts';
 
-export enum FootnoteType {
-	'separator',
-	'continuationSeparator',
-}
+type FootnoteSeparatorType = 'separator' | 'continuationSeparator' | 'normal';
 
 export type Footnote = {
 	id: number;
 	content: Paragraph[];
-	type: 'separator' | 'continuationSeparator';
+	type: FootnoteSeparatorType;
 };
 
 export class FootnotesXml extends XmlFile {
@@ -33,7 +26,10 @@ export class FootnotesXml extends XmlFile {
 		return !this.#footnotes.size;
 	}
 
-	public add(content: Paragraph[] | Paragraph, type: FootnoteType): Footnote {
+	public add(
+		content: Paragraph[] | Paragraph,
+		type: FootnoteSeparatorType
+	): Footnote {
 		const id = this.#footnotes.getNextAvailableKey();
 		const newFootnote = {
 			id: id,
@@ -63,6 +59,11 @@ export class FootnotesXml extends XmlFile {
 								}
 							}, 
 							element w:r { 
+								element w:rPr { 
+									element w:rStyle { 
+										attribute w:val { "FootnoteReference" }
+									}
+								},
 								element w:footnoteRef {}
 							}, 
 							element w:r { 

@@ -4,6 +4,22 @@ import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
+/**
+ * A type that models the properties that are applied to all of a document's footnotes.
+ */
+export type DocumentFootnoteProps = {
+	numberingFormat?:
+		| 'bullet'
+		| 'chicago'
+		| 'decimal'
+		| 'lowerRoman'
+		| 'upperRoman'
+		| 'lowerLetter'
+		| 'upperLetter';
+	position?: 'beneathText' | 'documentEnd' | 'sectionEnd' | 'pageBottom';
+	restart?: 'section' | 'page' | 'continuous';
+};
+
 export type FootnoteReferenceProps = {
 	id: number;
 };

@@ -1,17 +1,22 @@
 /** @jsx  Docx.jsx */
 import Docx, { FootnoteReference, Paragraph } from '../mod.ts';
 import { Text } from '../src/components/Text.ts';
-import { FootnoteType } from '../src/files/FootnotesXml.ts';
 
 const docxFile = Docx.fromNothing();
 const footnote1 = docxFile.document.footnotes.add(
 	new Paragraph({}, new Text({}, 'Hello, this is a footnote.')),
-	'separator'
+	'normal'
 );
 const footnote2 = docxFile.document.footnotes.add(
 	new Paragraph({}, new Text({}, 'And this is an additional footnote.')),
-	'separator'
+	'normal'
 );
+
+docxFile.document.settings.set('footnoteProperties', {
+	numberingFormat: 'lowerRoman',
+	position: 'beneathText',
+	restart: 'page',
+});
 
 docxFile.document.set(
 	<Paragraph>
