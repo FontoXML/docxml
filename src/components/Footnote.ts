@@ -29,7 +29,7 @@ export class FootnoteReference extends Component<FootnoteReferenceProps> {
 		return create(
 			`
             element ${QNS.w}r {
-                element ${QNS.w}Pr {
+                element ${QNS.w}rPr {
                     element ${QNS.w}rStyle { 
                         attribute ${QNS.w}val { "FootnoteReference" }
                     }
