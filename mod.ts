@@ -1,6 +1,9 @@
 // Top-level API
 export { Docx as default } from './src/Docx.ts';
 
+// Classes
+export { type AnyComponent as DocxmlComponent } from './src/classes/Component.ts';
+
 // Content components
 export {
 	BookmarkRangeEnd,
@@ -122,6 +125,12 @@ export {
 	type WatermarkTextProps,
 } from './src/components/WatermarkText.ts';
 export { FileMime } from './src/enums.ts';
+
+// Shared properties
+export {
+	type Border,
+	type LineBorderType,
+} from './src/properties/shared-properties.ts';
 
 // Utility functions
 export { RelationshipType } from './src/enums.ts';
