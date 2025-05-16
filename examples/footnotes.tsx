@@ -11,7 +11,7 @@ import { pt } from '../src/utilities/length.ts';
 const docxFile = Docx.fromNothing();
 
 const footnoteProps: FootnoteProps = {
-	numberingFormat: 'chicago',
+	numberingFormat: 'lowerRoman',
 	position: 'beneathText',
 	restart: 'continuous',
 	styleName: 'FootnoteText',
@@ -37,6 +37,7 @@ docxFile.document.styles.add({
 	type: 'character',
 	text: {
 		verticalAlign: 'superscript',
+		fontSize: pt(10),
 	},
 });
 
@@ -61,10 +62,12 @@ docxFile.document.set(
 			This is my first paragraph of text.
 			<Footnote
 				id={footnote1.id}
-				referenceStyleName={.referenceStyleName}
+				styleName={footnoteProps.styleName}
+				referenceStyleName={footnoteProps.referenceStyleName}
 			/>
 			<Footnote
 				id={footnote2.id}
+				styleName={footnoteProps.styleName}
 				referenceStyleName={footnoteProps.referenceStyleName}
 			/>
 		</Paragraph>
