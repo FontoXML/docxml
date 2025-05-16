@@ -47,12 +47,16 @@ export class Registry<MetadataGeneric> {
 	private optimize(): void {
 		this.sets = this.sets
 			// Sort alphabetically by test to get a consistent sorting even if selectors are equally specific
-			.sort((setLeft, setRight) => setLeft.test.localeCompare(setRight.test))
+			.sort((setLeft, setRight) =>
+				setLeft.test.localeCompare(setRight.test)
+			)
 			// Sort by descreasing specificity as determined by fontoxpath
-			.sort((setLeft, setRight) => this.xpath.compareSpecificity(setRight.test, setLeft.test));
+			.sort((setLeft, setRight) =>
+				this.xpath.compareSpecificity(setRight.test, setLeft.test)
+			);
 	}
 
-	public get length() {
+	public get length(): number {
 		return this.sets.length;
 	}
 
@@ -64,9 +68,11 @@ export class Registry<MetadataGeneric> {
 			(sets, registry) =>
 				sets
 					// Remove any duplicates from the pre-existing set
-					.filter((set) => !registry.sets.some((s) => s.test === set.test))
+					.filter(
+						(set) => !registry.sets.some((s) => s.test === set.test)
+					)
 					.concat(registry.sets),
-			this.sets,
+			this.sets
 		);
 		this.optimize();
 		return this;
@@ -77,10 +83,14 @@ export class Registry<MetadataGeneric> {
 	 */
 	public add(test: RegistrySelector, value: MetadataGeneric): this {
 		if (value === undefined) {
-			throw new TypeError('Required to pass a value when adding to registry.');
+			throw new TypeError(
+				'Required to pass a value when adding to registry.'
+			);
 		}
 		if (this.sets.some((set) => set.test === test)) {
-			throw new TypeError('Refusing to add a selector in duplicate, use #overwrite() instead.');
+			throw new TypeError(
+				'Refusing to add a selector in duplicate, use #overwrite() instead.'
+			);
 		}
 		this.sets.push({
 			test,
@@ -93,12 +103,14 @@ export class Registry<MetadataGeneric> {
 	public overwrite(test: RegistrySelector, value: MetadataGeneric): this {
 		if (value === undefined) {
 			throw new TypeError(
-				'Required to pass a value when overwriting to registry, use #remove() instead.',
+				'Required to pass a value when overwriting to registry, use #remove() instead.'
 			);
 		}
 		const index = this.sets.findIndex((set) => set.test === test);
 		if (index < 0) {
-			throw new TypeError('Refusing to overwrite a selector because it was never set before.');
+			throw new TypeError(
+				'Refusing to overwrite a selector because it was never set before.'
+			);
 		}
 		this.sets.splice(index, 1, {
 			test,
@@ -123,7 +135,9 @@ export class Registry<MetadataGeneric> {
 	 * gives you only the value of the best match.
 	 */
 	public find(node: Node): MetadataGeneric | undefined {
-		const set = this.sets.find((set) => this.xpath.evaluateXPathToBoolean(set.test, node));
+		const set = this.sets.find((set) =>
+			this.xpath.evaluateXPathToBoolean(set.test, node)
+		);
 		return set?.value;
 	}
 }

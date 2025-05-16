@@ -1,4 +1,4 @@
-import { JSZip, readZip } from 'jszip';
+import { JSZip, readZip } from '../../vendor/jszip/mod.ts';
 
 import { parse, serialize } from '../utilities/dom.ts';
 
