@@ -151,7 +151,6 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 					attribute ${QNS.w}val { $footnotes('restart')}
 				}
 			} else (), 
-
 			if (exists($headers('first'))) then element ${QNS.w}headerReference {
 				attribute ${QNS.r}id { $headers('first') },
 				attribute ${QNS.w}type { 'first' }

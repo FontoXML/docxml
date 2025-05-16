@@ -39,14 +39,9 @@ export class FootnotesXml extends XmlFile {
 			id: id,
 			content: Array.isArray(content) ? content : [content],
 			type: type,
+			styleName: styleName,
+			referenceStyleName: referenceStyleName,
 		};
-		if (styleName) {
-			newFootnote.styleName = styleName;
-		}
-		if (referenceStyleName) {
-			newFootnote.referenceStyleName = referenceStyleName;
-		}
-
 		this.#footnotes.set(id, newFootnote);
 		return newFootnote;
 	}

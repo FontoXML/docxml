@@ -20,11 +20,15 @@ const footnoteProps: FootnoteProps = {
 
 const footnote1 = docxFile.document.footnotes.add(
 	new Paragraph({}, new Text({}, 'Hello, this is a footnote.')),
-	'normal'
+	'normal',
+	footnoteProps.styleName,
+	footnoteProps.referenceStyleName
 );
 const footnote2 = docxFile.document.footnotes.add(
 	new Paragraph({}, new Text({}, 'And this is an additional footnote.')),
-	'normal'
+	'normal',
+	footnoteProps.styleName,
+	footnoteProps.referenceStyleName
 );
 
 docxFile.document.styles.add({
@@ -57,7 +61,7 @@ docxFile.document.set(
 			This is my first paragraph of text.
 			<Footnote
 				id={footnote1.id}
-				referenceStyleName={footnoteProps.referenceStyleName}
+				referenceStyleName={.referenceStyleName}
 			/>
 			<Footnote
 				id={footnote2.id}
