@@ -285,7 +285,3 @@ interface JSZip {
 	};
 	version: string;
 }
-
-declare var JSZip: JSZip;
-
-export = JSZip;
