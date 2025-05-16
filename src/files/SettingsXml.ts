@@ -3,7 +3,7 @@ import * as path from 'std/path';
 import type { ContentTypesXml, Length } from '../../mod.ts';
 import type { Archive } from '../classes/Archive.ts';
 import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
-import { DocumentFootnoteProps } from '../components/Footnote.ts';
+import { FootnoteProps } from '../components/Footnote.ts';
 import { FileMime, RelationshipType } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { twip } from '../utilities/length.ts';
@@ -28,7 +28,7 @@ export type SettingsI = {
 
 	defaultTabStop: Length | null;
 
-	footnoteProperties?: DocumentFootnoteProps | null;
+	footnoteProperties?: FootnoteProps | null;
 };
 
 const DEFAULT_SETTINGS: SettingsI = {
@@ -202,10 +202,7 @@ export class SettingsXml extends XmlFileWithContentTypes {
 							element ${QNS.w}footnote { 
 								attribute ${QNS.w}id { "0" }
 							}
-						}, 
-						element ${QNS.w}themeFontLang { 
-							attribute ${QNS.w}val { "en-US" }
-						} 
+						}
 					) else (), 
 					${
 						this.#props.defaultTabStop

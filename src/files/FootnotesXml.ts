@@ -16,6 +16,8 @@ export type Footnote = {
 	id: number;
 	content: Paragraph[];
 	type: FootnoteSeparatorType;
+	styleName?: string;
+	referenceStyleName?: string;
 };
 
 export class FootnotesXml extends XmlFile {
@@ -28,14 +30,23 @@ export class FootnotesXml extends XmlFile {
 
 	public add(
 		content: Paragraph[] | Paragraph,
-		type: FootnoteSeparatorType
+		type: FootnoteSeparatorType,
+		styleName?: string,
+		referenceStyleName?: string
 	): Footnote {
 		const id = this.#footnotes.getNextAvailableKey();
-		const newFootnote = {
+		const newFootnote: Footnote = {
 			id: id,
 			content: Array.isArray(content) ? content : [content],
 			type: type,
 		};
+		if (styleName) {
+			newFootnote.styleName = styleName;
+		}
+		if (referenceStyleName) {
+			newFootnote.referenceStyleName = referenceStyleName;
+		}
+
 		this.#footnotes.set(id, newFootnote);
 		return newFootnote;
 	}
@@ -58,13 +69,13 @@ export class FootnotesXml extends XmlFile {
 							element w:p {
 								element w:pPr { 
 									element w:pStyle { 
-										attribute w:val { "FootnoteText" }
+										attribute w:val { $footnote('styleName') }
 									}
 								}, 
 								element w:r {
 									element w:rPr { 
 										element w:rStyle { 
-											attribute w:val { "FootnoteReference" }
+											attribute w:val { $footnote('referenceStyleName') }
 										}
 									},
 									element w:footnoteRef {}
@@ -108,6 +119,8 @@ export class FootnotesXml extends XmlFile {
 							content: await Promise.all(
 								footnote.content.map((p) => p.toNode([]))
 							),
+							styleName: footnote.styleName,
+							referenceStyleName: footnote.referenceStyleName,
 						}))
 					)),
 				],
@@ -140,7 +153,9 @@ export class FootnotesXml extends XmlFile {
 						//${QNS.w}footnote/map { 
 							"id" : @${QNS.w}id/number(),
 							"content": array { ./${QNS.w}p }, 
-							"type": @${QNS.w}type/string()
+							"type": @${QNS.w}type/string(),
+							"styleName": ./${QNS.w}p/${QNS.w}pPr/${QNS.w}pStyle/@${QNS.w}val/string(),
+							"referenceStyleName": ./${QNS.w}r/${QNS.w}rPr/${QNS.w}rStyle/@${QNS.w}val/string()
 						}
 					}`,
 					relsDom
@@ -149,7 +164,9 @@ export class FootnotesXml extends XmlFile {
 						footnote.content.map((f: Node) =>
 							Paragraph.fromNode(f, { archive, relationships })
 						),
-						footnote.type
+						footnote.type,
+						footnote.styleName,
+						footnote.referenceStyleName
 					);
 				});
 			}

@@ -61,7 +61,7 @@ export {
 	type FieldRangeStartChild,
 	type FieldRangeStartProps,
 } from './src/components/FieldRangeStart.ts';
-export { FootnoteReference } from './src/components/Footnote.ts';
+export { Footnote, type FootnoteProps } from './src/components/Footnote.ts';
 export {
 	Hyperlink,
 	type HyperlinkChild,

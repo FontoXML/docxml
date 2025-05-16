@@ -1,8 +1,23 @@
 /** @jsx  Docx.jsx */
-import Docx, { FootnoteReference, Paragraph, Section } from '../mod.ts';
+import Docx, {
+	type FootnoteProps,
+	Footnote,
+	Paragraph,
+	Section,
+} from '../mod.ts';
 import { Text } from '../src/components/Text.ts';
+import { pt } from '../src/utilities/length.ts';
 
 const docxFile = Docx.fromNothing();
+
+const footnoteProps: FootnoteProps = {
+	numberingFormat: 'chicago',
+	position: 'beneathText',
+	restart: 'continuous',
+	styleName: 'FootnoteText',
+	referenceStyleName: 'FootnoteReference',
+};
+
 const footnote1 = docxFile.document.footnotes.add(
 	new Paragraph({}, new Text({}, 'Hello, this is a footnote.')),
 	'normal'
@@ -21,18 +36,33 @@ docxFile.document.styles.add({
 	},
 });
 
+docxFile.document.styles.add({
+	id: 'FootnoteText',
+	name: 'FootnoteText',
+	type: 'paragraph',
+	text: {
+		fontSize: pt(9),
+	},
+});
+
 docxFile.document.settings.set('footnoteProperties', {
 	numberingFormat: 'lowerRoman',
 	position: 'beneathText',
-	restart: 'page',
+	restart: 'eachPage',
 });
 
 docxFile.document.set(
-	<Section>
+	<Section footnotes={footnoteProps}>
 		<Paragraph>
 			This is my first paragraph of text.
-			<FootnoteReference id={footnote1.id} />
-			<FootnoteReference id={footnote2.id} />
+			<Footnote
+				id={footnote1.id}
+				referenceStyleName={footnoteProps.referenceStyleName}
+			/>
+			<Footnote
+				id={footnote2.id}
+				referenceStyleName={footnoteProps.referenceStyleName}
+			/>
 		</Paragraph>
 	</Section>
 );
