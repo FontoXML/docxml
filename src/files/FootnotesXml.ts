@@ -10,7 +10,10 @@ import { evaluateXPathToArray } from '../utilities/xquery.ts';
 import { ContentTypesXml } from './ContentTypesXml.ts';
 import { RelationshipsXml } from './RelationshipsXml.ts';
 
-type FootnoteSeparatorType = 'separator' | 'continuationSeparator' | 'normal';
+export type FootnoteSeparatorType =
+	| 'separator'
+	| 'continuationSeparator'
+	| 'normal';
 
 export type Footnote = {
 	id: number;
