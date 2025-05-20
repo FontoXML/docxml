@@ -13,18 +13,18 @@ import './Text.ts';
 import './TextAddition.ts';
 import './TextDeletion.ts';
 
-import { type Hyperlink } from '../../mod.ts';
+import type { Hyperlink } from '../../mod.ts';
 import {
-	type ComponentAncestor,
 	Component,
-	ComponentContext,
+	type ComponentAncestor,
+	type ComponentContext,
 } from '../classes/Component.ts';
 import {
 	type ParagraphProperties,
 	paragraphPropertiesFromNode,
 	paragraphPropertiesToNode,
 } from '../properties/paragraph-properties.ts';
-import { type SectionProperties } from '../properties/section-properties.ts';
+import type { SectionProperties } from '../properties/section-properties.ts';
 import {
 	createChildComponentsFromNodes,
 	registerComponent,
@@ -32,16 +32,16 @@ import {
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import { type BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
-import { type BookmarkRangeStart } from './BookmarkRangeStart.ts';
-import { type Comment } from './Comment.ts';
-import { type CommentRangeEnd } from './CommentRangeEnd.ts';
-import { type CommentRangeStart } from './CommentRangeStart.ts';
-import { type Field } from './Field.ts';
-import { Footnote } from './Footnote.ts';
-import { type Text } from './Text.ts';
-import { type TextAddition } from './TextAddition.ts';
-import { type TextDeletion } from './TextDeletion.ts';
+import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
+import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
+import type { Comment } from './Comment.ts';
+import type { CommentRangeEnd } from './CommentRangeEnd.ts';
+import type { CommentRangeStart } from './CommentRangeStart.ts';
+import type { Field } from './Field.ts';
+import type { FootnoteReference } from './Footnote.ts';
+import type { Text } from './Text.ts';
+import type { TextAddition } from './TextAddition.ts';
+import type { TextDeletion } from './TextDeletion.ts';
 
 /**
  * A type describing the components accepted as children of {@link Paragraph}.
@@ -57,7 +57,7 @@ export type ParagraphChild =
 	| BookmarkRangeEnd
 	| Hyperlink
 	| Field
-	| Footnote;
+	| FootnoteReference;
 
 /**
  * A type describing the props accepted by {@link Paragraph}.
@@ -85,7 +85,6 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'TextAddition',
 		'TextDeletion',
 		'Field',
-		'Footnote',
 	];
 	public static override readonly mixed: boolean = false;
 	#sectionProperties: SectionProperties | null = null;
@@ -149,9 +148,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 						${QNS.w}commentRangeStart |
 						${QNS.w}commentRangeEnd |
 						${QNS.w}bookmarkStart |
-						${QNS.w}bookmarkEnd | 
-						${QNS.w}footnoteReference | 
-						${QNS.w}footnoteRef
+						${QNS.w}bookmarkEnd
 					) }
 				}
 			`,

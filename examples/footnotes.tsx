@@ -1,7 +1,7 @@
 /** @jsx  Docx.jsx */
 import Docx, {
 	type FootnoteProps,
-	Footnote,
+	FootnoteReference,
 	Paragraph,
 	Section,
 } from '../mod.ts';
@@ -60,12 +60,12 @@ docxFile.document.set(
 	<Section footnotes={footnoteProps}>
 		<Paragraph>
 			This is my first paragraph of text.
-			<Footnote
+			<FootnoteReference
 				id={footnote1.id}
 				styleName={footnoteProps.styleName}
 				referenceStyleName={footnoteProps.referenceStyleName}
 			/>
-			<Footnote
+			<FootnoteReference
 				id={footnote2.id}
 				styleName={footnoteProps.styleName}
 				referenceStyleName={footnoteProps.referenceStyleName}

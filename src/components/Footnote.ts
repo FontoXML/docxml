@@ -26,7 +26,7 @@ export type FootnoteReferenceProps = {
 	id: number;
 };
 
-export class Footnote extends Component<
+export class FootnoteReference extends Component<
 	FootnoteReferenceProps & FootnoteProps
 > {
 	public override toNode(): Node {
@@ -50,8 +50,8 @@ export class Footnote extends Component<
 		);
 	}
 
-	static override fromNode(node: Node): Footnote {
-		return new Footnote(
+	static override fromNode(node: Node): FootnoteReference {
+		return new FootnoteReference(
 			evaluateXPathToMap<FootnoteReferenceProps>(
 				`map { 
                 "id": ./@${QNS.w}id/number()
@@ -62,4 +62,4 @@ export class Footnote extends Component<
 	}
 }
 
-registerComponent(Footnote);
+registerComponent(FootnoteReference);
