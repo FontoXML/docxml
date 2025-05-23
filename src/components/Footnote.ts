@@ -17,7 +17,7 @@ export type FootnoteProps = {
 		| 'lowerLetter'
 		| 'upperLetter';
 	position?: 'beneathText' | 'documentEnd' | 'sectionEnd' | 'pageBottom';
-	restart?: 'section' | 'eachPage' | 'continuous';
+	restart?: 'eachSect' | 'eachPage' | 'continuous';
 	styleName?: string;
 	referenceStyleName?: string;
 };
@@ -54,7 +54,8 @@ export class FootnoteReference extends Component<
 		return new FootnoteReference(
 			evaluateXPathToMap<FootnoteReferenceProps>(
 				`map { 
-                "id": ./@${QNS.w}id/number()
+					"id": ./@${QNS.w}id/number(),
+					"referenceStyle": ./descendant::${QNS.w}rStyle/@${QNS.w}val/string()
             }`,
 				node
 			)

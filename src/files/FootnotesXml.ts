@@ -31,6 +31,14 @@ export class FootnotesXml extends XmlFile {
 		return !this.#footnotes.size;
 	}
 
+	/**
+	 * Adds a footnote to a document.
+	 * @param content A `Paragraph` or array of `Paragraph` objects that comprise the content.
+	 * @param type Describes the type of footnote, either as a separator or 'normal'.
+	 * @param styleName The style used for the text of the footnote positioned below document's main text.
+	 * @param referenceStyleName The style used for the reference mark in the body text.
+	 * @returns Returns a new `Footnote`
+	 */
 	public add(
 		content: Paragraph[] | Paragraph,
 		type: FootnoteSeparatorType,
@@ -59,7 +67,7 @@ export class FootnotesXml extends XmlFile {
 			<w:footnotes ${ALL_NAMESPACE_DECLARATIONS}>
 				{ for $footnote in array:flatten($footnotes)
 					return element w:footnote {
-						if ($footnote('type') = 'normal') then ()
+						if ($footnote('type') eq 'normal') then ()
 						else attribute w:type { $footnote('type') },
 						attribute w:id { $footnote('id') },
 						if (array:size($footnote('content')) > 0)
@@ -99,6 +107,8 @@ export class FootnotesXml extends XmlFile {
 				} 
 			</w:footnotes>`,
 			{
+				// In Word, footnotes with IDs -1 and 0 are reserved for the elements that visually separate the footnotes
+				// from the regular flow of content. We generate those here.
 				footnotes: [
 					{
 						type: 'separator',
@@ -168,10 +178,7 @@ export class FootnotesXml extends XmlFile {
 					);
 				});
 			}
-			// console.log(inst.#footnotes);
-			return inst;
-		} else {
-			return inst;
 		}
+		return inst;
 	}
 }

@@ -1,10 +1,9 @@
 /** @jsx  Docx.jsx */
-import Docx, {
+import Docx, { Paragraph, Section } from '../mod.ts';
+import {
 	type FootnoteProps,
 	FootnoteReference,
-	Paragraph,
-	Section,
-} from '../mod.ts';
+} from '../src/components/Footnote.ts';
 import { Text } from '../src/components/Text.ts';
 import { pt } from '../src/utilities/length.ts';
 

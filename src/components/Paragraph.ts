@@ -85,6 +85,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'TextAddition',
 		'TextDeletion',
 		'Field',
+		'FootnoteReference',
 	];
 	public static override readonly mixed: boolean = false;
 	#sectionProperties: SectionProperties | null = null;

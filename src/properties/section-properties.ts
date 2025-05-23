@@ -141,15 +141,18 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 	return create(
 		`element ${QNS.w}sectPr {
 			if (exists($footnotes)) then element ${QNS.w}footnotePr {
-				element ${QNS.w}numFmt { 
+				if (exists($footnotes('numberingFormat')))
+				then element ${QNS.w}numFmt { 
 					attribute ${QNS.w}val { $footnotes('numberingFormat')}
-				},
-				element ${QNS.w}pos { 
+				} else (),
+				if (exists($footnotes('position')))
+				then element ${QNS.w}pos { 
 					attribute ${QNS.w}val { $footnotes('position')}
-				},
-				element ${QNS.w}numRestart { 
+				} else (),
+				if (exists($footnotes('restart'))) 
+				then element ${QNS.w}numRestart { 
 					attribute ${QNS.w}val { $footnotes('restart')}
-				}
+				} else ()
 			} else (), 
 			if (exists($headers('first'))) then element ${QNS.w}headerReference {
 				attribute ${QNS.r}id { $headers('first') },

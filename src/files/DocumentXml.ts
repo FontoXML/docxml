@@ -17,6 +17,7 @@ import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToNodes } from '../utilities/xquery.ts';
 import { CommentsXml } from './CommentsXml.ts';
+import { FootnotesXml } from './FootnotesXml.ts';
 import {
 	type HeaderFooterRoot,
 	FooterXml,
@@ -26,7 +27,6 @@ import { NumberingXml } from './NumberingXml.ts';
 import { type File, RelationshipsXml } from './RelationshipsXml.ts';
 import { SettingsXml } from './SettingsXml.ts';
 import { StylesXml } from './StylesXml.ts';
-import { FootnotesXml } from "./FootnotesXml.ts";
 
 export type DocumentChild = SectionChild | Section;
 
@@ -98,18 +98,18 @@ export class DocumentXml extends XmlFileWithContentTypes {
 		return this.#comments;
 	}
 
-	#footnotes: FootnotesXml | null = null; 
+	#footnotes: FootnotesXml | null = null;
 	/**
 	 * The API representing "footnotes.xml" and all the footnotes in this document.
 	 */
-	public get footnotes(): FootnotesXml { 
-		if (!this.#footnotes) { 
+	public get footnotes(): FootnotesXml {
+		if (!this.#footnotes) {
 			this.#footnotes = this.relationships.ensureRelationship(
-				RelationshipType.footnotes, 
+				RelationshipType.footnotes,
 				() => new FootnotesXml(FileLocation.footnotes)
-			)
+			);
 		}
-		return this.#footnotes
+		return this.#footnotes;
 	}
 
 	#numbering: NumberingXml | null = null;

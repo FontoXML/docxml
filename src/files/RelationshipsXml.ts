@@ -229,7 +229,7 @@ export class RelationshipsXml extends XmlFileWithContentTypes {
 					.map(async (meta) => ({
 						...meta,
 						instance: meta.isBinary
-							? await BinaryFile.fromArchive(
+							? BinaryFile.fromArchive(
 									archive,
 									contentTypes,
 									meta.target
