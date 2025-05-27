@@ -2,7 +2,9 @@ import * as path from 'std/path';
 import type { Archive } from '../classes/Archive.ts';
 import { NumberMap } from '../classes/NumberMap.ts';
 import { XmlFile } from '../classes/XmlFile.ts';
+import type { Image } from '../components/Image.ts';
 import { Paragraph } from '../components/Paragraph.ts';
+import type { Table } from '../components/Table.ts';
 import { FileMime } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
@@ -17,7 +19,7 @@ export type FootnoteSeparatorType =
 
 export type Footnote = {
 	id: number;
-	content: Paragraph[];
+	content: (Paragraph | Image | Table)[];
 	type: FootnoteSeparatorType;
 	styleName?: string;
 	referenceStyleName?: string;
@@ -40,7 +42,7 @@ export class FootnotesXml extends XmlFile {
 	 * @returns Returns a new `Footnote`
 	 */
 	public add(
-		content: Paragraph[] | Paragraph,
+		content: Paragraph | Image | Table | Array<Paragraph | Image | Table>,
 		type: FootnoteSeparatorType,
 		styleName?: string,
 		referenceStyleName?: string
@@ -66,44 +68,76 @@ export class FootnotesXml extends XmlFile {
 			`
 			<w:footnotes ${ALL_NAMESPACE_DECLARATIONS}>
 				{ for $footnote in array:flatten($footnotes)
-					return element w:footnote {
-						if ($footnote('type') eq 'normal') then ()
-						else attribute w:type { $footnote('type') },
-						attribute w:id { $footnote('id') },
-						if (array:size($footnote('content')) > 0)
-						then (
-							element w:p {
-								element w:pPr { 
-									element w:pStyle { 
-										attribute w:val { $footnote('styleName') }
-									}
-								}, 
-								element w:r {
-									element w:rPr { 
-										element w:rStyle { 
-											attribute w:val { $footnote('referenceStyleName') }
-										}
-									},
-									element w:footnoteRef {}
-								}, 
-								for $run in array:flatten($footnote('content'))
-									return array:flatten($run/*)
-							}
-						)
-						else if ( $footnote('type') = "separator" ) then (
-							element w:p {
-								element w:r {
+				 	let $content := 
+						switch ($footnote('type'))
+						case 'separator' return (
+							attribute w:type { 'separator' },
+							element w:p { 
+								element w:r { 
 									element w:separator {}
 								}
 							}
-						) else (
-							element w:p {
-								element w:r {
+						)
+						case 'continuationSeparator' return (
+							attribute w:type { 'continuationSeparator' },
+							element w:p { 
+								element w:r { 
 									element w:continuationSeparator {}
 								}
 							}
 						)
-					}
+						default return (
+							if (array:size($footnote('content')) > 0)
+							then (
+								(: The first paragraph element of a footnote is a sibling of the footnote pPr
+								but all subsequent paragraphs in a footnote fall outside. :)
+								let $head := array:head($footnote('content'))
+								let $tail := array:tail($footnote('content'))
+								return (
+									element w:p { 
+										element w:pPr { 
+											element w:pStyle { 
+												attribute w:val { $footnote('styleName') }
+											}
+										},
+										element w:r { 
+											element w:rPr { 
+												element w:rStyle { 
+													attribute w:val { $footnote('referenceStyleName') }
+												}
+											}, 
+											element w:footnoteRef {}
+										},
+										switch ($head('name'))
+										case 'p' return (
+											$head('node')/*
+										)
+										case 'drawing' return (
+											element w:r { 
+												$head('node')
+											}
+										)
+										default return ()
+									}, 
+									if ($head('name') != 'p')
+									then (
+										$head('node')
+									)
+									else (), 
+									for $element in array:flatten($tail)
+									return ( 
+										$element('node')
+									)
+								)
+							)
+							else () 
+						) 
+					return (
+						element w:footnote {  
+							attribute w:id { $footnote('id') }, 
+							$content 
+						} 
+					)
 				} 
 			</w:footnotes>`,
 			{
@@ -125,7 +159,14 @@ export class FootnotesXml extends XmlFile {
 							type: footnote.type,
 							id: footnote.id,
 							content: await Promise.all(
-								footnote.content.map((p) => p.toNode([]))
+								footnote.content.map(async (p) => {
+									const node = await p.toNode([]);
+									console.log(node.nodeName);
+									return {
+										node: node,
+										name: node.nodeName,
+									};
+								})
 							),
 							styleName: footnote.styleName,
 							referenceStyleName: footnote.referenceStyleName,

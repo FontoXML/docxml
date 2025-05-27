@@ -57,7 +57,7 @@ export type ParagraphChild =
 	| BookmarkRangeEnd
 	| Hyperlink
 	| Field
-	| FootnoteReference;
+	| FootnoteReference; 
 
 /**
  * A type describing the props accepted by {@link Paragraph}.

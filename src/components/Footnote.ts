@@ -1,3 +1,4 @@
+import type { Paragraph } from '../../mod.ts';
 import { Component } from '../classes/Component.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
@@ -63,4 +64,4 @@ export class FootnoteReference extends Component<
 	}
 }
 
-registerComponent(FootnoteReference);
+console.log(registerComponent(FootnoteReference));
