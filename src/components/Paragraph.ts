@@ -14,15 +14,23 @@ import './TextAddition.ts';
 import './TextDeletion.ts';
 
 import type { Hyperlink } from '../../mod.ts';
-import { type ComponentAncestor, Component, type ComponentContext } from '../classes/Component.ts';
+import {
+	Component,
+	type ComponentAncestor,
+	type ComponentContext,
+} from '../classes/Component.ts';
 import type { ParagraphProperties } from '../properties/paragraph-properties.ts';
 import {
 	paragraphPropertiesFromNode,
 	paragraphPropertiesToNode,
 } from '../properties/paragraph-properties.ts';
 import type { SectionProperties } from '../properties/section-properties.ts';
-import { createChildComponentsFromNodes, registerComponent } from '../utilities/components.ts';
+import {
+	createChildComponentsFromNodes,
+	registerComponent,
+} from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
+import { toHex } from '../utilities/hexadecimal.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
@@ -80,6 +88,11 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 	public static override readonly mixed: boolean = false;
 	#sectionProperties: SectionProperties | null = null;
 
+	// For regular paragraphs this identifier is not required.
+	// It is when comments have replies. These "links" (X comment is a reply of Y comment)
+	// are handled via this identifier.
+	#id: string | null = null;
+
 	/**
 	 * Set properties to the section that this paragraph is supposed to represent. Not intended to be
 	 * called manually. Only here because OOXML somehow decided that a section is defined in the last
@@ -89,21 +102,34 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		this.#sectionProperties = properties || null;
 	}
 
+	public set id(id: number | string) {
+		this.#id = typeof id === 'string' ? id : toHex(id);
+	}
+
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+		/**
+		 * For some reason, MSWord requires the paraId attribute to have the w14 namespace, and at the
+		 * same time requires the w15 namespace in the commentsExtended.xml file 🤡.
+		 */
 		return create(
 			`
 				element ${QNS.w}p {
+					if ($id) then attribute ${QNS.w14}paraId { $id } else (),
 					$pPr,
 					$children
 				}
 			`,
 			{
-				pPr: paragraphPropertiesToNode(this.props, this.#sectionProperties),
+				id: this.#id,
+				pPr: paragraphPropertiesToNode(
+					this.props,
+					this.#sectionProperties
+				),
 				children: await this.childrenToNode(ancestry),
-			},
+			}
 		);
 	}
 
@@ -118,13 +144,15 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static override fromNode(node: Node, context: ComponentContext): Paragraph {
-		const { children, ppr, ...props } = evaluateXPathToMap<{
+		const { children, ppr, id, ...props } = evaluateXPathToMap<{
 			ppr: Node;
 			children: Node[];
+			id?: string;
 			style?: string;
 		}>(
 			`
 				map {
+					"id": @${QNS.w14}paraId/string(),
 					"ppr": ./${QNS.w}pPr,
 					"style": ./${QNS.w}pPr/${QNS.w}pStyle/@${QNS.w}val/string(),
 					"children": array{ ./(
@@ -140,16 +168,26 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 					) }
 				}
 			`,
-			node,
+			node
 		);
 
-		return new Paragraph(
+		const paragraph = new Paragraph(
 			{
 				...paragraphPropertiesFromNode(ppr),
 				...props,
 			},
-			...createChildComponentsFromNodes<ParagraphChild>(this.children, children, context),
+			...createChildComponentsFromNodes<ParagraphChild>(
+				this.children,
+				children,
+				context
+			)
 		);
+
+		if (id) {
+			paragraph.id = id;
+		}
+
+		return paragraph;
 	}
 }
 
