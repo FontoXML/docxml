@@ -112,7 +112,8 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		/**
 		 * For some reason, MSWord requires the paraId attribute to have the w14 namespace, and at the
-		 * same time requires the w15 namespace in the commentsExtended.xml file 🤡.
+		 * same time requires the w15 namespace in the commentsExtended.xml file for the same attribute
+		 * 🤡
 		 */
 		return create(
 			`
