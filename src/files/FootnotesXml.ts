@@ -1,15 +1,14 @@
 import * as path from 'std/path';
 import type { Archive } from '../classes/Archive.ts';
 import { NumberMap } from '../classes/NumberMap.ts';
-import { XmlFile } from '../classes/XmlFile.ts';
-import type { Image } from '../components/Image.ts';
+import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import type { Table } from '../components/Table.ts';
 import { FileMime } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToArray } from '../utilities/xquery.ts';
-import { ContentTypesXml } from './ContentTypesXml.ts';
+import type { ContentTypesXml } from './ContentTypesXml.ts';
 import { RelationshipsXml } from './RelationshipsXml.ts';
 
 export type FootnoteSeparatorType =
@@ -17,17 +16,31 @@ export type FootnoteSeparatorType =
 	| 'continuationSeparator'
 	| 'normal';
 
+export type FootnoteChild = Paragraph | Table;
+
 export type Footnote = {
 	id: number;
-	content: (Paragraph | Image | Table)[];
+	content: FootnoteChild[];
 	type: FootnoteSeparatorType;
-	styleName?: string;
-	referenceStyleName?: string;
+	style: string;
 };
 
-export class FootnotesXml extends XmlFile {
+export class FootnotesXml extends XmlFileWithContentTypes {
 	public static override contentType = FileMime.footnotes;
+
 	#footnotes = new NumberMap<Footnote>(1);
+
+	public readonly relationships: RelationshipsXml;
+
+	public constructor(
+		location: string,
+		relationships: RelationshipsXml = new RelationshipsXml(
+			`${path.dirname(location)}/_rels/${path.basename(location)}.rels`
+		)
+	) {
+		super(location);
+		this.relationships = relationships;
+	}
 
 	public override isEmpty(): boolean {
 		return !this.#footnotes.size;
@@ -36,27 +49,28 @@ export class FootnotesXml extends XmlFile {
 	/**
 	 * Adds a footnote to a document.
 	 * @param content A `Paragraph` or array of `Paragraph` objects that comprise the content.
-	 * @param type Describes the type of footnote, either as a separator or 'normal'.
-	 * @param styleName The style used for the text of the footnote positioned below document's main text.
-	 * @param referenceStyleName The style used for the reference mark in the body text.
-	 * @returns Returns a new `Footnote`
+	 * @param style The style used for the reference mark in the body text.
+	 * @returns The identifier of the new footnote.
 	 */
-	public add(
-		content: Paragraph | Image | Table | Array<Paragraph | Image | Table>,
-		type: FootnoteSeparatorType,
-		styleName?: string,
-		referenceStyleName?: string
-	): Footnote {
+	public add(content: FootnoteChild | FootnoteChild[], style: string) {
 		const id = this.#footnotes.getNextAvailableKey();
-		const newFootnote: Footnote = {
-			id: id,
+		this.#footnotes.set(id, {
+			id,
 			content: Array.isArray(content) ? content : [content],
-			type: type,
-			styleName: styleName,
-			referenceStyleName: referenceStyleName,
-		};
-		this.#footnotes.set(id, newFootnote);
-		return newFootnote;
+			type: 'normal',
+			style,
+		});
+		return id;
+	}
+
+	/**
+	 * Get all XmlFile instances related to this one, including self. This helps the system
+	 * serialize itself back to DOCX fullly. Probably not useful for consumers of the library.
+	 *
+	 * By default only returns the instance itself but no other related instances.
+	 */
+	public override getRelated(): File[] {
+		return [this, ...this.relationships.getRelated()];
 	}
 
 	/**
@@ -87,50 +101,47 @@ export class FootnotesXml extends XmlFile {
 							}
 						)
 						default return (
-							if (array:size($footnote('content')) > 0)
+							(: 
+								Get the head (first item), and tail (rest).
+								This allows us to check the very first element of the footnote.
+								If the node is a paragraph, then Word places the footnoteRef in the same paragraph.
+								Else, the reference is in a different paragraph.
+									This also applies for images, MSWords requires images to be placed in paragraphs,
+									but shows them in a different paragraph.
+							:)
+							let $head := array:head($footnote('content'))
+							let $tail := array:tail($footnote('content'))
+							return if ($head[self::w:p] and not($head/descendant::w:drawing))
 							then (
-								(: The first paragraph element of a footnote is a sibling of the footnote pPr
-								but all subsequent paragraphs in a footnote fall outside. :)
-								let $head := array:head($footnote('content'))
-								let $tail := array:tail($footnote('content'))
-								return (
-									element w:p { 
-										element w:pPr { 
-											element w:pStyle { 
-												attribute w:val { $footnote('styleName') }
+								(: The head is a paragraph, replace it with a new paragraph, make sure to include previous the nodes and attributes. :)
+								element w:p {
+									$head/@*,
+									element w:r { 
+										element w:rPr { 
+											element w:rStyle { 
+												attribute w:val { $footnote('style') }
 											}
-										},
-										element w:r { 
-											element w:rPr { 
-												element w:rStyle { 
-													attribute w:val { $footnote('referenceStyleName') }
-												}
-											}, 
-											element w:footnoteRef {}
-										},
-										switch ($head('name'))
-										case 'p' return (
-											$head('node')/*
-										)
-										case 'drawing' return (
-											element w:r { 
-												$head('node')
+										}, 
+										element w:footnoteRef {}
+									},
+									$head/*
+								},
+								$tail
+							) else (
+								(: The first node is not a paragraph, create a paragraph for the footnoteRef. :)
+								element w:p {
+									element w:r { 
+										element w:rPr { 
+											element w:rStyle { 
+												attribute w:val { $footnote('style') }
 											}
-										)
-										default return ()
-									}, 
-									if ($head('name') != 'p')
-									then (
-										$head('node')
-									)
-									else (), 
-									for $element in array:flatten($tail)
-									return ( 
-										$element('node')
-									)
-								)
+										}, 
+										element w:footnoteRef {}
+									}
+								},
+								$head,
+								$tail
 							)
-							else () 
 						) 
 					return (
 						element w:footnote {  
@@ -156,20 +167,12 @@ export class FootnotesXml extends XmlFile {
 					},
 					...(await Promise.all(
 						this.#footnotes.array().map(async (footnote) => ({
-							type: footnote.type,
-							id: footnote.id,
+							...footnote,
 							content: await Promise.all(
-								footnote.content.map(async (p) => {
-									const node = await p.toNode([]);
-									console.log(node.nodeName);
-									return {
-										node: node,
-										name: node.nodeName,
-									};
-								})
+								footnote.content.map(
+									async (n) => await n.toNode([])
+								)
 							),
-							styleName: footnote.styleName,
-							referenceStyleName: footnote.referenceStyleName,
 						}))
 					)),
 				],
@@ -177,15 +180,16 @@ export class FootnotesXml extends XmlFile {
 			true
 		);
 	}
+
 	/**
 	 * Instantiate this class by looking at the DOCX XML for it.
 	 */
 	public static override async fromArchive(
 		archive: Archive,
+		contentTypes: ContentTypesXml,
 		location: string
 	): Promise<FootnotesXml> {
-		const contentType = new ContentTypesXml(location);
-		const relsLocation = `${path.dirname(location)}/${path.basename(
+		const relsLocation = `${path.dirname(location)}/_rels/${path.basename(
 			location
 		)}`;
 		const inst = new this(location);
@@ -193,7 +197,7 @@ export class FootnotesXml extends XmlFile {
 			const relsDom = await archive.readXml(location);
 			const relationships = await RelationshipsXml.fromArchive(
 				archive,
-				contentType,
+				contentTypes,
 				relsLocation
 			);
 			if (relationships && relationships != null) {
@@ -201,10 +205,10 @@ export class FootnotesXml extends XmlFile {
 					`array {
 						//${QNS.w}footnote/map { 
 							"id" : @${QNS.w}id/number(),
-							"content": array { ./${QNS.w}p }, 
+							"content": array { ./* }, 
 							"type": @${QNS.w}type/string(),
-							"styleName": ./${QNS.w}p/${QNS.w}pPr/${QNS.w}pStyle/@${QNS.w}val/string(),
-							"referenceStyleName": ./${QNS.w}r/${QNS.w}rPr/${QNS.w}rStyle/@${QNS.w}val/string()
+							"style": ./${QNS.w}p/${QNS.w}pPr/${QNS.w}pStyle/@${QNS.w}val/string(),
+							"referencestyle": ./${QNS.w}r/${QNS.w}rPr/${QNS.w}rStyle/@${QNS.w}val/string()
 						}
 					}`,
 					relsDom
@@ -213,9 +217,7 @@ export class FootnotesXml extends XmlFile {
 						footnote.content.map((f: Node) =>
 							Paragraph.fromNode(f, { archive, relationships })
 						),
-						footnote.type,
-						footnote.styleName,
-						footnote.referenceStyleName
+						footnote.style
 					);
 				});
 			}

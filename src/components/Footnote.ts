@@ -1,4 +1,3 @@
-import type { Paragraph } from '../../mod.ts';
 import { Component } from '../classes/Component.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
@@ -19,12 +18,11 @@ export type FootnoteProps = {
 		| 'upperLetter';
 	position?: 'beneathText' | 'documentEnd' | 'sectionEnd' | 'pageBottom';
 	restart?: 'eachSect' | 'eachPage' | 'continuous';
-	styleName?: string;
-	referenceStyleName?: string;
 };
 
 export type FootnoteReferenceProps = {
 	id: number;
+	style: string;
 };
 
 export class FootnoteReference extends Component<
@@ -36,7 +34,7 @@ export class FootnoteReference extends Component<
             element ${QNS.w}r {
                 element ${QNS.w}rPr {
                     element ${QNS.w}rStyle { 
-                        attribute ${QNS.w}val { $referenceStyleName }
+                        attribute ${QNS.w}val { $style }
                     }
                 }, 
                 element ${QNS.w}footnoteReference { 
@@ -46,7 +44,7 @@ export class FootnoteReference extends Component<
         `,
 			{
 				id: this.props.id,
-				referenceStyleName: this.props.referenceStyleName,
+				style: this.props.style,
 			}
 		);
 	}
@@ -56,7 +54,7 @@ export class FootnoteReference extends Component<
 			evaluateXPathToMap<FootnoteReferenceProps>(
 				`map { 
 					"id": ./@${QNS.w}id/number(),
-					"referenceStyle": ./descendant::${QNS.w}rStyle/@${QNS.w}val/string()
+					"style": ./descendant::${QNS.w}rStyle/@${QNS.w}val/string()
             }`,
 				node
 			)
@@ -64,4 +62,4 @@ export class FootnoteReference extends Component<
 	}
 }
 
-console.log(registerComponent(FootnoteReference));
+registerComponent(FootnoteReference);

@@ -5,44 +5,21 @@ import {
 	FootnoteReference,
 } from '../src/components/Footnote.ts';
 import { Text } from '../src/components/Text.ts';
-import { RelationshipType } from '../src/enums.ts';
-import { inch, pt } from '../src/utilities/length.ts';
+import { cm, inch, pt } from '../src/utilities/length.ts';
 
 const docxFile = Docx.fromNothing();
 
 const footnoteProps: FootnoteProps = {
 	numberingFormat: 'lowerRoman',
-	position: 'beneathText',
+	position: 'pageBottom',
 	restart: 'continuous',
-	styleName: 'FootnoteText',
-	referenceStyleName: 'FootnoteReference',
 };
 
-const newImage = new Image({
-	data: Deno.readFile('test/spacekees.jpeg'),
-	width: inch(1),
-	height: inch(1),
-});
-
-await newImage.ensureRelationship(docxFile.document.relationships);
-
-const testCell = new Cell(
-	{},
-	new Paragraph(
-		{},
-		new Text({ style: 'FootnoteText' }, 'This is a table cell')
-	)
-);
-
-const testRow = new Row({}, testCell);
-
-const testTable = new Table({}, testRow);
+const footnoteReferenceStyleName = 'FootnoteReference';
 
 const footnote1 = docxFile.document.footnotes.add(
 	new Paragraph({}, new Text({}, 'Hello, this is a footnote.')),
-	'normal',
-	footnoteProps.styleName,
-	footnoteProps.referenceStyleName
+	footnoteReferenceStyleName
 );
 const footnote2 = docxFile.document.footnotes.add(
 	[
@@ -52,23 +29,54 @@ const footnote2 = docxFile.document.footnotes.add(
 			new Text({}, 'And it will have more than one paragraph')
 		),
 	],
-	'normal',
-	footnoteProps.styleName,
-	footnoteProps.referenceStyleName
+	footnoteReferenceStyleName
 );
 
+const image = new Image({
+	data: Deno.readFile('test/spacekees.jpeg'),
+	width: inch(1),
+	height: inch(1),
+	title: 'Title',
+	alt: 'Alt',
+});
+await image.ensureRelationship(docxFile.document.footnotes.relationships);
+
 const footnote3 = docxFile.document.footnotes.add(
-	newImage,
-	'normal',
-	footnoteProps.styleName,
-	footnoteProps.referenceStyleName
+	new Paragraph({}, new Text({}, image)),
+	footnoteReferenceStyleName
 );
 
 const footnote4 = docxFile.document.footnotes.add(
-	testTable,
-	'normal',
-	'FootnoteText',
-	'FootnoteReference'
+	new Table(
+		{
+			columnWidths: [cm(3)],
+			cellPadding: {
+				top: pt(6),
+				bottom: pt(6),
+				start: pt(6),
+				end: pt(6),
+			},
+			borders: {
+				bottom: { color: '666666', width: pt(1), type: 'single' },
+				start: { color: '666666', width: pt(1), type: 'single' },
+				top: { color: '666666', width: pt(1), type: 'single' },
+				end: { color: '666666', width: pt(1), type: 'single' },
+				insideH: { color: 'CCCCCC', width: pt(1), type: 'dashed' },
+				insideV: { color: 'CCCCCC', width: pt(1), type: 'dashed' },
+			},
+		},
+		new Row(
+			{},
+			new Cell(
+				{},
+				new Paragraph(
+					{},
+					new Text({ style: 'Text' }, 'This is a table cell')
+				)
+			)
+		)
+	),
+	footnoteReferenceStyleName
 );
 
 docxFile.document.styles.add({
@@ -82,46 +90,41 @@ docxFile.document.styles.add({
 });
 
 docxFile.document.styles.add({
-	id: 'FootnoteText',
-	name: 'FootnoteText',
+	id: 'Text',
+	name: 'Text',
 	type: 'paragraph',
 	text: {
 		fontSize: pt(9),
 	},
 });
 
-docxFile.document.settings.set('footnoteProperties', {
-	numberingFormat: 'lowerRoman',
-	position: 'beneathText',
-	restart: 'eachPage',
-});
+docxFile.document.settings.set('footnoteProperties', footnoteProps);
 
 docxFile.document.set(
 	<Section footnotes={footnoteProps}>
 		<Paragraph>
-			This is my first paragraph of text.
+			This is my first paragraph of text with a few footnotes.
 			<FootnoteReference
-				id={footnote1.id}
-				styleName={footnoteProps.styleName}
-				referenceStyleName={footnoteProps.referenceStyleName}
+				id={footnote1}
+				style={footnoteReferenceStyleName}
 			/>
+			-
 			<FootnoteReference
-				id={footnote2.id}
-				styleName={footnoteProps.styleName}
-				referenceStyleName={footnoteProps.referenceStyleName}
+				id={footnote2}
+				style={footnoteReferenceStyleName}
 			/>
+			-
 			<FootnoteReference
-				id={footnote3.id}
-				styleName={footnoteProps.styleName}
-				referenceStyleName={footnoteProps.referenceStyleName}
+				id={footnote3}
+				style={footnoteReferenceStyleName}
 			/>
+			-
 			<FootnoteReference
-				id={footnote4.id}
-				styleName={footnoteProps.styleName}
-				referenceStyleName={footnoteProps.referenceStyleName}
+				id={footnote4}
+				style={footnoteReferenceStyleName}
 			/>
 		</Paragraph>
 	</Section>
 );
 
-await docxFile.toFile('footnotes.docx');
+await docxFile.toFile('footnotes2.docx');
