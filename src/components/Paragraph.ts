@@ -102,6 +102,10 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		this.#sectionProperties = properties || null;
 	}
 
+	/**
+	 * Set the identifier (@w:paraId attribute) of this paragraph.
+	 * This identifier is used by comment replies.
+	 */
 	public set id(id: number | string) {
 		this.#id = typeof id === 'string' ? id : toHex(id);
 	}
