@@ -69,7 +69,7 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 	 *
 	 * By default only returns the instance itself but no other related instances.
 	 */
-	public override getRelated(): File[] {
+	public override getRelated() {
 		return [this, ...this.relationships.getRelated()];
 	}
 
