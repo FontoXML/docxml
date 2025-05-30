@@ -20,14 +20,18 @@ export type FootnoteProps = {
 	restart?: 'eachSect' | 'eachPage' | 'continuous';
 };
 
+/**
+ * A type describing the props accepted by {@link FootnoteReference}.
+ */
 export type FootnoteReferenceProps = {
 	id: number;
 	style: string;
 };
 
-export class FootnoteReference extends Component<
-	FootnoteReferenceProps & FootnoteProps
-> {
+/**
+ * A component that represents a footnote reference.
+ */
+export class FootnoteReference extends Component<FootnoteReferenceProps> {
 	public override toNode(): Node {
 		return create(
 			`

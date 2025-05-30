@@ -38,7 +38,7 @@ import type { Comment } from './Comment.ts';
 import type { CommentRangeEnd } from './CommentRangeEnd.ts';
 import type { CommentRangeStart } from './CommentRangeStart.ts';
 import type { Field } from './Field.ts';
-import type { FootnoteReference } from './Footnote.ts';
+import type { FootnoteReference } from './FootnoteReference.ts';
 import type { Text } from './Text.ts';
 import type { TextAddition } from './TextAddition.ts';
 import type { TextDeletion } from './TextDeletion.ts';
@@ -57,7 +57,7 @@ export type ParagraphChild =
 	| BookmarkRangeEnd
 	| Hyperlink
 	| Field
-	| FootnoteReference; 
+	| FootnoteReference;
 
 /**
  * A type describing the props accepted by {@link Paragraph}.

@@ -18,6 +18,9 @@ export type FootnoteSeparatorType =
 
 export type FootnoteChild = Paragraph | Table;
 
+/**
+ * A type describing a footnote.
+ */
 export type Footnote = {
 	id: number;
 	content: FootnoteChild[];
@@ -222,8 +225,7 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 							"id" : @${QNS.w}id/number(),
 							"content": array { ./* }, 
 							"type": @${QNS.w}type/string(),
-							"style": ./${QNS.w}p/${QNS.w}pPr/${QNS.w}pStyle/@${QNS.w}val/string(),
-							"referencestyle": ./${QNS.w}r/${QNS.w}rPr/${QNS.w}rStyle/@${QNS.w}val/string()
+							"style": ./${QNS.w}p/${QNS.w}pPr/${QNS.w}pStyle/@${QNS.w}val/string()
 						}
 					}`,
 					relsDom

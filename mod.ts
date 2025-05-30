@@ -65,7 +65,7 @@ export {
 	FootnoteReference,
 	type FootnoteProps,
 	type FootnoteReferenceProps,
-} from './src/components/Footnote.ts';
+} from './src/components/FootnoteReference.ts';
 export {
 	Hyperlink,
 	type HyperlinkChild,

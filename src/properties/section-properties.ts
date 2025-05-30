@@ -1,4 +1,4 @@
-import type { FootnoteProps } from '../components/Footnote.ts';
+import type { FootnoteProps } from '../components/FootnoteReference.ts';
 import { create } from '../utilities/dom.ts';
 import type { Length } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';

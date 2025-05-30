@@ -99,6 +99,7 @@ export class DocumentXml extends XmlFileWithContentTypes {
 	}
 
 	#footnotes: FootnotesXml | null = null;
+
 	/**
 	 * The API representing "footnotes.xml" and all the footnotes in this document.
 	 */

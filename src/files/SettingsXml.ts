@@ -3,7 +3,7 @@ import * as path from 'std/path';
 import type { ContentTypesXml, Length } from '../../mod.ts';
 import type { Archive } from '../classes/Archive.ts';
 import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
-import type { FootnoteProps } from '../components/Footnote.ts';
+import type { FootnoteProps } from '../components/FootnoteReference.ts';
 import { FileMime, RelationshipType } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { twip } from '../utilities/length.ts';
@@ -170,6 +170,7 @@ export class SettingsXml extends XmlFileWithContentTypes {
 	}
 
 	protected override toNode(): Document {
+		// Notice the two footnote elements. MSWord needs those there so it can display the horizontal separator line.
 		return create(
 			`<w:settings ${ALL_NAMESPACE_DECLARATIONS}>
 				{

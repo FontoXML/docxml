@@ -3,7 +3,7 @@ import Docx, { Cell, Image, Paragraph, Row, Section, Table } from '../mod.ts';
 import {
 	type FootnoteProps,
 	FootnoteReference,
-} from '../src/components/Footnote.ts';
+} from '../src/components/FootnoteReference.ts';
 import { Text } from '../src/components/Text.ts';
 import { cm, inch, pt } from '../src/utilities/length.ts';
 
