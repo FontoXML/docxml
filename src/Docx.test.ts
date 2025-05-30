@@ -13,6 +13,7 @@ describe('Docx', () => {
 
 	it('correct files', async () => {
 		const archive = await bundle.toArchive();
+
 		expect(
 			Object.keys(archive.$$$fileNames)
 				.filter((name) => !name.endsWith('/'))
@@ -39,7 +40,6 @@ describe('Docx', () => {
 				'word/footer3.xml',
 				'word/endnotes.xml',
 				'word/header3.xml',
-				'word/footnotes.xml',
 				'word/footer2.xml',
 			].sort()
 		);

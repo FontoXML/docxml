@@ -2,6 +2,7 @@ import * as path from 'std/path';
 import type { Archive } from '../classes/Archive.ts';
 import { NumberMap } from '../classes/NumberMap.ts';
 import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
+import '../components/FootnoteReference.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import type { Table } from '../components/Table.ts';
 import { FileMime } from '../enums.ts';
