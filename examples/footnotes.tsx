@@ -127,4 +127,4 @@ docxFile.document.set(
 	</Section>
 );
 
-await docxFile.toFile('footnotes2.docx');
+await docxFile.toFile('footnotes.docx');
