@@ -9,7 +9,7 @@ import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToArray } from '../utilities/xquery.ts';
 import type { ContentTypesXml } from './ContentTypesXml.ts';
-import { RelationshipsXml } from './RelationshipsXml.ts';
+import { type File, RelationshipsXml } from './RelationshipsXml.ts';
 
 export type FootnoteSeparatorType =
 	| 'separator'
@@ -69,7 +69,7 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 	 *
 	 * By default only returns the instance itself but no other related instances.
 	 */
-	public override getRelated() {
+	public override getRelated(): File[] {
 		return [this, ...this.relationships.getRelated()];
 	}
 
@@ -101,34 +101,8 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 							}
 						)
 						default return (
-							(: 
-								Get the head (first item), and tail (rest).
-								This allows us to check the very first element of the footnote.
-								If the node is a paragraph, then Word places the footnoteRef in the same paragraph.
-								Else, the reference is in a different paragraph.
-									This also applies for images, MSWords requires images to be placed in paragraphs,
-									but shows them in a different paragraph.
-							:)
-							let $head := array:head($footnote('content'))
-							let $tail := array:tail($footnote('content'))
-							return if ($head[self::w:p] and not($head/descendant::w:drawing))
+							if (array:size($footnote("content")) = 0)
 							then (
-								(: The head is a paragraph, replace it with a new paragraph, make sure to include previous the nodes and attributes. :)
-								element w:p {
-									$head/@*,
-									element w:r { 
-										element w:rPr { 
-											element w:rStyle { 
-												attribute w:val { $footnote('style') }
-											}
-										}, 
-										element w:footnoteRef {}
-									},
-									$head/*
-								},
-								$tail
-							) else (
-								(: The first node is not a paragraph, create a paragraph for the footnoteRef. :)
 								element w:p {
 									element w:r { 
 										element w:rPr { 
@@ -138,9 +112,50 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 										}, 
 										element w:footnoteRef {}
 									}
-								},
-								$head,
-								$tail
+								}
+							)
+							else (
+								(: 
+									Get the head (first item), and tail (rest).
+									This allows us to check the very first element of the footnote.
+									If the node is a paragraph, then Word places the footnoteRef in the same paragraph.
+									Else, the reference is in a different paragraph.
+										This also applies for images, MSWords requires images to be placed in paragraphs,
+										but shows them in a different paragraph.
+								:)
+								let $head := array:head($footnote('content'))
+								let $tail := array:tail($footnote('content'))
+								return if ($head[self::w:p] and not($head/descendant::w:drawing))
+								then (
+									(: The head is a paragraph, replace it with a new paragraph, make sure to include previous the nodes and attributes. :)
+									element w:p {
+										$head/@*,
+										element w:r { 
+											element w:rPr { 
+												element w:rStyle { 
+													attribute w:val { $footnote('style') }
+												}
+											}, 
+											element w:footnoteRef {}
+										},
+										$head/*
+									},
+									$tail
+								) else (
+									(: The first node is not a paragraph, create a paragraph for the footnoteRef. :)
+									element w:p {
+										element w:r { 
+											element w:rPr { 
+												element w:rStyle { 
+													attribute w:val { $footnote('style') }
+												}
+											}, 
+											element w:footnoteRef {}
+										}
+									},
+									$head,
+									$tail
+								)
 							)
 						) 
 					return (
@@ -223,5 +238,12 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 			}
 		}
 		return inst;
+	}
+
+	/**
+	 * @deprecated FOR TEST PURPOSES ONLY
+	 */
+	public $$$clearFootnotes(): void {
+		this.#footnotes.clear();
 	}
 }

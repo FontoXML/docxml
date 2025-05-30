@@ -1,4 +1,3 @@
-import * as slimdom from 'slimdom';
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
@@ -14,8 +13,8 @@ const emptyContext: ComponentContext = {
 };
 
 describe('Paragraph from XML', () => {
-	const paragraph = slimdom
-	.parseXmlFragment(`
+	const paragraph = Paragraph.fromNode(
+		create(`
 			<w:p xmlns:w="${NamespaceUri.w}" xmlns:w14="${NamespaceUri.w14}" w14:paraId="4CE0D358" w14:textId="77777777" w:rsidR="00A26C11" w:rsidRPr="00A26C11" w:rsidRDefault="00A26C11">
 				<w:pPr>
 					<w:pStyle w:val="Header" />
@@ -29,37 +28,40 @@ describe('Paragraph from XML', () => {
 					</w:rPr>
 					<w:t>My custom template</w:t>
 				</w:r>
-			</w:p>`);
+			</w:p>
+		`),
+		emptyContext
+	);
 
-	// it('parses props correctly', () => {
-	// 	expect(paragraph.props.style).toBe('Header');
-	// 	expect(paragraph.props.pilcrow?.language).toBe('en-GB');
-	// });
+	it('parses props correctly', () => {
+		expect(paragraph.props.style).toBe('Header');
+		expect(paragraph.props.pilcrow?.language).toBe('en-GB');
+	});
 
-	// it('parses children correctly', () => {
-	// 	expect(paragraph.children).toHaveLength(1);
-	// });
+	it('parses children correctly', () => {
+		expect(paragraph.children).toHaveLength(1);
+	});
 
-	// it('serializes correctly', async () => {
-	// 	expect(serialize(await paragraph.toNode([]))).toBe(
-	// 		`
-	// 		<p xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-	// 			<pPr>
-	// 				<pStyle xmlns:ns1="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns1:val="Header"/>
-	// 				<rPr>
-	// 					<lang xmlns:ns2="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns2:val="en-GB"/>
-	// 				</rPr>
-	// 			</pPr>
-	// 			<r>
-	// 				<rPr>
-	// 					<lang xmlns:ns3="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns3:val="nl-NL"/>
-	// 				</rPr>
-	// 				<t xml:space="preserve">My custom template</t>
-	// 			</r>
-	// 		</p>
-	// 		`.replace(/\n|\t/g, '')
-	// 	);
-	// });
+	it('serializes correctly', async () => {
+		expect(serialize(await paragraph.toNode([]))).toBe(
+			`
+			<p xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+				<pPr>
+					<pStyle xmlns:ns1="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns1:val="Header"/>
+					<rPr>
+						<lang xmlns:ns2="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns2:val="en-GB"/>
+					</rPr>
+				</pPr>
+				<r>
+					<rPr>
+						<lang xmlns:ns3="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns3:val="nl-NL"/>
+					</rPr>
+					<t xml:space="preserve">My custom template</t>
+				</r>
+			</p>
+			`.replace(/\n|\t/g, '')
+		);
+	});
 });
 
 describe('Paragraph with style change', () => {
@@ -76,17 +78,17 @@ describe('Paragraph with style change', () => {
 	it('serializes correctly', async () => {
 		expect(serialize(await paragraph.toNode([]))).toBe(
 			`
-					<p xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-						<pPr>
-							<pStyle xmlns:ns1="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns1:val="StyleNew"/>
-							<pPrChange xmlns:ns2="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns2:id="0" ns2:author="Wybe" ns2:date="${now.toISOString()}">
-								<pPr>
-									<pStyle ns2:val="StyleOld"/>
-							</pPr>
-							</pPrChange>
+				<p xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+					<pPr>
+						<pStyle xmlns:ns1="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns1:val="StyleNew"/>
+						<pPrChange xmlns:ns2="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns2:id="0" ns2:author="Wybe" ns2:date="${now.toISOString()}">
+							<pPr>
+								<pStyle ns2:val="StyleOld"/>
 						</pPr>
-					</p>
-				`.replace(/\n|\t/g, '')
+						</pPrChange>
+					</pPr>
+				</p>
+			`.replace(/\n|\t/g, '')
 		);
 	});
 });
