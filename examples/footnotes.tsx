@@ -70,8 +70,8 @@ const footnote4 = docxFile.document.footnotes.add(
 			new Cell(
 				{},
 				new Paragraph(
-					{},
-					new Text({ style: 'Text' }, 'This is a table cell')
+					{ style: 'Text' },
+					new Text({}, 'This is a table cell')
 				)
 			)
 		)
