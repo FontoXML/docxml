@@ -39,6 +39,7 @@ import type { Comment } from './Comment.ts';
 import type { CommentRangeEnd } from './CommentRangeEnd.ts';
 import type { CommentRangeStart } from './CommentRangeStart.ts';
 import type { Field } from './Field.ts';
+import type { FootnoteAnchor } from './FootnoteAnchor.ts';
 import type { FootnoteReference } from './FootnoteReference.ts';
 import type { Text } from './Text.ts';
 import type { TextAddition } from './TextAddition.ts';
@@ -58,7 +59,8 @@ export type ParagraphChild =
 	| BookmarkRangeEnd
 	| Hyperlink
 	| Field
-	| FootnoteReference;
+	| FootnoteReference
+	| FootnoteAnchor;
 
 /**
  * A type describing the props accepted by {@link Paragraph}.
@@ -87,6 +89,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'TextDeletion',
 		'Field',
 		'FootnoteReference',
+		'FootnoteAnchor',
 	];
 	public static override readonly mixed: boolean = false;
 	#sectionProperties: SectionProperties | null = null;

@@ -2,9 +2,13 @@ import * as path from 'std/path';
 import type { Archive } from '../classes/Archive.ts';
 import { NumberMap } from '../classes/NumberMap.ts';
 import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
+import { FootnoteAnchor } from '../components/FootnoteAnchor.ts';
+import { FootnoteContinuationSeparator } from '../components/FootnoteContinuationSeparator.ts';
 import '../components/FootnoteReference.ts';
+import { FootnoteSeparator } from '../components/FootnoteSeparator.ts';
 import { Paragraph } from '../components/Paragraph.ts';
-import type { Table } from '../components/Table.ts';
+import { Table } from '../components/Table.ts';
+import { Text } from '../components/Text.ts';
 import { FileMime } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
@@ -26,7 +30,7 @@ export type Footnote = {
 	id: number;
 	content: FootnoteChild[];
 	type: FootnoteSeparatorType;
-	style: string;
+	style?: string;
 };
 
 export class FootnotesXml extends XmlFileWithContentTypes {
@@ -82,7 +86,91 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 	 *  Creates an OOXML representation of the FootnotesXml.
 	 */
 	protected override async toNode(): Promise<Document> {
-		return create(
+		const originalFootnotes = [...this.#footnotes.array()];
+
+		// Add the two separator footnotes. Required by MSWord.
+		originalFootnotes.unshift(
+			{
+				type: 'separator',
+				id: -1,
+				content: [
+					new Paragraph({}, new Text({}, new FootnoteSeparator({}))),
+				],
+			},
+			{
+				type: 'continuationSeparator',
+				id: 0,
+				content: [
+					new Paragraph(
+						{},
+						new Text({}, new FootnoteContinuationSeparator({}))
+					),
+				],
+			}
+		);
+
+		const footnotes = await Promise.all(
+			originalFootnotes.map(async (footnote) => {
+				if (
+					footnote.type === 'separator' ||
+					footnote.type === 'continuationSeparator'
+				) {
+					return {
+						...footnote,
+						content: await Promise.all(
+							footnote.content.map(
+								async (n) => await n.toNode([])
+							)
+						),
+					};
+				}
+
+				if (!footnote.content.length) {
+					// No content, just push a new paragraph.
+					footnote.content.push(
+						new Paragraph(
+							{},
+							new FootnoteAnchor({
+								style: footnote.style,
+							})
+						)
+					);
+				} else {
+					// There's some content, but we only care about the very first node.
+					const [firstNode] = footnote.content;
+
+					// The first node is a paragraph. Add the anchor inside the paragraph.
+					if (firstNode instanceof Paragraph) {
+						firstNode.children.unshift(
+							new FootnoteAnchor({
+								style: footnote.style,
+							})
+						);
+					}
+
+					// The first node is a table. Add a new paragraph with the anchor.
+					if (firstNode instanceof Table) {
+						footnote.content.unshift(
+							new Paragraph(
+								{},
+								new FootnoteAnchor({
+									style: footnote.style,
+								})
+							)
+						);
+					}
+				}
+
+				return {
+					...footnote,
+					content: await Promise.all(
+						footnote.content.map(async (n) => await n.toNode([]))
+					),
+				};
+			})
+		);
+
+		const document = create(
 			`
 			<w:footnotes ${ALL_NAMESPACE_DECLARATIONS}>
 				{ for $footnote in array:flatten($footnotes)
@@ -90,77 +178,14 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 						switch ($footnote('type'))
 						case 'separator' return (
 							attribute w:type { 'separator' },
-							element w:p { 
-								element w:r { 
-									element w:separator {}
-								}
-							}
+							$footnote('content')
 						)
 						case 'continuationSeparator' return (
 							attribute w:type { 'continuationSeparator' },
-							element w:p { 
-								element w:r { 
-									element w:continuationSeparator {}
-								}
-							}
+							$footnote('content')
 						)
 						default return (
-							if (array:size($footnote("content")) = 0)
-							then (
-								element w:p {
-									element w:r { 
-										element w:rPr { 
-											element w:rStyle { 
-												attribute w:val { $footnote('style') }
-											}
-										}, 
-										element w:footnoteRef {}
-									}
-								}
-							)
-							else (
-								(: 
-									Get the head (first item), and tail (rest).
-									This allows us to check the very first element of the footnote.
-									If the node is a paragraph, then Word places the footnoteRef in the same paragraph.
-									Else, the reference is in a different paragraph.
-										This also applies for images, MSWords requires images to be placed in paragraphs,
-										but shows them in a different paragraph.
-								:)
-								let $head := array:head($footnote('content'))
-								let $tail := array:tail($footnote('content'))
-								return if ($head[self::w:p] and not($head/descendant::w:drawing))
-								then (
-									(: The head is a paragraph, replace it with a new paragraph, make sure to include previous the nodes and attributes. :)
-									element w:p {
-										$head/@*,
-										element w:r { 
-											element w:rPr { 
-												element w:rStyle { 
-													attribute w:val { $footnote('style') }
-												}
-											}, 
-											element w:footnoteRef {}
-										},
-										$head/*
-									},
-									$tail
-								) else (
-									(: The first node is not a paragraph, create a paragraph for the footnoteRef. :)
-									element w:p {
-										element w:r { 
-											element w:rPr { 
-												element w:rStyle { 
-													attribute w:val { $footnote('style') }
-												}
-											}, 
-											element w:footnoteRef {}
-										}
-									},
-									$head,
-									$tail
-								)
-							)
+							$footnote("content")
 						) 
 					return (
 						element w:footnote {  
@@ -173,31 +198,12 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 			{
 				// In Word, footnotes with IDs -1 and 0 are reserved for the elements that visually separate the footnotes
 				// from the regular flow of content. We generate those here.
-				footnotes: [
-					{
-						type: 'separator',
-						id: -1,
-						content: [],
-					},
-					{
-						type: 'continuationSeparator',
-						id: 0,
-						content: [],
-					},
-					...(await Promise.all(
-						this.#footnotes.array().map(async (footnote) => ({
-							...footnote,
-							content: await Promise.all(
-								footnote.content.map(
-									async (n) => await n.toNode([])
-								)
-							),
-						}))
-					)),
-				],
+				footnotes,
 			},
 			true
 		);
+
+		return document;
 	}
 
 	/**
