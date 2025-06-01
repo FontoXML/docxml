@@ -4,13 +4,13 @@ import { NumberMap } from '../classes/NumberMap.ts';
 import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
 import { FileMime } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
-import { fromHex, toHex } from '../utilities/hexadecimal.ts';
+import { hex, type Id } from '../utilities/id.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToArray } from '../utilities/xquery.ts';
 
 type CommentEx = {
-	id: number;
-	parentId?: number;
+	id: Id;
+	parentId?: Id;
 };
 
 export class CommentsExtendedXml extends XmlFileWithContentTypes {
@@ -42,8 +42,8 @@ export class CommentsExtendedXml extends XmlFileWithContentTypes {
 					.array()
 					.map(({ id, parentId }) => {
 						return {
-							id: toHex(id),
-							parentId: parentId ? toHex(parentId) : undefined,
+							id: id.hex,
+							parentId: parentId ? parentId.hex : undefined,
 						};
 					}),
 			},
@@ -55,8 +55,8 @@ export class CommentsExtendedXml extends XmlFileWithContentTypes {
 	 * Add a comment to the DOCX file and return its new identifier.
 	 */
 	public add(meta: CommentEx): number {
-		this.#commentsExtended.set(meta.id, meta);
-		return meta.id;
+		this.#commentsExtended.set(meta.id.int, meta);
+		return meta.id.int;
 	}
 
 	/**
@@ -88,8 +88,8 @@ export class CommentsExtendedXml extends XmlFileWithContentTypes {
 			dom
 		).forEach(({ id, parentId }) =>
 			inst.add({
-				id: fromHex(id),
-				parentId: parentId ? fromHex(parentId) : undefined,
+				id: hex(id),
+				parentId: parentId ? hex(parentId) : undefined,
 			})
 		);
 

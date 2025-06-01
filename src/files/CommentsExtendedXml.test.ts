@@ -2,6 +2,7 @@ import { expect } from 'std/expect';
 import { beforeEach, describe, it } from 'std/testing/bdd';
 
 import { parse, serialize } from '../utilities/dom.ts';
+import { int } from '../utilities/id.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
 import { archive } from '../utilities/tests.ts';
 import { CommentsExtendedXml } from './CommentsExtendedXml.ts';
@@ -38,7 +39,7 @@ describe('CommentsExtended', () => {
 	});
 
 	it('can add a comment extension with minimum information', () => {
-		commentsExtended.add({ id: 1 });
+		commentsExtended.add({ id: int(1) });
 		const expectedComment = `<w15:commentEx w15:paraId="00000001"/>`;
 
 		expect(serialize(commentsExtended.$$$toNode())).toBe(
@@ -51,7 +52,7 @@ describe('CommentsExtended', () => {
 	});
 
 	it('can add a comment extension with maximum information', () => {
-		commentsExtended.add({ id: 4294967295, parentId: 19687 });
+		commentsExtended.add({ id: int(4294967295), parentId: int(19687) });
 		const expectedComment = `<w15:commentEx w15:paraId="FFFFFFFF" w15:paraIdParent="00004CE7"/>`;
 
 		expect(serialize(commentsExtended.$$$toNode())).toBe(

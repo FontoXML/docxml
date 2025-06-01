@@ -4,6 +4,7 @@ import { beforeEach, describe, it } from 'std/testing/bdd';
 import { Paragraph } from '../components/Paragraph.ts';
 import { Text } from '../components/Text.ts';
 import { parse, serialize } from '../utilities/dom.ts';
+import { int } from '../utilities/id.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
 import { archive } from '../utilities/tests.ts';
 import { CommentsXml } from './CommentsXml.ts';
@@ -115,7 +116,7 @@ describe('Comments', () => {
 			[new Paragraph({}, new Text({}, 'Hello'))]
 		);
 		const child = comments.add(
-			{ author: 'Foo Bar', date, initials: 'FB', parentId: parent },
+			{ author: 'Foo Bar', date, initials: 'FB', parentId: int(parent) },
 			[new Paragraph({}, new Text({}, 'world!'))]
 		);
 

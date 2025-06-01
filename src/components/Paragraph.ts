@@ -30,7 +30,7 @@ import {
 	registerComponent,
 } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
-import { toHex } from '../utilities/hexadecimal.ts';
+import { hex, type Id } from '../utilities/id.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
@@ -91,7 +91,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 	// For regular paragraphs this identifier is not required.
 	// It is when comments have replies. These "links" (X comment is a reply of Y comment)
 	// are handled via this identifier.
-	#id: string | null = null;
+	#id: Id | null = null;
 
 	/**
 	 * Set properties to the section that this paragraph is supposed to represent. Not intended to be
@@ -106,8 +106,8 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 	 * Set the identifier (@w:paraId attribute) of this paragraph.
 	 * This identifier is used by comment replies.
 	 */
-	public set id(id: number | string) {
-		this.#id = typeof id === 'string' ? id : toHex(id);
+	public set id(id: Id) {
+		this.#id = id;
 	}
 
 	/**
@@ -128,7 +128,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 				}
 			`,
 			{
-				id: this.#id,
+				id: this.#id?.hex || null,
 				pPr: paragraphPropertiesToNode(
 					this.props,
 					this.#sectionProperties
@@ -189,7 +189,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		);
 
 		if (id) {
-			paragraph.id = id;
+			paragraph.id = hex(id);
 		}
 
 		return paragraph;

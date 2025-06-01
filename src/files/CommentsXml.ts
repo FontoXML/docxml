@@ -7,18 +7,19 @@ import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { FileLocation, FileMime } from '../enums.ts';
 import { create } from '../utilities/dom.ts';
+import { type Id, int } from '../utilities/id.ts';
 import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToArray } from '../utilities/xquery.ts';
 import { CommentsExtendedXml } from './CommentsExtendedXml.ts';
 import { RelationshipsXml } from './RelationshipsXml.ts';
 
 type Comment = {
-	id: number;
+	id: Id;
 	author: string;
 	initials?: string | null;
 	date: Date;
 	contents: Paragraph[] | Promise<Paragraph[]>;
-	parentId?: number;
+	parentId?: Id;
 };
 
 export class CommentsXml extends XmlFileWithContentTypes {
@@ -57,6 +58,7 @@ export class CommentsXml extends XmlFileWithContentTypes {
 				comments: await Promise.all(
 					this.#comments.array().map(async (comment) => ({
 						...comment,
+						id: comment.id.int,
 						date: comment.date.toISOString(),
 						contents: await Promise.all(
 							(
@@ -89,12 +91,12 @@ export class CommentsXml extends XmlFileWithContentTypes {
 
 		// Add the extended comment.
 		this.#commentsExtended?.add({
-			id,
+			id: int(id),
 			parentId: meta.parentId,
 		});
 
 		this.#comments.set(id, {
-			id,
+			id: int(id),
 			...meta,
 			contents,
 		});
@@ -158,13 +160,6 @@ export class CommentsXml extends XmlFileWithContentTypes {
 		);
 
 		return inst;
-	}
-
-	/**
-	 * @deprecated FOR TEST PURPOSES ONLY
-	 */
-	public override $$$toNode(): Promise<Document> {
-		return this.toNode();
 	}
 
 	/**
