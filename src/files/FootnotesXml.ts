@@ -6,6 +6,7 @@ import { FootnoteAnchor } from '../components/FootnoteAnchor.ts';
 import { FootnoteContinuationSeparator } from '../components/FootnoteContinuationSeparator.ts';
 import '../components/FootnoteReference.ts';
 import { FootnoteSeparator } from '../components/FootnoteSeparator.ts';
+import { Image } from '../components/Image.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { Table } from '../components/Table.ts';
 import { Text } from '../components/Text.ts';
@@ -139,13 +140,29 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 					// There's some content, but we only care about the very first node.
 					const [firstNode] = footnote.content;
 
-					// The first node is a paragraph. Add the anchor inside the paragraph.
+					// The first node is a paragraph.
 					if (firstNode instanceof Paragraph) {
-						firstNode.children.unshift(
-							new FootnoteAnchor({
-								style: footnote.style,
-							})
-						);
+						// Check if the first child node is an image.
+						const [text] = firstNode.children;
+						const [image] = text ? text.children : [undefined];
+						if (image && image instanceof Image) {
+							// The first child is an image. Insert the anchor in a new paragraph.
+							// This is what MSWord does by default.
+							footnote.content.unshift(
+								new Paragraph(
+									{},
+									new FootnoteAnchor({
+										style: footnote.style,
+									})
+								)
+							);
+						} else {
+							firstNode.children.unshift(
+								new FootnoteAnchor({
+									style: footnote.style,
+								})
+							);
+						}
 					}
 
 					// The first node is a table. Add a new paragraph with the anchor.
