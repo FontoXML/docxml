@@ -160,6 +160,14 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 								)
 							);
 						} else {
+							if (
+								typeof firstNode.children[0].children[0] ===
+								'string'
+							) {
+								firstNode.children[0].children[0] = ' '.concat(
+									firstNode.children[0].children[0]
+								);
+							}
 							firstNode.children.unshift(
 								new FootnoteAnchor({
 									style: footnote.style,
@@ -205,7 +213,7 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 							$footnote('content')
 						)
 						default return (
-							$footnote("content")
+							$footnote('content')
 						) 
 					return (
 						element w:footnote {  
