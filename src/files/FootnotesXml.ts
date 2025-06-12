@@ -1,6 +1,6 @@
 import * as path from 'std/path';
 import type { Archive } from '../classes/Archive.ts';
-import { Component } from '../classes/Component.ts';
+import type { Component } from '../classes/Component.ts';
 import { NumberMap } from '../classes/NumberMap.ts';
 import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
 import { FootnoteAnchor } from '../components/FootnoteAnchor.ts';

@@ -1,7 +1,7 @@
 import { expect } from 'std/expect';
 import { beforeAll, describe, it } from 'std/testing/bdd';
-
 import { Cell } from '../components/Cell.ts';
+import { Image } from '../components/Image.ts';
 import { Paragraph } from '../components/Paragraph.ts';
 import { Row } from '../components/Row.ts';
 import { Table } from '../components/Table.ts';
@@ -272,6 +272,32 @@ describe('Footnotes', () => {
 				${expectedFootnote}
 			</w:footnotes>	
 			`.replace(/\n|\t/g, '')
+		);
+	});
+
+	it('Images are added with correct relationships', async () => {
+		const image = new Image({
+			data: Deno.readFile('test/spacekees.jpeg'),
+			width: cm(2.54),
+			height: cm(2.54),
+			title: 'Title',
+			alt: 'Alt',
+		});
+		await footnotes.add(new Paragraph({}, new Text({}, image)), 'MyStyle');
+
+		// A _rels file is created for our footnotes.
+		expect(footnotes.relationships.location).toBe(
+			'word/_rels/footnotes.xml.rels'
+		);
+
+		// That _rels file contains a reference to our image.
+		// This should be our only RelationshipsXml file at this point, so we can use meta[0].
+		expect(footnotes.relationships.meta[0].id).toBe(
+			image.meta.relationshipId
+		);
+
+		expect(footnotes.relationships.meta[0].target).toBe(
+			image.meta.location
 		);
 	});
 });
