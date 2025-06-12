@@ -39,7 +39,7 @@ const image = new Image({
 	title: 'Title',
 	alt: 'Alt',
 });
-await image.ensureRelationship(docxFile.document.footnotes.relationships);
+// await image.ensureRelationship(docxFile.document.footnotes.relationships);
 
 const footnote3 = docxFile.document.footnotes.add(
 	new Paragraph({}, new Text({}, image)),

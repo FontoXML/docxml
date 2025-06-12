@@ -1,5 +1,6 @@
 import * as path from 'std/path';
 import type { Archive } from '../classes/Archive.ts';
+import { Component } from '../classes/Component.ts';
 import { NumberMap } from '../classes/NumberMap.ts';
 import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
 import { FootnoteAnchor } from '../components/FootnoteAnchor.ts';
@@ -192,7 +193,18 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 				return {
 					...footnote,
 					content: await Promise.all(
-						footnote.content.map(async (n) => await n.toNode([]))
+						footnote.content.map(async (node) => {
+							// Get all descendant images and register them.
+							for await (const image of findDescendantImages(
+								node
+							)) {
+								await image.ensureRelationship(
+									this.relationships
+								);
+							}
+
+							return await node.toNode([]);
+						})
 					),
 				};
 			})
@@ -283,4 +295,23 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 	public $$$clearFootnotes(): void {
 		this.#footnotes.clear();
 	}
+}
+
+function findDescendantImages(
+	node: Component<
+		// deno-lint-ignore ban-types
+		{},
+		// deno-lint-ignore no-explicit-any
+		any
+	>
+): Image[] {
+	const images: Image[] = [];
+	node.children?.forEach((child) => {
+		if (child instanceof Image) {
+			images.push(child);
+		}
+		images.push(...findDescendantImages(child));
+	});
+
+	return images;
 }
