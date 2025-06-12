@@ -56,7 +56,7 @@ describe('Footnotes', () => {
 
 	it('can add a footnote with minimum information', async () => {
 		footnotes.$$$clearFootnotes();
-		const footnoteId = footnotes.add([], 'MyStyle');
+		const footnoteId = await footnotes.add([], 'MyStyle');
 		const expectedFootnote = `<w:footnote w:id="${footnoteId}"><w:p><w:r><w:rPr><w:rStyle w:val="MyStyle"/></w:rPr><w:footnoteRef/></w:r></w:p></w:footnote>`;
 
 		expect(serialize(await footnotes.$$$toNode())).toBe(
@@ -83,7 +83,7 @@ describe('Footnotes', () => {
 
 	it('can add a footnote with paragraphs', async () => {
 		footnotes.$$$clearFootnotes();
-		const footnoteId = footnotes.add(
+		const footnoteId = await footnotes.add(
 			[new Paragraph({}, new Text({}, 'Hello, this is a footnote.'))],
 			'MyStyle'
 		);
@@ -127,7 +127,7 @@ describe('Footnotes', () => {
 	it('can add a footnote with multiple paragraphs', async () => {
 		footnotes.$$$clearFootnotes();
 
-		const footnoteId = footnotes.add(
+		const footnoteId = await footnotes.add(
 			[
 				new Paragraph({}, new Text({}, 'Hello, this is a footnote 1.')),
 				new Paragraph({}, new Text({}, 'Hello, this is a footnote 2.')),
@@ -179,7 +179,7 @@ describe('Footnotes', () => {
 	it('can add a footnote with tables', async () => {
 		footnotes.$$$clearFootnotes();
 
-		const footnoteId = footnotes.add(
+		const footnoteId = await footnotes.add(
 			[
 				new Table(
 					{
