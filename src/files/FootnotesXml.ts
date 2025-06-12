@@ -62,14 +62,22 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 	 * @param style The style used for the reference mark in the body text.
 	 * @returns The identifier of the new footnote.
 	 */
-	public add(
+	public async add(
 		content: FootnoteChild | FootnoteChild[],
 		style: string
-	): number {
+	): Promise<number> {
 		const id = this.#footnotes.getNextAvailableKey();
+
+		const contentArray = Array.isArray(content) ? content : [content];
+
+		// Get all descendant images and register them.
+		for await (const image of findDescendantImages(contentArray)) {
+			await image.ensureRelationship(this.relationships);
+		}
+
 		this.#footnotes.set(id, {
 			id,
-			content: Array.isArray(content) ? content : [content],
+			content: contentArray,
 			type: 'normal',
 			style,
 		});
@@ -193,18 +201,9 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 				return {
 					...footnote,
 					content: await Promise.all(
-						footnote.content.map(async (node) => {
-							// Get all descendant images and register them.
-							for await (const image of findDescendantImages(
-								node
-							)) {
-								await image.ensureRelationship(
-									this.relationships
-								);
-							}
-
-							return await node.toNode([]);
-						})
+						footnote.content.map(
+							async (node) => await node.toNode([])
+						)
 					),
 				};
 			})
@@ -297,20 +296,24 @@ export class FootnotesXml extends XmlFileWithContentTypes {
 	}
 }
 
+/**
+ * Finds all descendant images.
+ */
 function findDescendantImages(
-	node: Component<
+	nodes: Component<
 		// deno-lint-ignore ban-types
 		{},
 		// deno-lint-ignore no-explicit-any
 		any
-	>
+	>[]
 ): Image[] {
 	const images: Image[] = [];
-	node.children?.forEach((child) => {
-		if (child instanceof Image) {
-			images.push(child);
+	nodes.forEach((node) => {
+		if (node instanceof Image) {
+			images.push(node);
 		}
-		images.push(...findDescendantImages(child));
+
+		images.push(...findDescendantImages(node.children || []));
 	});
 
 	return images;
