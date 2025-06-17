@@ -109,7 +109,7 @@ export function sectionPropertiesFromNode(
 			},
 			"columns": map {
 				"numberOfColumns": ./${QNS.w}cols/@${QNS.w}num/number(),
-				"equalWidth": docxml:st-on-off(./${QNS.w}cols/@${QNS.w}equalwidth),
+				"equalWidth": docxml:st-on-off(./${QNS.w}cols/@${QNS.w}equalWidth),
 				"separator": if (exists(./${QNS.w}cols/@${QNS.w}sep)) then docxml:st-on-off(./${QNS.w}cols/@${QNS.w}sep) else (),
 				"columnSpace": docxml:length(./${QNS.w}cols/@${QNS.w}space, 'twip'),
 				"columnDefs": array{
@@ -182,14 +182,16 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 				if (exists($columns('separator'))) then attribute ${QNS.w}sep { 
 					$columns('separator') } 
 				else (),
-				if (exists($columns('equalWidth'))) then attribute ${QNS.w}equalWidth { "1" } 
-				else (attribute ${QNS.w}equalWidth { "0" }),
 				if (exists($columns('numberOfColumns'))) then attribute ${QNS.w}num {
 					$columns('numberOfColumns') 
 				} else (),
 				if (exists($columns('columnSpace'))) then attribute ${QNS.w}space {
 					round($columns('columnSpace')('twip')) 
 				} else (),
+				if (exists($columns('equalWidth'))) then 
+					if ($columns('equalWidth')) then attribute ${QNS.w}equalWidth { "1" } 
+					else (attribute ${QNS.w}equalWidth { "0" })
+				else (),
  				if (docxml:st-on-off(string($columns('equalWidth')))) then ()
  				else for $column in array:flatten($columns('columnDefs'))
  					return element ${QNS.w}col {
