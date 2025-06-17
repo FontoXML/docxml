@@ -1,4 +1,4 @@
-import JSZip from 'jszipXX';
+import JSZip from 'jszip';
 
 import { parse, serialize } from '../utilities/dom.ts';
 
