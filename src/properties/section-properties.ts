@@ -182,15 +182,8 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
 				if (exists($columns('separator'))) then attribute ${QNS.w}sep { 
 					$columns('separator') } 
 				else (),
-				if (exists($columns('equalWidth'))) then attribute ${QNS.w}equalwidth {
-					$columns('equalWidth') 
-				} else (
-					if (count($columns('columnDefs')) > 1)
-					then (
-						attribute ${QNS.w}equalwidth { false }
-					)
-					else () 
-				),
+				if (exists($columns('equalWidth'))) then attribute ${QNS.w}equalWidth { "1" } 
+				else (attribute ${QNS.w}equalWidth { "0" }),
 				if (exists($columns('numberOfColumns'))) then attribute ${QNS.w}num {
 					$columns('numberOfColumns') 
 				} else (),
@@ -202,7 +195,7 @@ export function sectionPropertiesToNode(data: SectionProperties = {}): Node {
  					return element ${QNS.w}col {
  						attribute ${QNS.w}w { round($column('columnWidth')('twip')) },
  						if (not(exists($column('columnSpace')))) then ()
- 							else attribute ${QNS.w}space { round($column('columnSpace')('twip')) }
+ 						else attribute ${QNS.w}space { round($column('columnSpace')('twip')) }
  					}
 			} else (), 
 			if (exists($pageWidth) or exists($pageHeight) or $pageOrientation) then element ${QNS.w}pgSz {
