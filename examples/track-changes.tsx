@@ -7,9 +7,12 @@ import Docx, {
 	TextDeletion,
 } from '../mod.ts';
 
+// Create a new .docx file with track changes enabled.
 const docxFile = Docx.fromNothing().withSettings({
 	isTrackChangesEnabled: true,
 });
+
+// Create a new paragraph that includes text, a text deletion, and a text addition.
 const testParagraph = new Paragraph(
 	{},
 	new Text({}, 'Hello, '),
@@ -21,14 +24,22 @@ const testParagraph = new Paragraph(
 		},
 		new Text({}, 'nighttime')
 	),
-	new Text({}, " my old friend."),
+	new TextAddition(
+		{ id: 2, author: 'Paul Simon', date: new Date() },
+		new Text({}, 'darkness')
+	),
+	new Text({}, ' my old friend.'),
 	new TextAddition(
 		{ id: 1, author: 'Gabe', date: new Date() },
-		new Text({}, "I've come to talk with you again.")
-	),
+		new Text({}, ` I've come to talk with you again.`)
+	)
 );
 
+// Create a section ast he parent of our new paragraph. 
 const testSection = new Section({}, testParagraph);
 
+// Set that section as the content of our document. 
 docxFile.document.set(testSection);
+
+// Save our document. 
 await docxFile.toFile('track-changes.docx');
