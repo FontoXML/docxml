@@ -35,7 +35,7 @@ const testParagraph = new Paragraph(
 	)
 );
 
-// Create a section ast he parent of our new paragraph.
+// Create a section as the parent of our new paragraph.
 const testSection = new Section({}, testParagraph);
 
 // Set that section as the content of our document.
