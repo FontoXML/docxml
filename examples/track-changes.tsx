@@ -35,11 +35,27 @@ const testParagraph = new Paragraph(
 	)
 );
 
-// Create a section ast he parent of our new paragraph. 
+// Create a section ast he parent of our new paragraph.
 const testSection = new Section({}, testParagraph);
 
-// Set that section as the content of our document. 
+// Set that section as the content of our document.
 docxFile.document.set(testSection);
 
-// Save our document. 
+// Save our document.
 await docxFile.toFile('track-changes.docx');
+
+// Alternatively, you can use JSX:
+await Docx.fromJsx(
+	<Section>
+		<Paragraph>
+			<Text>Four score and </Text>
+			<TextDeletion id={1} author="Gabe" date={new Date()}>
+				<Text>six</Text>
+			</TextDeletion>
+			<TextAddition id={1} author="Gabe" date={new Date()}>
+				<Text>seven</Text>
+			</TextAddition>
+			<Text> years ago...</Text>
+		</Paragraph>
+	</Section>
+).toFile('track-changes-jsx.docx');
