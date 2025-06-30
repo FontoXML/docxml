@@ -1,55 +1,58 @@
-import { expect } from 'std/expect'; 
-import { describe, it } from 'std/testing/bdd'; 
+import { expect } from 'std/expect';
+import { describe, it } from 'std/testing/bdd';
 
-import { Text } from '../../mod.ts';
-import { Archive } from '../classes/Archive.ts';
-import type { ComponentContext } from '../classes/Component.ts';
+import { Text, TextDeletion } from '../../mod.ts';
+import { Docx } from '../Docx.ts';
 import { create, serialize } from '../utilities/dom.ts';
 import { NamespaceUri } from '../utilities/namespaces.ts';
 
-const emptyContext: ComponentContext = {
-	archive: new Archive(),
-	relationships: null,
-};
-
 describe('Text', () => {
-	const text = Text.fromNode(
-		create(`
-			<w:r xmlns:w="${NamespaceUri.w}">
-				<w:rPr>
-					<w:b />
-				</w:rPr>
-				<w:t>This text contains</w:t>
-				<w:br w:type="page" />
-				<w:t>a page break</w:t>
-			</w:r>
-		`),
-		emptyContext,
-	);
-
-	it('parses props correctly', () => {
-		expect(text.props.isBold).toBeTruthy();
-	});
-
-	it('parses children correctly', () => {
-		expect(text.children).toHaveLength(3);
-		expect(text.children.map((child) => child.constructor.name)).toEqual([
-			'String',
-			'Break',
-			'String',
-		]);
-	});
+	const timeStamp = new Date();
 
 	it('serializes correctly', async () => {
-		expect(serialize(await text.toNode([]))).toBe(
-			`
-				<r xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-					<rPr><b/></rPr>
-					<t xml:space="preserve">This text contains</t>
-					<br xmlns:ns1="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns1:type="page"/>
-					<t xml:space="preserve">a page break</t>
-				</r>
-			`.replace(/\n|\t/g, ''),
+		const newAddition = new TextDeletion(
+			{
+				id: 1,
+				author: 'X',
+				date: timeStamp,
+			},
+			new Text({}, 'Hello')
+		);
+
+		const additionNode = await newAddition.toNode([]);
+
+		const newNode = create(`<del xmlns="${NamespaceUri.w}" xmlns:ns1="${
+			NamespaceUri.w
+		}" ns1:id="1" ns1:author="X" ns1:date="${timeStamp.toISOString()}">
+						<r>
+							<delText xml:space="preserve">Hello</delText>
+						</r>
+			</del>`);
+
+		expect(serialize(additionNode)).toEqual(serialize(newNode));
+	});
+
+	it('creates component XML from node', async () => {
+		const docxArchive = await Docx.fromNothing().toArchive();
+		const date = new Date();
+		const newNode = create(`
+				<del xmlns="${NamespaceUri.w}" xmlns:ns1="${
+			NamespaceUri.w
+		}" ns1:author="Y" ns1:id="1-test" ns1:date="${date.toISOString()}">
+					<r>
+						<delText xml:space="preserver">Node Test</delText>
+					</r>
+				</del>
+			`);
+
+		const newAddition = TextDeletion.fromNode(newNode, {
+			archive: docxArchive,
+			relationships: null,
+		});
+
+		expect(newAddition.props.author).toBe('Y');
+		expect(newAddition.props.date.toISOString()).toEqual(
+			date.toISOString()
 		);
 	});
 });
