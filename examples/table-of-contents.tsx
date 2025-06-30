@@ -15,9 +15,6 @@ import { inch, pt } from '../src/utilities/length.ts';
 
 const docx = Docx.fromNothing();
 
-const ch1 = docx.bookmarks.create();
-const ch2 = docx.bookmarks.create();
-
 docx.document.styles.add({
 	id: 'ChapterTitle',
 	name: 'ChapterTitle',
@@ -337,9 +334,7 @@ docx.document.set(
 			</Text>
 		</Paragraph>
 		<Paragraph style="ChapterTitle">
-			<BookmarkRangeStart bookmark={ch2} />
 			<Text>CHAPTER II</Text>
-			<BookmarkRangeEnd bookmark={ch2} />
 		</Paragraph>
 		<Paragraph>
 			<Text>
