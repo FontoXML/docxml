@@ -103,7 +103,7 @@ export class RowDeletion extends Component<RowDeletionProps, RowDeletionChild> {
 	): RowDeletion {
 		const { children, ...rowProps } = parsePropsAndChildNodes(node);
 		const changeProps = getChangeInformation(
-			evaluateXPathToFirstNode(`./${QNS.w}trPr`, node)
+			evaluateXPathToFirstNode(`./${QNS.w}trPr/${QNS.w}del`, node)
 		);
 
 		return new RowDeletion(

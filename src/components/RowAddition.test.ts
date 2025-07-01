@@ -12,7 +12,7 @@ const emptyContext: ComponentContext = {
 	relationships: null,
 };
 
-describe('RowAddition from XML', () => {
+describe('RowAddition', () => {
 	const rowAddition = RowAddition.fromNode(
 		create(`
         <w:tr xmlns:w="${NamespaceUri.w}">
