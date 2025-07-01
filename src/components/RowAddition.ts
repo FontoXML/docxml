@@ -2,7 +2,7 @@
  * @file
  * Note this file is 99% the same as RowDeletion. Please maintain both accordingly.
  */
-
+import { Row } from '../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,
@@ -27,7 +27,6 @@ import {
 import {
 	createNodeFromRow,
 	parsePropsAndChildNodes,
-	Row,
 	type RowChild,
 } from './Row.ts';
 
