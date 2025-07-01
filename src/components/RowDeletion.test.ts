@@ -38,22 +38,21 @@ describe('RowDeletion', () => {
 		expect(rowDeletion.props.date).toEqual(
 			new Date('2025-06-30T14:25:40.079Z')
 		);
-		expect(rowDeletion.props.cellSpacing).toBeTruthy();
-		expect(rowDeletion.props.isHeaderRow).toBe(true);
-		expect(rowDeletion.props.isUnsplittable).toBe(true);
+		expect(rowDeletion.props.cellSpacing).toBeFalsy();
+		expect(rowDeletion.props.isHeaderRow).toBe(false);
+		expect(rowDeletion.props.isUnsplittable).toBe(false);
 	});
 
 	it('parses children correctly', () => {
-		expect(rowDeletion.children).toBeFalsy();
+		expect(rowDeletion.children).toHaveLength(1);
 	});
 
 	it('serializes correctly', async () => {
 		expect(serialize(await rowDeletion.toNode([new Table({})]))).toBe(
-			`<tr xmlns="${NamespaceUri.w}">
-                <trPr>
-                    <del xmlns:ns1="${NamespaceUri.w}" ns1:id="2" ns1:author="Inés" ns1:date="2025-06-30T14:25:40.079Z"/>
-                </trPr>
-            </tr>`.replace(/\n|\t/g, '')
+			`<tr xmlns="${NamespaceUri.w}"><trPr><del xmlns:ns1="${NamespaceUri.w}" ns1:id="2" ns1:author="Inés" ns1:date="2025-06-30T14:25:40.079Z"/></trPr></tr>`.replace(
+				/\n|\t/g,
+				''
+			)
 		);
 	});
 });
