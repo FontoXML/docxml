@@ -6,7 +6,7 @@ import { Component, type ComponentDefinition } from '../classes/Component.ts';
 import type { ChangeInformation } from '../utilities/changes.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
-import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
+import { QNS } from '../utilities/namespaces.ts';
 
 export type MoveRangeStartProps = ChangeInformation & {
 	name: string;
@@ -27,23 +27,24 @@ export class MoveRangeStart extends Component<
 	 */
 	public override toNode(): Node {
 		return create(
-			`	
+			`	let $attrs := [
+					attribute ${QNS.w}id { $id }, 
+					attribute ${QNS.w}date { $date }, 
+					attribute ${QNS.w}author { $author }, 
+					attribute ${QNS.w}name { $name }
+				]
+				return (
 					switch ($type)
 					case 'to' return 
 					element ${QNS.w}moveToRangeStart {
-						attribute ${QNS.w}id { $id },
-						attribute ${QNS.w}author { $author },
-						attribute ${QNS.w}date { $date },
-						attribute ${QNS.w}name { $name }
+						$attrs
 					}
 					case 'from' return 
 					element ${QNS.w}moveFromRangeStart {
-						attribute ${QNS.w}id { $id },
-						attribute ${QNS.w}author { $author },
-						attribute ${QNS.w}date { $date },
-						attribute ${QNS.w}name { $name }
+						$attrs
 					}
 					default return ()
+				)	
 			`,
 			{
 				...this.props,

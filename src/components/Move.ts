@@ -17,13 +17,9 @@ import {
 	registerComponent,
 } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
-import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
-import {
-	evaluateXPathToNodes,
-	evaluateXPathToString,
-} from '../utilities/xquery.ts';
+import { QNS } from '../utilities/namespaces.ts';
+import { evaluateXPathToNodes } from '../utilities/xquery.ts';
 import type { Paragraph } from './Paragraph.ts';
-import { parsePropsAndChildNodes } from './Row.ts';
 import type { Text } from './Text.ts';
 /**
  * A type for indicating the start of a range of moved text. In OOXML, these are self-closing tags.
@@ -48,22 +44,22 @@ export class Move extends Component<MoveProps, MoveChild> {
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		return create(
 			`
-				let $t := $type 
+				let $attrs := [
+					attribute ${QNS.w}id { $id }, 
+					attribute ${QNS.w}date { $date }, 
+					attribute ${QNS.w}author { $author }
+				]
 				return (
-					switch ($t)
+					switch ($type)
 					case 'to' return (
 						element ${QNS.w}moveTo { 
-							attribute ${QNS.w}id { $id },
-							attribute ${QNS.w}date { $date }, 
-							attribute ${QNS.w}author { $author },
+							$attrs,
 							$children
 						}
 					)
 					case 'from' return (
 						element ${QNS.w}moveFrom { 
-							attribute ${QNS.w}id { $id },
-							attribute ${QNS.w}date { $date }, 
-							attribute ${QNS.w}author { $author },
+							$attrs,
 							$children
 						}
 					)

@@ -55,7 +55,10 @@ export class MoveRangeEnd extends Component<
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return node.nodeName === 'w:moveFromRangeStart';
+		return (
+			node.nodeName === 'w:moveFromRangeEnd' ||
+			node.nodeName === 'w:moveToRangeEnd'
+		);
 	}
 
 	/**
