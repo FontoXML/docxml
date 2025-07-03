@@ -7,6 +7,7 @@ import type { ChangeInformation } from '../utilities/changes.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
+import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
 /**
  * A type for indicating the start of a range of moved text. In OOXML, these are self-closing tags.
@@ -64,10 +65,20 @@ export class MoveRangeEnd extends Component<
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	// static override fromNode(node: Node): MoveFromRangeStart {
-	// 	const props = getChangeInformation(node);
-	// 	return new MoveFromRangeStart(props);
-	// }
+	static override fromNode(node: Node): MoveRangeEnd {
+		const type = node.nodeName === 'moveFromRangeEnd' ? 'from' : 'to';
+		const { id } = evaluateXPathToMap<{
+			id: number;
+		}>(
+			`map { 
+				"id": ./@${QNS.w}id/number(), 
+			}`
+		);
+		return new MoveRangeEnd({
+			type: type,
+			id: id,
+		});
+	}
 }
 
 registerComponent(MoveRangeEnd as unknown as ComponentDefinition);

@@ -7,6 +7,7 @@ import type { ChangeInformation } from '../utilities/changes.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
+import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
 export type MoveRangeStartProps = ChangeInformation & {
 	name: string;
@@ -69,7 +70,29 @@ export class MoveRangeStart extends Component<
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	// static override fromNode(node: Node): MoveRangeStart {}
+	static override fromNode(node: Node): MoveRangeStart {
+		const type = node.nodeName === 'moveFromRangeStart' ? 'from' : 'to';
+		const { id, name, date, author } = evaluateXPathToMap<{
+			id: number;
+			name: string;
+			date: Date;
+			author: string;
+		}>(
+			`map { 
+				"id": ./@${QNS.w}id/number(), 
+				"name": ./@${QNS.w}name/string(),
+				"date": ./@${QNS.w}date/string(),
+				"author": ./@${QNS.w}author/string()
+			}`
+		);
+		return new MoveRangeStart({
+			type: type,
+			id: id,
+			name: name,
+			date: date,
+			author: author,
+		});
+	}
 }
 
 registerComponent(MoveRangeStart as unknown as ComponentDefinition);

@@ -94,7 +94,6 @@ export class Move extends Component<MoveProps, MoveChild> {
 			`./*[self::w:p or self::w:r]`,
 			node
 		);
-		console.log(children);
 		return new Move(
 			{
 				author: changeProps.author,
