@@ -13,6 +13,31 @@ const date = new Date();
 // Alternatively, you can use JSX:
 docxFile.document.set(
 	<Section>
+		<Paragraph>
+			<MoveRangeStart
+				id={2}
+				author="Gabe"
+				date={date}
+				name="Move_1"
+				type="to"
+			/>
+			<Move type="to" id={2} date={date} author="Gabe">
+				<Text>This is some more moved text.</Text>
+			</Move>
+			<MoveRangeEnd id={2} type="to" />
+			<Text>This is a bit of sample text.</Text>
+			<MoveRangeStart
+				id={3}
+				author="Gabe"
+				date={date}
+				name="Move_1"
+				type="from"
+			/>
+			<Move type="from" id={3} date={date} author="Gabe">
+				<Text>This is some more moved text.</Text>
+			</Move>
+			<MoveRangeEnd id={3} type="from" />
+		</Paragraph>
 		<MoveRangeStart
 			id={1}
 			type="to"

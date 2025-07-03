@@ -6,7 +6,7 @@ import { Component, type ComponentDefinition } from '../classes/Component.ts';
 import type { ChangeInformation } from '../utilities/changes.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
-import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
+import { QNS } from '../utilities/namespaces.ts';
 
 /**
  * A type for indicating the start of a range of moved text. In OOXML, these are self-closing tags.
