@@ -3,18 +3,15 @@
 import './Text.ts';
 
 import { Component, type ComponentDefinition } from '../classes/Component.ts';
-import {
-	type ChangeInformation,
-	getChangeInformation,
-} from '../utilities/changes.ts';
+import type { ChangeInformation } from '../utilities/changes.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
-import { QNS } from '../utilities/namespaces.ts';
+import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 
 /**
  * A type for indicating the start of a range of moved text. In OOXML, these are self-closing tags.
  */
-export type MoveRangeEndChildren = never;
+export type MoveRangeEndChild = never;
 
 export type MoveRangeEndProps = Pick<ChangeInformation, 'id'> & {
 	type: 'from' | 'to';
@@ -25,7 +22,7 @@ export type MoveRangeEndProps = Pick<ChangeInformation, 'id'> & {
  */
 export class MoveRangeEnd extends Component<
 	MoveRangeEndProps,
-	MoveRangeEndChildren
+	MoveRangeEndChild
 > {
 	public static override readonly children: string[] = [];
 	public static override readonly mixed: boolean = false;
@@ -36,17 +33,19 @@ export class MoveRangeEnd extends Component<
 	public override toNode(): Node {
 		return create(
 			`
-				element { $type } {
-					attribute ${QNS.w}id { $id },
-					attribute ${QNS.w}author { $author },
-					attribute ${QNS.w}date { $date }
+				switch ($type)
+				case 'to' return 
+				element ${QNS.w}moveToRangeEnd {
+					attribute ${QNS.w}id { $id }
 				}
+				case 'from' return 
+				element ${QNS.w}moveFromRangeEnd { 
+					attribute ${QNS.w}id { $id }
+				}
+				default return ()
 			`,
 			{
-				type:
-					this.props.type == 'to'
-						? `${QNS.w}moveToRangeEnd`
-						: `${QNS.w}moveFromRangeEnd`,
+				type: this.props.type,
 				id: this.props.id,
 			}
 		);

@@ -7,11 +7,6 @@ import { MoveRangeStart } from './MoveRangeStart.ts';
 describe('Move range start for to and from elements...', () => {
 	const date = new Date();
 
-	const emptyContext: ComponentContext = {
-		archive: new Archive(),
-		relationships: null,
-	};
-
 	const newMoveToRangeStart = new MoveRangeStart({
 		type: 'to',
 		name: 'Move_1',

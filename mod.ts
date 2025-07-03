@@ -76,11 +76,12 @@ export {
 	type ImageChild,
 	type ImageProps,
 } from './src/components/Image.ts';
+export { Move, type MoveChild, type MoveProps } from './src/components/Move.ts';
 export {
-	MoveFrom,
-	type MoveFromChild,
-	type MoveFromProps,
-} from './src/components/MoveFrom.ts';
+	MoveRangeEnd,
+	type MoveRangeEndChild,
+	type MoveRangeEndProps,
+} from './src/components/MoveRangeEnd.ts';
 export {
 	MoveRangeStart,
 	type MoveRangeStartChild,
