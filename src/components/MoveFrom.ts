@@ -12,55 +12,53 @@ import {
 	type ChangeInformation,
 	getChangeInformation,
 } from '../utilities/changes.ts';
-import {
-	createChildComponentsFromNodes,
-	registerComponent,
-} from '../utilities/components.ts';
+import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToNodes } from '../utilities/xquery.ts';
+import { evaluateXPathToString } from '../utilities/xquery.ts';
+import type { Paragraph } from './Paragraph.ts';
 import type { Text } from './Text.ts';
-import type { TextDeletion } from './TextDeletion.ts';
-
 /**
  * A type for indicating the start of a range of moved text. In OOXML, these are self-closing tags.
  */
-export type MoveToRangeStart = never;
+export type MoveFromChild = Text | Paragraph;
 
 /**
  * A type describing the props accepted by {@link TextAddition}.
  */
-export type MoveRangeStartProps = ChangeInformation & {
+export type MoveFromProps = ChangeInformation & {
 	name: string;
-	colFirst?: number;
-	colLast?: number;
 };
 
 /**
  * A component that represents a change-tracked text that was inserted.
  */
-export class MoveToRangeStart extends Component<
-	TextAdditionProps,
-	TextAdditionChild
-> {
-	public static override readonly children: string[] = [
-		'Text',
-		this.name,
-		'TextDeletion',
-	];
-	public static override readonly mixed: boolean = false;
+export class MoveFrom extends Component<MoveFromProps, MoveFromChild> {
+	public static override readonly children: string[] = ['Text', 'Paragraph'];
+
+	public static override readonly mixed: boolean = true;
 
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+		console.log(ancestry);
 		return create(
 			`
-				element ${QNS.w}ins {
-					attribute ${QNS.w}id { $id },
-					attribute ${QNS.w}author { $author },
+				element ${QNS.w}moveFromRangeStart {
+					attribute ${QNS.w}author { $author }, 
+					attribute ${QNS.w}id { $id }, 
 					attribute ${QNS.w}date { $date },
+					attribute ${QNS.w}name { $name } 
+				}, 
+				element ${QNS.w}moveFrom { 
+					attribute ${QNS.w}id { $moveFromId },
+					attribute ${QNS.w}date { $date }, 
+					attribute ${QNS.w}author { $author },
 					$children
+				},
+				element ${QNS.w}moveFromRangeEnd {
+					attribute ${QNS.w}id { $id }
 				}
 			`,
 			{
@@ -75,26 +73,23 @@ export class MoveToRangeStart extends Component<
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return node.nodeName === 'w:ins';
+		return node.nodeName === 'w:moveFrom';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(
-		node: Node,
-		context: ComponentContext
-	): TextAddition {
-		const props = getChangeInformation(node);
-		return new TextAddition(
-			props,
-			...createChildComponentsFromNodes<TextAdditionChild>(
-				this.children,
-				evaluateXPathToNodes(`./${QNS.w}r`, node),
-				context
-			)
-		);
+	static override fromNode(node: Node, context: ComponentContext): MoveFrom {
+		const changeProps = getChangeInformation(node);
+		const name = evaluateXPathToString(`./@${QNS.w}name`, node);
+		console.log(name);
+		return new MoveFrom({
+			author: changeProps.author,
+			date: changeProps.date,
+			id: changeProps.id,
+			name: name,
+		});
 	}
 }
 
-registerComponent(TextAddition as unknown as ComponentDefinition);
+registerComponent(MoveFrom as unknown as ComponentDefinition);

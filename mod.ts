@@ -77,6 +77,16 @@ export {
 	type ImageProps,
 } from './src/components/Image.ts';
 export {
+	MoveFrom,
+	type MoveFromChild,
+	type MoveFromProps,
+} from './src/components/MoveFrom.ts';
+export {
+	MoveRangeStart,
+	type MoveRangeStartChild,
+	type MoveRangeStartProps,
+} from './src/components/MoveRangeStart.ts';
+export {
 	NonBreakingHyphen,
 	type NonBreakingHyphenChild,
 	type NonBreakingHyphenProps,
