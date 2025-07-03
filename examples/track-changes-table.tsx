@@ -30,9 +30,6 @@ const testTable = new Table(
 			id: 1,
 			author: 'Inés',
 			date: new Date(),
-			cellSpacing: cm(3),
-			isHeaderRow: true,
-			isUnsplittable: true,
 		},
 		new Cell({}, new Paragraph({}, new Text({}, ' it is time')))
 	),
