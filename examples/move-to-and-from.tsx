@@ -8,10 +8,89 @@ const docxFile = Docx.fromNothing().withSettings({
 	isTrackChangesEnabled: true,
 });
 
+// Next, we'll create some new instances of our various objects to create our content.
 const date = new Date();
 
+const paragraph1 = new Paragraph(
+	{},
+	new Text({}, 'This is my original, first paragraph.')
+);
+
+const paragraph2 = new Paragraph(
+	{},
+	new Text({}, 'This will be moved from being paragraph 2, to paragraph 1.')
+);
+
+const moveToStart = new MoveRangeStart({
+	id: 0,
+	type: 'to',
+	author: 'Gabe',
+	name: 'Move_0',
+	date: date,
+});
+
+const moveTo = new Move(
+	{
+		id: 1,
+		type: 'to',
+		author: 'Gabe',
+		date: date,
+	},
+	paragraph2
+);
+
+const moveToEnd = new MoveRangeEnd({
+	id: 0,
+	type: 'to',
+});
+
+const moveFromStart = new MoveRangeStart({
+	id: 2,
+	type: 'from',
+	author: 'Gabe',
+	name: 'Move_0',
+	date: date,
+});
+
+const moveFrom = new Move(
+	{
+		id: 2,
+		type: 'to',
+		author: 'Gabe',
+		date: date,
+	},
+	paragraph2
+);
+
+const moveFromEnd = new MoveRangeEnd({
+	id: 2,
+	type: 'from',
+});
+
+// Create a section that contains our content moves.
+const section = new Section(
+	{},
+	moveToStart,
+	moveTo,
+	moveToEnd,
+	paragraph1,
+	moveFromStart,
+	moveFrom,
+	moveFromEnd
+);
+
+// Add that section to our existing Word document.
+docxFile.document.set(section);
+
+// And write it to a file.
+docxFile.toFile('move-content.docx');
+
 // Alternatively, you can use JSX:
-docxFile.document.set(
+const jsxWordDoc = Docx.fromNothing().withSettings({
+	isTrackChangesEnabled: true,
+});
+
+jsxWordDoc.document.set(
 	<Section>
 		<Paragraph>
 			<MoveRangeStart
@@ -70,4 +149,4 @@ docxFile.document.set(
 	</Section>
 );
 
-docxFile.toFile('move-content-jsx.docx');
+jsxWordDoc.toFile('move-content-jsx.docx');

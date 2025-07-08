@@ -7,7 +7,9 @@ import {
 	type AnyComponent,
 	Component,
 	type ComponentAncestor,
+	type ComponentAncestor,
 	type ComponentContext,
+	type ComponentDefinition,
 	type ComponentDefinition,
 	type ComponentNodes,
 	isComponentDefinition,
@@ -21,10 +23,15 @@ import {
 	createChildComponentsFromNodes,
 	registerComponent,
 } from '../utilities/components.ts';
+import {
+	createChildComponentsFromNodes,
+	registerComponent,
+} from '../utilities/components.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
+import type { Move } from './Move.ts';
 import { Paragraph } from './Paragraph.ts';
 import type { Table } from './Table.ts';
 
@@ -32,6 +39,7 @@ import type { Table } from './Table.ts';
  * A type describing the components accepted as children of {@link Section}.
  */
 export type SectionChild =
+	| Move
 	| Paragraph
 	| Table
 	| BookmarkRangeStart
