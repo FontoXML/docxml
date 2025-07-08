@@ -25,6 +25,8 @@ const moveToStart = new MoveRangeStart({
 	id: 0,
 	type: 'to',
 	author: 'Gabe',
+	// The name of a move to should match that of a move from. Word will still open the document if the two
+	// do not match, but it will appear as an extra addition and movement. 
 	name: 'Move_0',
 	date: date,
 });
