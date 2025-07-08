@@ -49,9 +49,6 @@ export class MoveRangeStart extends Component<
 			`,
 			{
 				...this.props,
-				type: this.props.type,
-				id: this.props.id,
-				name: this.props.name,
 				date: this.props.date.toISOString(),
 			}
 		);
@@ -71,7 +68,7 @@ export class MoveRangeStart extends Component<
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static override fromNode(node: Node): MoveRangeStart {
-		const type = node.nodeName === 'moveFromRangeStart' ? 'from' : 'to';
+		const type = node.nodeName === 'w:moveFromRangeStart' ? 'from' : 'to';
 		const { id, name, date, author } = evaluateXPathToMap<{
 			id: number;
 			name: string;
@@ -83,7 +80,8 @@ export class MoveRangeStart extends Component<
 				"name": ./@${QNS.w}name/string(),
 				"date": ./@${QNS.w}date/string(),
 				"author": ./@${QNS.w}author/string()
-			}`
+			}`,
+			node
 		);
 		return new MoveRangeStart({
 			type: type,

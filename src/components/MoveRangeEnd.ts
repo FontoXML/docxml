@@ -66,13 +66,14 @@ export class MoveRangeEnd extends Component<
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static override fromNode(node: Node): MoveRangeEnd {
-		const type = node.nodeName === 'moveFromRangeEnd' ? 'from' : 'to';
+		const type = node.nodeName === 'w:moveFromRangeEnd' ? 'from' : 'to';
 		const { id } = evaluateXPathToMap<{
 			id: number;
 		}>(
 			`map { 
-				"id": ./@${QNS.w}id/number(), 
-			}`
+				"id": ./@${QNS.w}id/number()
+			}`,
+			node
 		);
 		return new MoveRangeEnd({
 			type: type,
