@@ -7,9 +7,7 @@ import {
 	type AnyComponent,
 	Component,
 	type ComponentAncestor,
-	type ComponentAncestor,
 	type ComponentContext,
-	type ComponentDefinition,
 	type ComponentDefinition,
 	type ComponentNodes,
 	isComponentDefinition,
@@ -19,10 +17,6 @@ import {
 	sectionPropertiesFromNode,
 	sectionPropertiesToNode,
 } from '../properties/section-properties.ts';
-import {
-	createChildComponentsFromNodes,
-	registerComponent,
-} from '../utilities/components.ts';
 import {
 	createChildComponentsFromNodes,
 	registerComponent,
