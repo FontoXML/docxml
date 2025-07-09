@@ -1,11 +1,11 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
-import { Move } from '@fontoxml/docxml';
 import { Archive } from '../classes/Archive.ts';
 import type { ComponentContext } from '../classes/Component.ts';
 import { create, serialize } from '../utilities/dom.ts';
 import { NamespaceUri } from '../utilities/namespaces.ts';
+import { Move } from './Move.ts';
 import { Paragraph } from './Paragraph.ts';
 import { Text } from './Text.ts';
 
@@ -77,17 +77,15 @@ describe('Move content in track changes...', () => {
 		expect(serialize(await moveToObject.toNode([]))).toEqual(
 			serialize(
 				create(
-					`<moveTo xmlns="${NamespaceUri.w}" xmlns:ns1="${
+					`<p xmlns="${NamespaceUri.w}" xmlns:ns1="${
 						NamespaceUri.w
-					}" ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe" >
-						<p>
-							<pPr />
-							<r>
-								<t xml:space="preserve" >This is paragraph text</t>
-							</r>
-						</p>
-					
-					</moveTo>`
+					}"  >
+						<pPr><moveTo ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe"/></pPr>
+						<r>
+							<t xml:space="preserve" >This is paragraph text</t>
+						</r>
+					</p>
+					`
 				)
 			)
 		);
@@ -97,16 +95,16 @@ describe('Move content in track changes...', () => {
 		expect(serialize(await moveFromObject.toNode([]))).toEqual(
 			serialize(
 				create(
-					`<moveFrom xmlns="${NamespaceUri.w}" xmlns:ns1="${
+					`<p xmlns="${NamespaceUri.w}" xmlns:ns1="${
 						NamespaceUri.w
-					}" ns1:id="1" ns1:date="${date.toISOString()}" ns1:author="Angel" >
-						<p>
-							<pPr />
-							<r>
-								<t xml:space="preserve" >This is a moveFrom node.</t>
-							</r>
-						</p>
-					</moveFrom>`
+					}" >
+						<pPr>
+							<moveFrom  ns1:id="1" ns1:date="${date.toISOString()}" ns1:author="Angel" /> 
+						</pPr>
+						<r>
+							<t xml:space="preserve" >This is a moveFrom node.</t>
+						</r>
+					</p>`
 				)
 			)
 		);

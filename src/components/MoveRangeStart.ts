@@ -2,7 +2,7 @@
 // definitions, components register themselves in a side-effect of their module.
 import './Text.ts';
 
-import { Component, type ComponentDefinition } from '../classes/Component.ts';
+import { Component } from '../classes/Component.ts';
 import type { ChangeInformation } from '../utilities/changes.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
@@ -93,4 +93,4 @@ export class MoveRangeStart extends Component<
 	}
 }
 
-registerComponent(MoveRangeStart as unknown as ComponentDefinition);
+registerComponent(MoveRangeStart);

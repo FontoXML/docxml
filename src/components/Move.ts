@@ -6,7 +6,6 @@ import {
 	Component,
 	type ComponentAncestor,
 	type ComponentContext,
-	type ComponentDefinition,
 } from '../classes/Component.ts';
 import {
 	type ChangeInformation,
@@ -21,13 +20,14 @@ import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToNodes } from '../utilities/xquery.ts';
 import type { Paragraph } from './Paragraph.ts';
 import type { Text } from './Text.ts';
+
 /**
- * A type for indicating the start of a range of moved text. In OOXML, these are self-closing tags.
+ * A type specifying the children of {@link Moved}.
  */
 export type MoveChild = Text | Paragraph;
 
 /**
- * A type describing the props accepted by {@link TextAddition}.
+ * A type describing the props accepted by {@link Move}.
  */
 export type MoveProps = ChangeInformation & { type: 'to' | 'from' };
 /**
@@ -49,21 +49,38 @@ export class Move extends Component<MoveProps, MoveChild> {
 					attribute ${QNS.w}date { $date }, 
 					attribute ${QNS.w}author { $author }
 				]
-				return (
+				let $moveType := 
 					switch ($type)
-					case 'to' return (
-						element ${QNS.w}moveTo { 
-							$attrs,
-							$children
-						}
-					)
-					case 'from' return (
-						element ${QNS.w}moveFrom { 
-							$attrs,
-							$children
-						}
-					)
+					case 'to' return element ${QNS.w}moveTo { $attrs }
+					case 'from' return element ${QNS.w}moveFrom { $attrs }
 					default return () 
+				return (
+					for $child in array:flatten($children) 
+					return (
+						if ($child/name() = 'p')
+						then (
+							copy $c := $child
+							modify (
+								if (exists($c/${QNS.w}pPr))
+								then (
+									insert node $moveType into $c/${QNS.w}pPr
+								)
+								else (
+									insert node element ${QNS.w}pPr { 
+										$moveType
+									} into $c
+								)
+							)
+							return ($c)
+						)
+						else (
+							copy $m := $moveType 
+							modify (
+								insert node $child into $m 
+							)
+							return ($m)
+						)
+					)
 				)
 			`,
 			{
@@ -110,4 +127,4 @@ export class Move extends Component<MoveProps, MoveChild> {
 	}
 }
 
-registerComponent(Move as unknown as ComponentDefinition);
+registerComponent(Move);
