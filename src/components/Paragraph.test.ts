@@ -78,7 +78,6 @@ describe('Paragraph with style change', () => {
 	});
 	it('serializes correctly', async () => {
 		const newNode = serialize(await paragraph.toNode([]));
-		console.log(newNode);
 		expect(newNode).toBe(
 			`
 				<p xmlns="${NamespaceUri.w}">
