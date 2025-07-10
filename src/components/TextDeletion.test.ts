@@ -10,7 +10,7 @@ describe('Text', () => {
 	const timeStamp = new Date();
 
 	it('serializes correctly', async () => {
-		const newAddition = new TextDeletion(
+		const newDeletion = new TextDeletion(
 			{
 				id: 1,
 				author: 'X',
@@ -19,7 +19,7 @@ describe('Text', () => {
 			new Text({}, 'Hello')
 		);
 
-		const additionNode = await newAddition.toNode([]);
+		const deletionNode = await newDeletion.toNode([]);
 
 		const newNode = create(`<del xmlns="${NamespaceUri.w}" xmlns:ns1="${
 			NamespaceUri.w
@@ -29,7 +29,7 @@ describe('Text', () => {
 						</r>
 			</del>`);
 
-		expect(serialize(additionNode)).toEqual(serialize(newNode));
+		expect(serialize(deletionNode)).toEqual(serialize(newNode));
 	});
 
 	it('creates component XML from node', async () => {
@@ -45,13 +45,13 @@ describe('Text', () => {
 				</del>
 			`);
 
-		const newAddition = TextDeletion.fromNode(newNode, {
+		const newDeletion = TextDeletion.fromNode(newNode, {
 			archive: docxArchive,
 			relationships: null,
 		});
 
-		expect(newAddition.props.author).toBe('Y');
-		expect(newAddition.props.date.toISOString()).toEqual(
+		expect(newDeletion.props.author).toBe('Y');
+		expect(newDeletion.props.date.toISOString()).toEqual(
 			date.toISOString()
 		);
 	});
