@@ -1,9 +1,10 @@
+import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
-import { expect } from 'std/expect';
+import { MoveRangeStart } from './MoveRangeStart.ts';
+
 import { create, serialize } from '../utilities/dom.ts';
 import { NamespaceUri } from '../utilities/namespaces.ts';
-import { MoveRangeStart } from './MoveRangeStart.ts';
 
 describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 	const date = new Date();

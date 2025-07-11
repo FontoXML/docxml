@@ -1,13 +1,14 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
+import { Move } from './Move.ts';
+import { Paragraph } from './Paragraph.ts';
+import { Text } from './Text.ts';
+
 import { Archive } from '../classes/Archive.ts';
 import type { ComponentContext } from '../classes/Component.ts';
 import { create, serialize } from '../utilities/dom.ts';
 import { NamespaceUri } from '../utilities/namespaces.ts';
-import { Move } from './Move.ts';
-import { Paragraph } from './Paragraph.ts';
-import { Text } from './Text.ts';
 
 describe('Move content in track changes...', () => {
 	const date = new Date();
