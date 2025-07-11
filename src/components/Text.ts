@@ -36,6 +36,7 @@ import type { FootnoteContinuationSeparator } from './FootnoteContinuationSepara
 import type { FootnoteSeparator } from './FootnoteSeparator.ts';
 import type { Image } from './Image.ts';
 import type { NonBreakingHyphen } from './NonBreakingHyphen.ts';
+import type { TextPropertiesChange } from './RunPropertiesChange.ts';
 import type { Symbol } from './Symbol.ts';
 import type { Tab } from './Tab.ts';
 import { TextDeletion } from './TextDeletion.ts';
@@ -56,6 +57,7 @@ export type TextChild =
 	| NonBreakingHyphen
 	// eslint-disable-next-line @typescript-eslint/ban-types
 	| Symbol
+	| TextPropertiesChange
 	| Tab;
 
 /**
@@ -80,6 +82,7 @@ export class Text extends Component<TextProps, TextChild> {
 		'NonBreakingHyphen',
 		'Symbol',
 		'Tab',
+		'TextPropertiesChange',
 	];
 	public static override readonly mixed: boolean = true;
 
