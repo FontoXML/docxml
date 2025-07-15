@@ -77,8 +77,7 @@ describe('Paragraph with style change', () => {
 		},
 	});
 	it('serializes correctly', async () => {
-		const newNode = serialize(await paragraph.toNode([]));
-		expect(newNode).toBe(
+		expect(serialize(await paragraph.toNode([]))).toBe(
 			`
 				<p xmlns="${NamespaceUri.w}">
 					<pPr>
