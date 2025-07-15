@@ -21,14 +21,14 @@ describe('Text', () => {
 
 		const deletionNode = await newDeletion.toNode([]);
 
-		const newNode = create(`
-			<del xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}" 
+		const newNode = create(
+			`<del xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}" 
 				ns1:id="1" ns1:author="X" ns1:date="${timeStamp.toISOString()}">
 				<r>
 					<delText xml:space="preserve">Hello</delText>
 				</r>
-			</del>
-		`);
+			</del>`
+		);
 
 		expect(serialize(deletionNode)).toEqual(serialize(newNode));
 	});
@@ -36,14 +36,16 @@ describe('Text', () => {
 	it('creates component XML from node', async () => {
 		const docxArchive = await Docx.fromNothing().toArchive();
 		const date = new Date();
-		const newNode = create(`
-			<del xmlns="${NamespaceUri.w}" xmlns:w="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}" 
+		const newNode = create(
+			`<del xmlns="${NamespaceUri.w}" xmlns:w="${
+				NamespaceUri.w
+			}" xmlns:ns1="${NamespaceUri.w}" 
 			ns1:author="Y" ns1:id="1" ns1:date="${date.toISOString()}">
 				<w:r>
 					<w:delText xml:space="preserve">Node Test</w:delText>
 				</w:r>
-			</del>
-		`);
+			</del>`
+		);
 
 		const newDeletion = TextDeletion.fromNode(newNode, {
 			archive: docxArchive,

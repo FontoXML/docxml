@@ -37,15 +37,17 @@ describe('Text', () => {
 	it('creates component XML from node', async () => {
 		const docxArchive = await Docx.fromNothing().toArchive();
 		const date = new Date();
-		const newNode = create(`
-			<ins xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}" xmlns:w="${
-			NamespaceUri.w
-		}" ns1:author="Y" ns1:id="1" ns1:date="${date.toISOString()}">
+		const newNode = create(
+			`<ins xmlns="${NamespaceUri.w}" xmlns:ns1="${
+				NamespaceUri.w
+			}" xmlns:w="${
+				NamespaceUri.w
+			}" ns1:author="Y" ns1:id="1" ns1:date="${date.toISOString()}">
 				<w:r>
 					<w:t xml:space="preserve">Node Test</w:t>
 				</w:r>
-			</ins>
-			`);
+			</ins>`
+		);
 
 		const newAddition = TextAddition.fromNode(newNode, {
 			archive: docxArchive,
