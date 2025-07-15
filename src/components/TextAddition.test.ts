@@ -22,13 +22,14 @@ describe('Text', () => {
 
 		const additionNode = await newAddition.toNode([]);
 
-		const newNode = create(`<ins xmlns="${NamespaceUri.w}" xmlns:ns1="${
-			NamespaceUri.w
-		}" ns1:id="1" ns1:author="X" ns1:date="${timeStamp.toISOString()}">
-                        <r>
-                            <t xml:space="preserve">Hello</t>
-                        </r>
-            </ins>`);
+		const newNode = create(
+			`<ins xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}" 
+				ns1:id="1" ns1:author="X" ns1:date="${timeStamp.toISOString()}">
+				<r>
+					<t xml:space="preserve">Hello</t>
+				</r>
+            </ins>`
+		);
 
 		expect(serialize(additionNode)).toEqual(serialize(newNode));
 	});
@@ -37,13 +38,13 @@ describe('Text', () => {
 		const docxArchive = await Docx.fromNothing().toArchive();
 		const date = new Date();
 		const newNode = create(`
-				<ins xmlns="${NamespaceUri.w}" xmlns:ns1="${
+			<ins xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}" xmlns:w="${
 			NamespaceUri.w
-		}" ns1:author="Y" ns1:id="1-test" ns1:date="${date.toISOString()}">
-					<r>
-						<t xml:space="preserver">Node Test</t>
-					</r>
-				</ins>
+		}" ns1:author="Y" ns1:id="1" ns1:date="${date.toISOString()}">
+				<w:r>
+					<w:t xml:space="preserve">Node Test</w:t>
+				</w:r>
+			</ins>
 			`);
 
 		const newAddition = TextAddition.fromNode(newNode, {
@@ -54,6 +55,15 @@ describe('Text', () => {
 		expect(newAddition.props.author).toBe('Y');
 		expect(newAddition.props.date.toISOString()).toEqual(
 			date.toISOString()
+		);
+
+		expect(serialize(await newAddition.toNode([]))).toBe(
+			`<ins xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}" 
+				ns1:id="1" ns1:author="Y" ns1:date="${date.toISOString()}">
+				<r>
+					<t xml:space="preserve">Node Test</t>
+				</r>
+			</ins>`.replace(/\t*\n*/gm, '')
 		);
 	});
 });

@@ -21,13 +21,14 @@ describe('Text', () => {
 
 		const deletionNode = await newDeletion.toNode([]);
 
-		const newNode = create(`<del xmlns="${NamespaceUri.w}" xmlns:ns1="${
-			NamespaceUri.w
-		}" ns1:id="1" ns1:author="X" ns1:date="${timeStamp.toISOString()}">
-						<r>
-							<delText xml:space="preserve">Hello</delText>
-						</r>
-			</del>`);
+		const newNode = create(`
+			<del xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}" 
+				ns1:id="1" ns1:author="X" ns1:date="${timeStamp.toISOString()}">
+				<r>
+					<delText xml:space="preserve">Hello</delText>
+				</r>
+			</del>
+		`);
 
 		expect(serialize(deletionNode)).toEqual(serialize(newNode));
 	});
@@ -36,14 +37,13 @@ describe('Text', () => {
 		const docxArchive = await Docx.fromNothing().toArchive();
 		const date = new Date();
 		const newNode = create(`
-				<del xmlns="${NamespaceUri.w}" xmlns:ns1="${
-			NamespaceUri.w
-		}" ns1:author="Y" ns1:id="1-test" ns1:date="${date.toISOString()}">
-					<r>
-						<delText xml:space="preserver">Node Test</delText>
-					</r>
-				</del>
-			`);
+			<del xmlns="${NamespaceUri.w}" xmlns:w="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}" 
+			ns1:author="Y" ns1:id="1" ns1:date="${date.toISOString()}">
+				<w:r>
+					<w:delText xml:space="preserve">Node Test</w:delText>
+				</w:r>
+			</del>
+		`);
 
 		const newDeletion = TextDeletion.fromNode(newNode, {
 			archive: docxArchive,
@@ -51,8 +51,19 @@ describe('Text', () => {
 		});
 
 		expect(newDeletion.props.author).toBe('Y');
+
 		expect(newDeletion.props.date.toISOString()).toEqual(
 			date.toISOString()
+		);
+
+		// Re-serialize our node to make sure we get the right thing back.
+		expect(serialize(await newDeletion.toNode([]))).toBe(
+			`<del xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}" 
+				ns1:id="1" ns1:author="Y" ns1:date="${date.toISOString()}">
+				<r>
+					<delText xml:space="preserve">Node Test</delText>
+				</r>
+			</del>`.replace(/\t*\n*/gm, '')
 		);
 	});
 });
