@@ -18,20 +18,19 @@ import {
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToNodes } from '../utilities/xquery.ts';
-import type { Paragraph } from './Paragraph.ts';
 import type { Text } from './Text.ts';
 
 /**
  * A type specifying the children of {@link Moved}.
  */
-export type MoveChild = Text | Paragraph;
+export type MoveChild = Text | never;
 
 /**
  * A type describing the props accepted by {@link Move}.
  */
 export type MoveProps = ChangeInformation & { type: 'to' | 'from' };
 /**
- * A component that represents a change-tracked text that was inserted.
+ * A component that represents a change-tracked text or paragrpah that was moved.
  */
 export class Move extends Component<MoveProps, MoveChild> {
 	public static override readonly children: string[] = ['Text', 'Paragraph'];
@@ -55,32 +54,14 @@ export class Move extends Component<MoveProps, MoveChild> {
 					case 'from' return element ${QNS.w}moveFrom { $attrs }
 					default return () 
 				return (
-					for $child in array:flatten($children) 
-					return (
-						if ($child/name() = 'p')
-						then (
-							copy $c := $child
-							modify (
-								if (exists($c/${QNS.w}pPr))
-								then (
-									insert node $moveType into $c/${QNS.w}pPr
-								)
-								else (
-									insert node element ${QNS.w}pPr { 
-										$moveType
-									} into $c
-								)
-							)
-							return ($c)
-						)
-						else (
-							copy $m := $moveType 
-							modify (
-								insert node $child into $m 
-							)
-							return ($m)
+					copy $m := $moveType 
+					modify (
+						for $c in array:flatten($children)
+						return (
+							insert node $c into $m
 						)
 					)
+					return ($m)
 				)
 			`,
 			{
@@ -107,10 +88,7 @@ export class Move extends Component<MoveProps, MoveChild> {
 	static override fromNode(node: Node, context: ComponentContext): Move {
 		const changeProps = getChangeInformation(node);
 		const type = node.nodeName === 'w:moveTo' ? 'to' : 'from';
-		const children = evaluateXPathToNodes(
-			`./*[self::w:p or self::w:r]`,
-			node
-		);
+		const children = evaluateXPathToNodes(`./*[self::w:r]`, node);
 		return new Move(
 			{
 				author: changeProps.author,
