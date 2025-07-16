@@ -1,4 +1,5 @@
-import type { MoveProps } from '../components/Move.ts';
+import { Archive } from '../classes/Archive.ts';
+import { Move } from '../components/Move.ts';
 import { create } from '../utilities/dom.ts';
 import type { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
@@ -125,15 +126,15 @@ export type TextProperties = {
 				hAnsi?: string;
 		  };
 
-	move?: MoveProps | null;
+	move?: Move | null;
 };
 
 export function textPropertiesFromNode(node?: Node | null): TextProperties {
 	if (!node) {
 		return {};
 	}
-	// console.log(serialize(node));
-	const data = evaluateXPathToMap<TextProperties>(
+
+	const data = evaluateXPathToMap(
 		`
 			map {
 				"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
@@ -163,17 +164,8 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 					"cs": @${QNS.w}cs/string(),
 					"ascii": @${QNS.w}ascii/string(),
 					"hAnsi": @${QNS.w}hAnsi/string()
-				}, 
-				"move":
-					let $n := ./*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]
-					return (
-						map { 
-							"author": ./$n/@${QNS.w}author/string(),
-							"id": $n/@${QNS.w}id/number(),
-							"type": if (./$n/name() eq '${QNS.w}moveTo') then 'to' else 'from',
-							"date": $n/@${QNS.w}date/string()	
-						}
-					)
+				},
+				"move": ./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]
 			}
 		`,
 		node
@@ -181,18 +173,18 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 
 	return {
 		...data,
-		// move: data.move
-		// 	? {
-		// 			author: data.move.author,
-		// 			id: data.move.id,
-		// 			date: new Date(data.move.date),
-		// 			type: data.move.type,
-		// 	  }
-		// 	: null,
+		move: data.move
+			? Move.fromNode(data.move as Node, {
+					archive: new Archive(),
+					relationships: null,
+			  })
+			: null,
 	};
 }
 
-export function textPropertiesToNode(data: TextProperties = {}): Node | null {
+export async function textPropertiesToNode(
+	data: TextProperties = {}
+): Promise<Node | null> {
 	if (
 		!data.style &&
 		!data.color &&
@@ -259,23 +251,8 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 					$font('hAnsi')
 				} else ()
 			} else (), 
-			if (exists($move)) then (
-				if ($move('type') = 'to')
-				then (
-					element ${QNS.w}moveTo { 
-						attribute ${QNS.w}author { $move('author') },
-						attribute ${QNS.w}id { $move('id') },
-						attribute ${QNS.w}date { $move('date') }
-					}
-				)
-				else (
-					element ${QNS.w}moveFrom { 
-						attribute ${QNS.w}author { $move('author') },
-						attribute ${QNS.w}id { $move('id') },
-						attribute ${QNS.w}date { $move('date') }
-					}
-				)
-			) else () 
+			if (exists($move)) then array:flatten($move) else () 
+
 		}`,
 		{
 			style: data.style || null,
@@ -311,14 +288,8 @@ export function textPropertiesToNode(data: TextProperties = {}): Node | null {
 							hAnsi: data.font.hAnsi || null,
 					  }
 					: null,
-			move: data.move
-				? {
-						author: data.move.author,
-						date: data.move.date,
-						id: data.move.id,
-						type: data.move.type,
-				  }
-				: null,
+
+			move: data.move ? await data.move?.toNode([]) : null,
 		}
 	);
 }

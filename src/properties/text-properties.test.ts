@@ -1,5 +1,6 @@
 import { describe } from 'std/testing/bdd';
 
+import { Move } from '../components/Move.ts';
 import { hpt, twip } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
 import { createXmlRoundRobinTest } from '../utilities/tests.ts';
@@ -32,7 +33,7 @@ describe('Text formatting', () => {
 			<w:kern w:val="23" />
 			<w:spacing w:val="100" />
 			<w:rFonts w:cs="Tahoma" w:ascii="Arial" w:hAnsi="Courier New" />
-			<w:moveTo w:author="Gabe" w:date="${date.toISOString()}" id="1" /> 
+			<w:moveTo w:author="Gabe" w:date="${date.toISOString()}" w:id="1" /> 
 		</w:rPr>`,
 		{
 			color: 'red',
@@ -56,12 +57,12 @@ describe('Text formatting', () => {
 				ascii: 'Arial',
 				hAnsi: 'Courier New',
 			},
-			move: {
+			move: new Move({
 				author: 'Gabe',
 				type: 'to',
 				date: date,
 				id: 1,
-			},
+			}),
 		}
 	);
 

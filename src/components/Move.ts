@@ -23,7 +23,7 @@ import type { Text } from './Text.ts';
 /**
  * A type specifying the children of {@link Moved}.
  */
-export type MoveChild = Text | never;
+export type MoveChild = Text;
 
 /**
  * A type describing the props accepted by {@link Move}.
@@ -87,8 +87,12 @@ export class Move extends Component<MoveProps, MoveChild> {
 	 */
 	static override fromNode(node: Node, context: ComponentContext): Move {
 		const changeProps = getChangeInformation(node);
-		const type = node.nodeName === 'w:moveTo' ? 'to' : 'from';
-		const children = evaluateXPathToNodes(`./*[self::w:r]`, node);
+		const type =
+			node.nodeName === `${QNS.w}moveTo` || node.nodeName === 'moveTo'
+				? 'to'
+				: 'from';
+		// console.log(node.nodeName);
+		const children = evaluateXPathToNodes(`./*[self::${QNS.w}r]`, node);
 		return new Move(
 			{
 				author: changeProps.author,
