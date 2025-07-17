@@ -1,5 +1,5 @@
 import { Archive } from '../classes/Archive.ts';
-import { Move } from '../components/Move.ts';
+import { Move, MoveProps } from '../components/Move.ts';
 import { create } from '../utilities/dom.ts';
 import type { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
@@ -126,7 +126,7 @@ export type TextProperties = {
 				hAnsi?: string;
 		  };
 
-	move?: Move | null;
+	move?: MoveProps | null;
 };
 
 export function textPropertiesFromNode(node?: Node | null): TextProperties {
@@ -135,39 +135,42 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 	}
 
 	const data = evaluateXPathToMap(
-		`
-			map {
-				"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
-				"color": ./${QNS.w}color/@${QNS.w}val/string(),
-				"shading": ./${QNS.w}shd/docxml:ct-shd(.),
-				"isUnderlined": ./${QNS.w}u/@${QNS.w}val/string(),
-				"isBold": map {
-					"simple": docxml:ct-on-off(./${QNS.w}b),
-					"complex": docxml:ct-on-off(./${QNS.w}bCs)
-				},
-				"isItalic": map {
-					"simple": docxml:ct-on-off(./${QNS.w}i),
-					"complex": docxml:ct-on-off(./${QNS.w}iCs)
-				},
-				"isSmallCaps": docxml:ct-on-off(./${QNS.w}smallCaps),
-				"isCaps": docxml:ct-on-off(./${QNS.w}caps),
-				"verticalAlign": ./${QNS.w}vertAlign/@${QNS.w}val/string(),
-				"language": ./${QNS.w}lang/@${QNS.w}val/string(),
-				"fontSize": map {
-					"simple": docxml:length(${QNS.w}sz/@${QNS.w}val, "hpt"),
-					"complex": docxml:length(${QNS.w}szCs/@${QNS.w}val, "hpt")
-				},
-				"minimumKerningFontSize": docxml:length(${QNS.w}kern/@${QNS.w}val, "hpt"),
-				"isStrike": docxml:ct-on-off(./${QNS.w}strike),
-				"spacing": docxml:length(${QNS.w}spacing/@${QNS.w}val, 'twip'),
-				"font": ./${QNS.w}rFonts/map {
-					"cs": @${QNS.w}cs/string(),
-					"ascii": @${QNS.w}ascii/string(),
-					"hAnsi": @${QNS.w}hAnsi/string()
-				},
-				"move": ./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]
+		`map {
+			"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
+			"color": ./${QNS.w}color/@${QNS.w}val/string(),
+			"shading": ./${QNS.w}shd/docxml:ct-shd(.),
+			"isUnderlined": ./${QNS.w}u/@${QNS.w}val/string(),
+			"isBold": map {
+				"simple": docxml:ct-on-off(./${QNS.w}b),
+				"complex": docxml:ct-on-off(./${QNS.w}bCs)
+			},
+			"isItalic": map {
+				"simple": docxml:ct-on-off(./${QNS.w}i),
+				"complex": docxml:ct-on-off(./${QNS.w}iCs)
+			},
+			"isSmallCaps": docxml:ct-on-off(./${QNS.w}smallCaps),
+			"isCaps": docxml:ct-on-off(./${QNS.w}caps),
+			"verticalAlign": ./${QNS.w}vertAlign/@${QNS.w}val/string(),
+			"language": ./${QNS.w}lang/@${QNS.w}val/string(),
+			"fontSize": map {
+				"simple": docxml:length(${QNS.w}sz/@${QNS.w}val, "hpt"),
+				"complex": docxml:length(${QNS.w}szCs/@${QNS.w}val, "hpt")
+			},
+			"minimumKerningFontSize": docxml:length(${QNS.w}kern/@${QNS.w}val, "hpt"),
+			"isStrike": docxml:ct-on-off(./${QNS.w}strike),
+			"spacing": docxml:length(${QNS.w}spacing/@${QNS.w}val, 'twip'),
+			"font": ./${QNS.w}rFonts/map {
+				"cs": @${QNS.w}cs/string(),
+				"ascii": @${QNS.w}ascii/string(),
+				"hAnsi": @${QNS.w}hAnsi/string()
+			},
+			"move": ./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]/map { 
+				"id": ./@${QNS.w}id/string(), 
+				"author": ./@${QNS.w}author/string(), 
+				"date": ./@${QNS.w}date/string(),
+				"type": if (name() eq '${QNS.w}moveTo') 'to' else 'from'
 			}
-		`,
+		}`,
 		node
 	);
 
@@ -251,8 +254,7 @@ export async function textPropertiesToNode(
 					$font('hAnsi')
 				} else ()
 			} else (), 
-			if (exists($move)) then $move else () 
-
+			if (exists($move)) then $move else ()
 		}`,
 		{
 			style: data.style || null,
@@ -288,7 +290,7 @@ export async function textPropertiesToNode(
 							hAnsi: data.font.hAnsi || null,
 					  }
 					: null,
-			move: data.move ? await data.move?.toNode([]) : null,
+			move: data.move ? await new Move(data.move).toNode([]) : null,
 		}
 	);
 }
