@@ -26,8 +26,6 @@ import { evaluateXPathToMap } from '../utilities/xquery.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import type { Move } from './Move.ts';
-import type { MoveRangeEnd } from './MoveRangeEnd.ts';
-import type { MoveRangeStart } from './MoveRangeStart.ts';
 import { Paragraph } from './Paragraph.ts';
 import type { Table } from './Table.ts';
 
@@ -40,8 +38,6 @@ export type SectionChild =
 	| Table
 	| BookmarkRangeStart
 	| BookmarkRangeEnd
-	| MoveRangeStart
-	| MoveRangeEnd
 	| Move;
 
 export const sectionChildComponentNames = [

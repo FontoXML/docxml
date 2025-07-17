@@ -42,8 +42,6 @@ import type { Field } from './Field.ts';
 import type { FootnoteAnchor } from './FootnoteAnchor.ts';
 import type { FootnoteReference } from './FootnoteReference.ts';
 import type { Move } from './Move.ts';
-import type { MoveRangeEnd } from './MoveRangeEnd.ts';
-import type { MoveRangeStart } from './MoveRangeStart.ts';
 import type { Text } from './Text.ts';
 import type { TextAddition } from './TextAddition.ts';
 import type { TextDeletion } from './TextDeletion.ts';
@@ -63,8 +61,6 @@ export type ParagraphChild =
 	| Hyperlink
 	| Field
 	| FootnoteReference
-	| MoveRangeStart
-	| MoveRangeEnd
 	| Move
 	| FootnoteAnchor;
 
