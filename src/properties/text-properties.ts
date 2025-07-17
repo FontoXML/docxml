@@ -170,7 +170,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 			"move": 
 				let $node := ./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]
 				return map { 
-					"id": $node/@${QNS.w}id/number(), 
+					"id": $node/@${QNS.w}id/string(), 
 					"author": $node/@${QNS.w}author/string(), 
 					"date": $node/@${QNS.w}date/string(),
 					"type": if ($node/name() eq 'to') then 'to' else 'from'
