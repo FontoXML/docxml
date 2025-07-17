@@ -1,5 +1,4 @@
-import { Archive } from '../classes/Archive.ts';
-import { Move, MoveProps } from '../components/Move.ts';
+import { Move, type MoveProps } from '../components/Move.ts';
 import { create } from '../utilities/dom.ts';
 import type { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
@@ -126,6 +125,10 @@ export type TextProperties = {
 				hAnsi?: string;
 		  };
 
+	/**
+	 * A property used to indicate when an entire paragraph has moved. If present, the containing paragraph
+	 * element will appear as a track-change moved paragraph.
+	 */
 	move?: MoveProps | null;
 };
 
@@ -134,7 +137,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		return {};
 	}
 
-	const data = evaluateXPathToMap(
+	const data = evaluateXPathToMap<TextProperties>(
 		`map {
 			"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
 			"color": ./${QNS.w}color/@${QNS.w}val/string(),
@@ -164,12 +167,14 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"ascii": @${QNS.w}ascii/string(),
 				"hAnsi": @${QNS.w}hAnsi/string()
 			},
-			"move": ./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]/map { 
-				"id": ./@${QNS.w}id/string(), 
-				"author": ./@${QNS.w}author/string(), 
-				"date": ./@${QNS.w}date/string(),
-				"type": if (name() eq '${QNS.w}moveTo') 'to' else 'from'
-			}
+			"move": 
+				let $node := ./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]
+				return map { 
+					"id": $node/@${QNS.w}id/number(), 
+					"author": $node/@${QNS.w}author/string(), 
+					"date": $node/@${QNS.w}date/string(),
+					"type": if ($node/name() eq 'to') then 'to' else 'from'
+				}
 		}`,
 		node
 	);
@@ -177,10 +182,12 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 	return {
 		...data,
 		move: data.move
-			? Move.fromNode(data.move as Node, {
-					archive: new Archive(),
-					relationships: null,
-			  })
+			? {
+					id: +data.move.id,
+					author: data.move.author,
+					date: new Date(data.move.date),
+					type: data.move.type,
+			  }
 			: null,
 	};
 }
@@ -206,7 +213,7 @@ export async function textPropertiesToNode(
 	) {
 		return null;
 	}
-	return create(
+	const newElement = create(
 		`element ${QNS.w}rPr {
 			if ($style) then element ${QNS.w}rStyle {
 				attribute ${QNS.w}val { $style }
@@ -254,7 +261,7 @@ export async function textPropertiesToNode(
 					$font('hAnsi')
 				} else ()
 			} else (), 
-			if (exists($move)) then $move else ()
+			$move
 		}`,
 		{
 			style: data.style || null,
@@ -293,4 +300,6 @@ export async function textPropertiesToNode(
 			move: data.move ? await new Move(data.move).toNode([]) : null,
 		}
 	);
+
+	return newElement;
 }

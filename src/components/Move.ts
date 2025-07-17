@@ -29,8 +29,11 @@ export type MoveChild = Text;
  * A type describing the props accepted by {@link Move}.
  */
 export type MoveProps = ChangeInformation & { type: 'to' | 'from' };
+
 /**
  * A component that represents a change-tracked text or paragrpah that was moved.
+ * If a `Move` is present outside the text-properties,
+ * then paragraphs appear as a insertion in Word.
  */
 export class Move extends Component<MoveProps, MoveChild> {
 	public static override readonly children: string[] = ['Text', 'Paragraph'];

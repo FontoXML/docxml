@@ -54,7 +54,7 @@ describe('Move content in track changes...', () => {
 		)
 	);
 
-	// Testinga move as a stand-alone object 
+	// Testing a move as a stand-alone object 
 	const moveFromObject = new Move(
 		{
 			id: 1,

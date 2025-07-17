@@ -1,6 +1,5 @@
 import { describe } from 'std/testing/bdd';
 
-import { Move } from '../components/Move.ts';
 import { hpt, twip } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
 import { createXmlRoundRobinTest } from '../utilities/tests.ts';
@@ -57,12 +56,12 @@ describe('Text formatting', () => {
 				ascii: 'Arial',
 				hAnsi: 'Courier New',
 			},
-			move: new Move({
+			move: {
 				author: 'Gabe',
 				type: 'from',
 				date: date,
 				id: 1,
-			}),
+			},
 		}
 	);
 
