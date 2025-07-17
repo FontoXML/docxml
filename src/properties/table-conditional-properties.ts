@@ -100,7 +100,7 @@ export async function tableConditionalPropertiesToNode(
 		`element ${QNS.w}tblStylePr {
 			attribute ${QNS.w}type { $type },
 			$pPr,
-			array:flatten($rPr),
+			$rPr,
 			$tblPr,
 			$tcPr
 		}`,

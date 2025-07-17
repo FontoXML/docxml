@@ -67,15 +67,15 @@ export class Move extends Component<MoveProps, MoveChild> {
 				]
 				let $moveType := 
 					switch ($type)
-					case 'to' return element ${QNS.w}moveTo { $attrs, $children  }
-					case 'from' return element ${QNS.w}moveFrom { $attrs, $children }
+					case 'to' return element ${QNS.w}moveTo { $attrs, $children } 
+					case 'from' return element ${QNS.w}moveFrom { $attrs, $children } 
 					default return () 
 				return $moveType
 			`,
 			{
 				...this.props,
 				type: this.props.type,
-				id: +this.props.id,
+				id: this.props.id,
 				date: new Date(this.props.date).toISOString(),
 				author: this.props.author,
 				children: await this.childrenToNode(ancestry),
@@ -94,7 +94,7 @@ export class Move extends Component<MoveProps, MoveChild> {
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static override fromNode(node: Node, context: ComponentContext): Move {
-		console.log('NODE NAME ', node.nodeName);
+		console.log('NODE NAME ', (node as Element).localName);
 		const { children, changeProps } = evaluateXPathToMap<{
 			children: Node[];
 			changeProps: MoveProps;
@@ -115,12 +115,12 @@ export class Move extends Component<MoveProps, MoveChild> {
 					"id": @${QNS.w}id/string(),
 					"author": @${QNS.w}author/string(),
 					"date": @${QNS.w}date/string(),
-					"type": if ($nodeName = 'w:moveTo' or $nodeName = 'moveTo') then 'to' else 'from'
+					"type": if ($nodeName eq 'moveTo') then 'to' else 'from'
 				}
 			}`,
 			node,
 			null,
-			{ nodeName: node.nodeName }
+			{ nodeName: (node as Element).localName }
 		);
 		return new Move(
 			{
