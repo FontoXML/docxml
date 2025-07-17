@@ -33,7 +33,7 @@ describe('Text formatting', () => {
 			<w:kern w:val="23" />
 			<w:spacing w:val="100" />
 			<w:rFonts w:cs="Tahoma" w:ascii="Arial" w:hAnsi="Courier New" />
-			<w:moveTo w:author="Gabe" w:date="${date.toISOString()}" w:id="1" /> 
+			<w:moveFrom w:author="Gabe" w:date="${date.toISOString()}" w:id="1" /> 
 		</w:rPr>`,
 		{
 			color: 'red',
@@ -59,7 +59,7 @@ describe('Text formatting', () => {
 			},
 			move: new Move({
 				author: 'Gabe',
-				type: 'to',
+				type: 'from',
 				date: date,
 				id: 1,
 			}),

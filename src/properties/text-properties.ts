@@ -251,7 +251,7 @@ export async function textPropertiesToNode(
 					$font('hAnsi')
 				} else ()
 			} else (), 
-			if (exists($move)) then array:flatten($move) else () 
+			if (exists($move)) then $move else () 
 
 		}`,
 		{
@@ -288,7 +288,6 @@ export async function textPropertiesToNode(
 							hAnsi: data.font.hAnsi || null,
 					  }
 					: null,
-
 			move: data.move ? await data.move?.toNode([]) : null,
 		}
 	);

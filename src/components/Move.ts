@@ -61,7 +61,7 @@ export class Move extends Component<MoveProps, MoveChild> {
 							insert node $c into $m
 						)
 					)
-					return ($m)
+					return $m
 				)
 			`,
 			{
@@ -88,7 +88,9 @@ export class Move extends Component<MoveProps, MoveChild> {
 	static override fromNode(node: Node, context: ComponentContext): Move {
 		const changeProps = getChangeInformation(node);
 		const type =
-			node.nodeName === `${QNS.w}moveTo` || node.nodeName === 'moveTo'
+			node.nodeName === `${QNS.w}moveTo` ||
+			node.nodeName === `moveTo` ||
+			node.nodeName === `w:moveTo`
 				? 'to'
 				: 'from';
 		// console.log(node.nodeName);

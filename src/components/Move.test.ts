@@ -7,7 +7,7 @@ import { Text } from './Text.ts';
 
 import { Archive } from '../classes/Archive.ts';
 import type { ComponentContext } from '../classes/Component.ts';
-import { create } from '../utilities/dom.ts';
+import { create, serialize } from '../utilities/dom.ts';
 import { NamespaceUri } from '../utilities/namespaces.ts';
 
 describe('Move content in track changes...', () => {
@@ -40,6 +40,7 @@ describe('Move content in track changes...', () => {
 		emptyContext
 	);
 
+	// Testing a move inside a paragraph. 
 	const moveToObject = new Paragraph(
 		{ style: null },
 		new Move(
@@ -53,6 +54,7 @@ describe('Move content in track changes...', () => {
 		)
 	);
 
+	// Testinga move as a stand-alone object 
 	const moveFromObject = new Move(
 		{
 			id: 1,
@@ -71,23 +73,23 @@ describe('Move content in track changes...', () => {
 		expect(newMoveFrom).toEqual(moveFromObject);
 	});
 
-	// it('turns Move object into the correct node', async () => {
-	// 	expect(serialize(await moveToObject.toNode([]))).toEqual(
-	// 		serialize(
-	// 			create(
-	// 				`<p xmlns="${NamespaceUri.w}" xmlns:ns1="${
-	// 					NamespaceUri.w
-	// 				}"  >
-	// 					<rPr><moveTo ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe"/></rPr>
-	// 					<r>
-	// 						<t xml:space="preserve" >This is paragraph text</t>
-	// 					</r>
-	// 				</p>
-	// 				`
-	// 			)
-	// 		)
-	// 	);
-	// });
+	it('turns Move object into the correct node', async () => {
+		expect(serialize(await moveToObject.toNode([]))).toEqual(
+			serialize(
+				create(
+					`<p xmlns="${NamespaceUri.w}" xmlns:ns1="${
+						NamespaceUri.w
+					}"  >
+						<rPr><moveTo ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe"/></rPr>
+						<r>
+							<t xml:space="preserve" >This is paragraph text</t>
+						</r>
+					</p>
+					`
+				)
+			)
+		);
+	});
 
 	// it('turns Move object into the correct node', async () => {
 	// 	expect(serialize(await moveFromObject.toNode([]))).toEqual(
