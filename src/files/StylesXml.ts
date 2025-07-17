@@ -167,12 +167,12 @@ export class StylesXml extends XmlFile {
 			</w:styles>`,
 			{
 				styles: this.#styles.map(
-					({ paragraph, text, table, ...style }) => ({
+					async ({ paragraph, text, table, ...style }) => ({
 						...style,
 						ppr: paragraphPropertiesToNode(
 							paragraph as ParagraphStyle['paragraph']
 						),
-						rpr: textPropertiesToNode(
+						rpr: await textPropertiesToNode(
 							text as ParagraphStyle['text']
 						),
 						tblpr: tablePropertiesToNode(

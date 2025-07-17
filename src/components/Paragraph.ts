@@ -93,8 +93,6 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'FootnoteReference',
 		'FootnoteAnchor',
 		'Move',
-		'MoveRangeStart',
-		'MoveRangeEnd',
 	];
 	public static override readonly mixed: boolean = false;
 	#sectionProperties: SectionProperties | null = null;
@@ -182,11 +180,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 						${QNS.w}bookmarkStart |
 						${QNS.w}bookmarkEnd | 
 						${QNS.w}moveTo | 
-						${QNS.w}moveFrom | 
-						${QNS.w}moveFromRangeStart | 
-						${QNS.w}moveFromRangeEnd | 
-						${QNS.w}moveToRangeStart | 
-						${QNS.w}moveToRangeEnd
+						${QNS.w}moveFrom 
 					) }
 				}
 			`,

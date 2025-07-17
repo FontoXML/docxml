@@ -206,10 +206,10 @@ export function paragraphPropertiesFromNode(
 	return data;
 }
 
-export function paragraphPropertiesToNode(
+export async function paragraphPropertiesToNode(
 	data: ParagraphProperties = {},
 	sectionProperties: SectionProperties | null = null
-): Node | null {
+): Promise<Node | null> {
 	if (!Object.keys(data).length && !sectionProperties) {
 		return null;
 	}
@@ -363,7 +363,7 @@ export function paragraphPropertiesToNode(
 						node: paragraphPropertiesToNode(data.change),
 				  }
 				: null,
-			rpr: textPropertiesToNode(data.pilcrow || undefined),
+			rpr: await textPropertiesToNode(data.pilcrow || undefined),
 			sectpr:
 				sectionProperties && sectionPropertiesToNode(sectionProperties),
 			tabs: data.tabs?.length

@@ -170,12 +170,12 @@ export class NumberingXml extends XmlFile {
 				abstracts: this.abstracts.array().map((abstract) => ({
 					...abstract,
 					levels: abstract.levels.map(
-						({ paragraph, text, ...level }) => ({
+						async ({ paragraph, text, ...level }) => ({
 							...level,
 							pPr: paragraph
 								? paragraphPropertiesToNode(paragraph)
 								: null,
-							rPr: text ? textPropertiesToNode(text) : null,
+							rPr: text ? await textPropertiesToNode(text) : null,
 						})
 					),
 				})),

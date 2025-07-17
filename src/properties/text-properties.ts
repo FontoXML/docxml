@@ -2,7 +2,10 @@ import { Move, type MoveProps } from '../components/Move.ts';
 import { create } from '../utilities/dom.ts';
 import type { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToMap } from '../utilities/xquery.ts';
+import {
+	evaluateXPathToMap,
+	evaluateXPathToString,
+} from '../utilities/xquery.ts';
 import type { Shading } from './shared-properties.ts';
 
 type SimpleOrComplex<Generic> = {
@@ -128,6 +131,7 @@ export type TextProperties = {
 	/**
 	 * A property used to indicate when an entire paragraph has moved. If present, the containing paragraph
 	 * element will appear as a track-change moved paragraph.
+	 * Read more here:  https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EXMJW.html
 	 */
 	move?: MoveProps | null;
 };
@@ -137,7 +141,16 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		return {};
 	}
 
-	const data = evaluateXPathToMap<TextProperties>(
+	const variables = {
+		nodeName: evaluateXPathToString(
+			`./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]/name()`,
+			node
+		),
+	};
+
+	console.log(variables.nodeName);
+
+	return evaluateXPathToMap<TextProperties>(
 		`map {
 			"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
 			"color": ./${QNS.w}color/@${QNS.w}val/string(),
@@ -167,29 +180,17 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"ascii": @${QNS.w}ascii/string(),
 				"hAnsi": @${QNS.w}hAnsi/string()
 			},
-			"move": 
-				let $node := ./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]
-				return map { 
-					"id": $node/@${QNS.w}id/string(), 
-					"author": $node/@${QNS.w}author/string(), 
-					"date": $node/@${QNS.w}date/string(),
-					"type": if ($node/name() eq 'to') then 'to' else 'from'
-				}
+			"move":  ./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]/map { 
+				"id": @${QNS.w}id/number(), 
+				"author": @${QNS.w}author/string(), 
+				"date": @${QNS.w}date/string(),
+				"type": if ($nodeName = '${QNS.w}moveTo') then 'to' else 'from'
+			}
 		}`,
-		node
+		node,
+		null,
+		variables
 	);
-
-	return {
-		...data,
-		move: data.move
-			? {
-					id: +data.move.id,
-					author: data.move.author,
-					date: new Date(data.move.date),
-					type: data.move.type,
-			  }
-			: null,
-	};
 }
 
 export async function textPropertiesToNode(
