@@ -169,7 +169,7 @@ export class StylesXml extends XmlFile {
 				styles: this.#styles.map(
 					async ({ paragraph, text, table, ...style }) => ({
 						...style,
-						ppr: paragraphPropertiesToNode(
+						ppr: await paragraphPropertiesToNode(
 							paragraph as ParagraphStyle['paragraph']
 						),
 						rpr: await textPropertiesToNode(
@@ -180,8 +180,8 @@ export class StylesXml extends XmlFile {
 						),
 						conditions: table?.conditions
 							? Object.entries(table.conditions).map(
-									([type, properties]) =>
-										tableConditionalPropertiesToNode({
+									async ([type, properties]) =>
+										await tableConditionalPropertiesToNode({
 											...properties,
 											type: type as TableConditionalTypes,
 										})

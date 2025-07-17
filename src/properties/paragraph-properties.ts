@@ -360,7 +360,7 @@ export async function paragraphPropertiesToNode(
 						id: data.change.id,
 						author: data.change.author,
 						date: data.change.date.toISOString(),
-						node: paragraphPropertiesToNode(data.change),
+						node: await paragraphPropertiesToNode(data.change),
 				  }
 				: null,
 			rpr: await textPropertiesToNode(data.pilcrow || undefined),

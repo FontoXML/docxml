@@ -107,7 +107,7 @@ export async function tableConditionalPropertiesToNode(
 		{
 			...tblpr,
 			pPr: tblpr.paragraph
-				? paragraphPropertiesToNode(tblpr.paragraph)
+				? await paragraphPropertiesToNode(tblpr.paragraph)
 				: null,
 			rPr: tblpr.text ? await textPropertiesToNode(tblpr.text) : null,
 			tblPr: tblpr.table ? tablePropertiesToNode(tblpr.table) : null,

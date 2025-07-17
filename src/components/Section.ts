@@ -45,8 +45,6 @@ export const sectionChildComponentNames = [
 	'Paragraph',
 	'BookmarkRangeStart',
 	'BookmarkRangeEnd',
-	'MoveRangeStart',
-	'MoveRangeEnd',
 	'Move',
 ];
 

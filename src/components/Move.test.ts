@@ -40,7 +40,7 @@ describe('Move content in track changes...', () => {
 		emptyContext
 	);
 
-	// Testing a move inside a paragraph. 
+	// Testing a move inside a paragraph.
 	const moveToObject = new Paragraph(
 		{ style: null },
 		new Move(
@@ -54,7 +54,7 @@ describe('Move content in track changes...', () => {
 		)
 	);
 
-	// Testing a move as a stand-alone object 
+	// Testing a move as a stand-alone object
 	const moveFromObject = new Move(
 		{
 			id: 1,
@@ -80,10 +80,12 @@ describe('Move content in track changes...', () => {
 					`<p xmlns="${NamespaceUri.w}" xmlns:ns1="${
 						NamespaceUri.w
 					}"  >
-						<rPr><moveTo ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe"/></rPr>
-						<r>
-							<t xml:space="preserve" >This is paragraph text</t>
-						</r>
+						<pPr/>
+						<moveTo ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe">
+							<r>
+								<t xml:space="preserve" >This is paragraph text</t>
+							</r>
+						</moveTo>
 					</p>
 					`
 				)

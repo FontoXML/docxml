@@ -173,7 +173,7 @@ export class NumberingXml extends XmlFile {
 						async ({ paragraph, text, ...level }) => ({
 							...level,
 							pPr: paragraph
-								? paragraphPropertiesToNode(paragraph)
+								? await paragraphPropertiesToNode(paragraph)
 								: null,
 							rPr: text ? await textPropertiesToNode(text) : null,
 						})

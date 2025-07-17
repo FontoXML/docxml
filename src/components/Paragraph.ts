@@ -138,7 +138,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 			`,
 			{
 				id: this.#id?.hex || null,
-				pPr: paragraphPropertiesToNode(
+				pPr: await paragraphPropertiesToNode(
 					this.props,
 					this.#sectionProperties
 				),
