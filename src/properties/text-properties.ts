@@ -214,7 +214,8 @@ export async function textPropertiesToNode(
 	) {
 		return null;
 	}
-	const newElement = create(
+
+	return create(
 		`element ${QNS.w}rPr {
 			if ($style) then element ${QNS.w}rStyle {
 				attribute ${QNS.w}val { $style }
@@ -301,6 +302,4 @@ export async function textPropertiesToNode(
 			move: data.move ? await new Move(data.move).toNode([]) : null,
 		}
 	);
-
-	return newElement;
 }
