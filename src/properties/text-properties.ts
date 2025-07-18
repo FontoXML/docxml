@@ -186,7 +186,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"id": @${QNS.w}id/number(), 
 				"author": @${QNS.w}author/string(), 
 				"date": @${QNS.w}date/string(),
-				"type": if ($nodeName eq 'w:moveTo' or $nodeName eq 'moveTo') then 'to' else 'from'
+				"type": if (nodeName eq '${QNS.w}moveTo' or $nodeName eq 'w:moveTo' or $nodeName eq 'moveTo') then 'to' else 'from'
 			}
 		}`,
 		node,
