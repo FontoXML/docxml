@@ -22,7 +22,7 @@ describe('Move content in track changes...', () => {
 		`<w:p xmlns:w="${NamespaceUri.w}">
 			<w:moveTo w:id="0" w:author="Gabe" w:date="${date.toISOString()}">
 				<w:r>
-					<w:t xml:space="preserve">This is paragraph text</w:t>
+					<w:t xml:space="preserve">This is a paragraph</w:t>
 				</w:r>
 			</w:moveTo>
 		</w:p>`,
@@ -50,7 +50,7 @@ describe('Move content in track changes...', () => {
 				author: 'Gabe',
 				type: 'to',
 			},
-			new Text({}, 'This is paragraph text')
+			new Text({}, 'This is a paragraph')
 		)
 	);
 
@@ -77,39 +77,34 @@ describe('Move content in track changes...', () => {
 		expect(serialize(await moveToObject.toNode([]))).toEqual(
 			serialize(
 				create(
-					`<p xmlns="${NamespaceUri.w}" xmlns:ns1="${
-						NamespaceUri.w
-					}"  >
+					`<p xmlns="${NamespaceUri.w}">
 						<pPr/>
-						<moveTo ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe">
-							<r>
-								<t xml:space="preserve" >This is paragraph text</t>
-							</r>
-						</moveTo>
-					</p>
-					`
+			<moveTo xmlns:ns1="${
+				NamespaceUri.w
+			}" ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe">
+				<r>
+					<t xml:space="preserve">This is a paragraph</t>
+				</r>
+			</moveTo>
+		</p>`
 				)
 			)
 		);
 	});
 
-	// it('turns Move object into the correct node', async () => {
-	// 	expect(serialize(await moveFromObject.toNode([]))).toEqual(
-	// 		serialize(
-	// 			create(
-	// 				`<p xmlns="${NamespaceUri.w}" xmlns:ns1="${
-	// 					NamespaceUri.w
-	// 				}" >
-	// 					<pPr>
-	// 					<rPr>
-	// 						<moveFrom  ns1:id="1" ns1:date="${date.toISOString()}" ns1:author="Angel" />
-	// 					</rPr>
-	// 					<r>
-	// 						<t xml:space="preserve" >This is a moveFrom node.</t>
-	// 					</r>
-	// 				</p>`
-	// 			)
-	// 		)
-	// 	);
-	// });
+	it('turns object of a moveFrom into the correct node', async () => {
+		expect(serialize(await moveFromObject.toNode([]))).toEqual(
+			serialize(
+				create(
+					`<moveFrom xmlns="${NamespaceUri.w}" xmlns:ns1="${
+						NamespaceUri.w
+					}" ns1:id="1" ns1:date="${date.toISOString()}" ns1:author="Angel" >
+						<r>
+							<t xml:space="preserve" >This is a moveFrom node.</t>
+						</r>
+					</moveFrom>`
+				)
+			)
+		);
+	});
 });

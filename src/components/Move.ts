@@ -94,7 +94,6 @@ export class Move extends Component<MoveProps, MoveChild> {
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static override fromNode(node: Node, context: ComponentContext): Move {
-		console.log('NODE NAME ', (node as Element).localName);
 		const { children, changeProps } = evaluateXPathToMap<{
 			children: Node[];
 			changeProps: MoveProps;
@@ -112,7 +111,7 @@ export class Move extends Component<MoveProps, MoveChild> {
 					${QNS.w}moveFrom
 				)}, 
 				"changeProps": map { 
-					"id": @${QNS.w}id/string(),
+					"id": @${QNS.w}id/number(),
 					"author": @${QNS.w}author/string(),
 					"date": @${QNS.w}date/string(),
 					"type": if ($nodeName eq 'moveTo') then 'to' else 'from'
@@ -126,7 +125,7 @@ export class Move extends Component<MoveProps, MoveChild> {
 			{
 				author: changeProps.author,
 				date: new Date(changeProps.date),
-				id: +changeProps.id,
+				id: changeProps.id,
 				type: changeProps.type,
 			},
 			...createChildComponentsFromNodes<MoveChild>(

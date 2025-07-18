@@ -141,15 +141,6 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		return {};
 	}
 
-	const variables = {
-		nodeName: evaluateXPathToString(
-			`./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]/name()`,
-			node
-		),
-	};
-
-	console.log(variables.nodeName);
-
 	return evaluateXPathToMap<TextProperties>(
 		`map {
 			"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
@@ -184,12 +175,17 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"id": @${QNS.w}id/number(), 
 				"author": @${QNS.w}author/string(), 
 				"date": @${QNS.w}date/string(),
-				"type": if ($nodeName = '${QNS.w}moveTo') then 'to' else 'from'
+				"type": if ($nodeName eq '${QNS.w}moveTo' or $nodeName eq 'moveTo') then 'to' else 'from'
 			}
 		}`,
 		node,
 		null,
-		variables
+		{
+			nodeName: evaluateXPathToString(
+				`./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]/name()`,
+				node
+			),
+		}
 	);
 }
 
