@@ -127,10 +127,11 @@ export type TextProperties = {
 				ascii?: string;
 				hAnsi?: string;
 		  };
-
 	/**
-	 * A property used to indicate when an entire paragraph has moved. If present, the containing paragraph
-	 * element will appear as a track-change moved paragraph.
+	 * A property used to indicate when an entire paragraph has moved.
+	 *
+	 * If present, the containing paragraph element will appear as a track-change moved paragraph.
+	 *
 	 * Read more here:  https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EXMJW.html
 	 */
 	move?: MoveProps | null;
@@ -171,7 +172,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"ascii": @${QNS.w}ascii/string(),
 				"hAnsi": @${QNS.w}hAnsi/string()
 			},
-			"move":  ./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]/map { 
+			"move": ./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]/map {
 				"id": @${QNS.w}id/number(), 
 				"author": @${QNS.w}author/string(), 
 				"date": @${QNS.w}date/string(),
@@ -295,6 +296,11 @@ export async function textPropertiesToNode(
 							hAnsi: data.font.hAnsi || null,
 					  }
 					: null,
+			/*
+			 * Although the Move component is used here and it can have children,
+			 * since the move information is sent as properties rather than as an
+			 * object, we can be sure that no more children will ever be created.
+			 */
 			move: data.move ? await new Move(data.move).toNode([]) : null,
 		}
 	);
