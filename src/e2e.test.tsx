@@ -32,8 +32,8 @@ describe('End-to-end', () => {
 			</Section>
 		);
 
-		it('Unformatted', async () =>
-			await expectDocxToContain(
+		it('Unformatted', () =>
+			expectDocxToContain(
 				docx,
 				RelationshipType.officeDocument,
 				`

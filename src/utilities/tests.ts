@@ -181,12 +181,12 @@ export function createXmlRoundRobinTest<
 	) {
 		const dom = typeof xml === 'string' ? create(xml) : xml;
 		const p1 = fromNode(dom);
-		const serializedAgain = toNode(p1);
+		const serializedAgain = await toNode(p1);
 		if (typeof xml !== 'string') {
 			xml.parentElement?.insertBefore(serializedAgain as Node, xml);
 			xml.parentElement?.removeChild(xml);
 		}
-		const p2 = fromNode(await serializedAgain);
+		const p2 = fromNode(serializedAgain);
 		for (const prop in parsedExpectation) {
 			localAssert(prop, p1, parsedExpectation, p2);
 		}

@@ -100,7 +100,7 @@ export type ParagraphProperties = {
 				date: Date;
 		  } & Omit<ParagraphProperties, 'change'>);
 	/**
-	 * Formatting of the pilcrow signn
+	 * Formatting of the pilcrow sign
 	 */
 	pilcrow?: TextProperties | null;
 

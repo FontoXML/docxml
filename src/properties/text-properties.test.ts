@@ -18,9 +18,9 @@ const test = createXmlRoundRobinTest<TextProperties>(
 const date = new Date();
 
 describe('Text formatting', () => {
-	it('Round-robin test for text properties...', async () => {
-		await test(
-			`<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+
+	test(
+		`<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
 				<w:color w:val="red" />
 				<w:u w:val="dashLongHeavy" />
 				<w:b />
@@ -36,52 +36,65 @@ describe('Text formatting', () => {
 				<w:rFonts w:cs="Tahoma" w:ascii="Arial" w:hAnsi="Courier New" />
 				<w:moveTo w:author="Gabe" w:date="${date.toISOString()}" w:id="1" /> 
 			</w:rPr>`,
-			{
-				color: 'red',
-				isUnderlined: 'dashLongHeavy',
-				isBold: { simple: true, complex: false },
-				isItalic: { simple: true, complex: false },
-				isSmallCaps: true,
-				shading: {
-					background: 'yellow',
-					foreground: 'orange',
-					pattern: 'diagStripe',
-				},
-				isCaps: true,
-				verticalAlign: 'subscript',
-				language: 'en-GB',
-				fontSize: { simple: hpt(19), complex: null },
-				minimumKerningFontSize: hpt(23),
-				spacing: twip(100),
-				font: {
-					cs: 'Tahoma',
-					ascii: 'Arial',
-					hAnsi: 'Courier New',
-				},
-				move: {
-					author: 'Gabe',
-					type: 'to',
-					date: date,
-					id: 1,
-				},
-			}
-		);
-	});
+		{
+			color: 'red',
+			isUnderlined: 'dashLongHeavy',
+			isBold: { simple: true, complex: false },
+			isItalic: { simple: true, complex: false },
+			isSmallCaps: true,
+			shading: {
+				background: 'yellow',
+				foreground: 'orange',
+				pattern: 'diagStripe',
+			},
+			isCaps: true,
+			verticalAlign: 'subscript',
+			language: 'en-GB',
+			fontSize: { simple: hpt(19), complex: null },
+			minimumKerningFontSize: hpt(23),
+			spacing: twip(100),
+			font: {
+				cs: 'Tahoma',
+				ascii: 'Arial',
+				hAnsi: 'Courier New',
+			},
+			move: {
+				author: 'Gabe',
+				type: 'to',
+				date: date,
+				id: 1,
+			},
+		}
+	);
 
-	describe('Complex character formatting', () => {
-		it('Round-robin test for complex character formatting', async () => {
-			await test(
-				`<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
-					<w:bCs />
-					<w:iCs />
-					<w:szCs w:val="23" />
-				</w:rPr>`,
-				{
-					isBold: { simple: false, complex: true },
-					isItalic: { simple: false, complex: true },
-					fontSize: { simple: null, complex: hpt(23) },
-				}
-			);
-		});
-	});
+	test(
+		`<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:color w:val="blue" />
+				<w:moveFrom w:author="Angel" w:date="${date.toISOString()}" w:id="0" /> 
+			</w:rPr>`,
+		{
+			color: 'blue',
+			move: {
+				type: 'from',
+				author: 'Angel',
+				date: date,
+				id: 0,
+			},
+		}
+	);
+});
+
+describe('Complex character formatting', () => {
+	test(
+		`<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:bCs />
+				<w:iCs />
+				<w:szCs w:val="23" />
+			</w:rPr>`,
+		{
+			isBold: { simple: false, complex: true },
+			isItalic: { simple: false, complex: true },
+			fontSize: { simple: null, complex: hpt(23) },
+		}
+	);
 });

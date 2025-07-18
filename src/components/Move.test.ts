@@ -40,6 +40,34 @@ describe('Move content in track changes...', () => {
 		emptyContext
 	);
 
+	const moveToAsPropNode = create(
+		`<w:p xmlns:w="${NamespaceUri.w}">
+			<w:pPr>
+				<w:rPr>
+					<w:moveTo w:id="1" w:author="Luis" w:date="${date.toISOString()}" />
+				</w:rPr>
+			</w:pPr>
+			<w:r>
+				<w:t>Hello this is some text.</w:t>
+			</w:r>
+		</w:p>`
+	);
+
+	const moveFromAsPropNode = create(
+		`<w:p xmlns:w="${NamespaceUri.w}">
+			<w:pPr>
+				<w:rPr>
+					<w:moveFrom w:id="2" w:author="Ines" w:date="${date.toISOString()}" />
+				</w:rPr>
+			</w:pPr>
+			<w:r>
+				<w:t>I'm just a poor boy</w:t>
+			</w:r>
+		</w:p>`
+	);
+
+	console.log(serialize(moveToAsPropNode));
+
 	// Testing a move inside a paragraph.
 	const moveToObject = new Paragraph(
 		{ style: null },
@@ -65,12 +93,47 @@ describe('Move content in track changes...', () => {
 		new Text({}, 'This is a moveFrom node.')
 	);
 
+	const moveToAsPropObject = new Paragraph(
+		{
+			pilcrow: {
+				move: {
+					author: 'Luis',
+					date: date,
+					type: 'to',
+					id: 1,
+				},
+			},
+		},
+		new Text({}, 'Hello this is some text.')
+	);
+
+	const moveFromAsPropObject = new Paragraph(
+		{
+			pilcrow: {
+				move: {
+					id: 2,
+					author: 'Ines',
+					date: date,
+					type: 'from',
+				},
+			},
+		},
+		new Text({}, "I'm just a poor boy")
+	);
+
 	const newMoveTo = Paragraph.fromNode(moveToNode, emptyContext);
 	const newMoveFrom = Move.fromNode(moveFromNode, emptyContext);
+	const newMoveToAsProp = Paragraph.fromNode(moveToAsPropNode, emptyContext);
+	const newMoveFromAsProp = Paragraph.fromNode(
+		moveFromAsPropNode,
+		emptyContext
+	);
 
 	it('turns node into correct Move objects', () => {
 		expect(newMoveTo).toEqual(moveToObject);
 		expect(newMoveFrom).toEqual(moveFromObject);
+		expect(newMoveToAsProp).toEqual(moveToAsPropObject);
+		expect(newMoveFromAsProp).toEqual(moveFromAsPropObject);
 	});
 
 	it('turns Move object into the correct node', async () => {
@@ -79,14 +142,13 @@ describe('Move content in track changes...', () => {
 				create(
 					`<p xmlns="${NamespaceUri.w}">
 						<pPr/>
-			<moveTo xmlns:ns1="${
-				NamespaceUri.w
-			}" ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe">
-				<r>
-					<t xml:space="preserve">This is a paragraph</t>
-				</r>
-			</moveTo>
-		</p>`
+						<moveTo xmlns:ns1="${NamespaceUri.w}" 
+							ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe">
+						<r>
+							<t xml:space="preserve">This is a paragraph</t>
+						</r>
+					</moveTo>
+					</p>`
 				)
 			)
 		);
@@ -96,9 +158,9 @@ describe('Move content in track changes...', () => {
 		expect(serialize(await moveFromObject.toNode([]))).toEqual(
 			serialize(
 				create(
-					`<moveFrom xmlns="${NamespaceUri.w}" xmlns:ns1="${
-						NamespaceUri.w
-					}" ns1:id="1" ns1:date="${date.toISOString()}" ns1:author="Angel" >
+					`<moveFrom 
+						xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}"
+						ns1:id="1" ns1:date="${date.toISOString()}" ns1:author="Angel" >
 						<r>
 							<t xml:space="preserve" >This is a moveFrom node.</t>
 						</r>
