@@ -1,5 +1,5 @@
 import { Move, type MoveProps } from '../components/Move.ts';
-import { create } from '../utilities/dom.ts';
+import { create, serialize } from '../utilities/dom.ts';
 import type { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import {
@@ -142,6 +142,16 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		return {};
 	}
 
+	console.log(serialize(node));
+
+	console.log(
+		'here ---- ',
+		evaluateXPathToString(
+			`./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]/name()`,
+			node
+		)
+	);
+
 	return evaluateXPathToMap<TextProperties>(
 		`map {
 			"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
@@ -176,7 +186,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"id": @${QNS.w}id/number(), 
 				"author": @${QNS.w}author/string(), 
 				"date": @${QNS.w}date/string(),
-				"type": if ($nodeName eq '${QNS.w}moveTo' or $nodeName eq 'moveTo') then 'to' else 'from'
+				"type": if ($nodeName eq 'w:moveTo' or $nodeName eq 'moveTo') then 'to' else 'from'
 			}
 		}`,
 		node,
@@ -211,6 +221,8 @@ export async function textPropertiesToNode(
 	) {
 		return null;
 	}
+
+	console.log(data.move);
 
 	return create(
 		`element ${QNS.w}rPr {
