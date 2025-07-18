@@ -50,7 +50,16 @@ export type MoveProps = ChangeInformation & { type: 'to' | 'from' };
  * https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EXMJW.html
  */
 export class Move extends Component<MoveProps, MoveChild> {
-	public static override readonly children: string[] = ['Text', 'Paragraph'];
+	public static override readonly children: string[] = [
+		'BookmarkRangeEnd',
+		'BookmarkRangeStart',
+		'CommentRangeStart',
+		'CommentRangeEnd',
+		'TextAddition',
+		'TextDeletion',
+		'Text',
+		'Move',
+	];
 
 	public static override readonly mixed: boolean = false;
 
