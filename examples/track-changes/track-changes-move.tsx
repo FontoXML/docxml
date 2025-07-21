@@ -27,7 +27,26 @@ const moveToParagraph = new Paragraph(
 			},
 		},
 	},
-	new Text({}, 'This is an example of some moved text.')
+	new MoveRangeStart({
+		type: 'to',
+		name: 'move_0',
+		author: 'Gabe',
+		date: date,
+		id: 3,
+	}),
+	new Move(
+		{
+			type: 'to',
+			id: 4,
+			date: date,
+			author: 'Gabe',
+		},
+		new Text({}, 'This is an example of some moved text.')
+	),
+	new MoveRangeEnd({
+		type: 'to',
+		id: 4,
+	})
 );
 
 const moveFromParagraph = new Paragraph(
@@ -41,7 +60,26 @@ const moveFromParagraph = new Paragraph(
 			},
 		},
 	},
-	new Text({}, 'This is an example of some moved text.')
+	new MoveRangeStart({
+		type: 'from',
+		name: 'move_0',
+		author: 'Gabe',
+		date: date,
+		id: 3,
+	}),
+	new Move(
+		{
+			type: 'from',
+			id: 4,
+			date: date,
+			author: 'Gabe',
+		},
+		new Text({}, 'This is an example of some moved text.')
+	),
+	new MoveRangeEnd({
+		type: 'from',
+		id: 4,
+	})
 );
 
 // Create an instance where text within a paragraph has been been moved. We will need to create a MoveRangeStart
