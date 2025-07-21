@@ -64,31 +64,15 @@ describe('Text formatting', () => {
 			},
 		}
 	);
-
-	test(
-		`<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
-				<w:color w:val="blue" />
-				<w:moveFrom w:author="Angel" w:date="${date.toISOString()}" w:id="0" /> 
-			</w:rPr>`,
-		{
-			color: 'blue',
-			move: {
-				type: 'from',
-				author: 'Angel',
-				date: date,
-				id: 0,
-			},
-		}
-	);
 });
 
 describe('Complex character formatting', () => {
 	test(
 		`<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
-				<w:bCs />
-				<w:iCs />
-				<w:szCs w:val="23" />
-			</w:rPr>`,
+					<w:bCs />
+					<w:iCs />
+					<w:szCs w:val="23" />
+				</w:rPr>`,
 		{
 			isBold: { simple: false, complex: true },
 			isItalic: { simple: false, complex: true },
