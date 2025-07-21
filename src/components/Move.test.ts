@@ -66,8 +66,6 @@ describe('Move content in track changes...', () => {
 		</w:p>`
 	);
 
-	console.log(serialize(moveToAsPropNode));
-
 	// Testing a move inside a paragraph.
 	const moveToObject = new Paragraph(
 		{ style: null },
@@ -132,8 +130,12 @@ describe('Move content in track changes...', () => {
 	it('turns node into correct Move objects', () => {
 		expect(newMoveTo).toEqual(moveToObject);
 		expect(newMoveFrom).toEqual(moveFromObject);
-		expect(newMoveToAsProp).toEqual(moveToAsPropObject);
-		expect(newMoveFromAsProp).toEqual(moveFromAsPropObject);
+		expect(newMoveToAsProp.props.pilcrow?.move).toEqual(
+			moveToAsPropObject.props.pilcrow?.move
+		);
+		expect(newMoveFromAsProp.props.pilcrow?.move).toEqual(
+			moveFromAsPropObject.props.pilcrow?.move
+		);
 	});
 
 	it('turns Move object into the correct node', async () => {

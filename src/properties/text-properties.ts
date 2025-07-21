@@ -3,8 +3,8 @@ import { create } from '../utilities/dom.ts';
 import type { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
 import {
+	evaluateXPathToFirstNode,
 	evaluateXPathToMap,
-	evaluateXPathToString,
 } from '../utilities/xquery.ts';
 import type { Shading } from './shared-properties.ts';
 
@@ -142,7 +142,13 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		return {};
 	}
 
-	return evaluateXPathToMap<TextProperties>(
+	// Check for a track changes movement element in our node.
+	const nodeName = evaluateXPathToFirstNode(
+		`./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]`,
+		node
+	) as Element;
+
+	const textProps = evaluateXPathToMap<TextProperties>(
 		`map {
 			"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
 			"color": ./${QNS.w}color/@${QNS.w}val/string(),
@@ -176,18 +182,25 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"id": @${QNS.w}id/number(), 
 				"author": @${QNS.w}author/string(), 
 				"date": @${QNS.w}date/string(),
-				"type": if ($nodeName eq '${QNS.w}moveTo' or $nodeName eq 'moveTo') then 'to' else 'from'
+				"type": if ($nodeName eq 'moveTo') then 'to' else 'from'
 			}
 		}`,
 		node,
 		null,
-		{
-			nodeName: evaluateXPathToString(
-				`./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]/name()`,
-				node
-			),
-		}
+		{ nodeName: nodeName ? nodeName.localName : null }
 	);
+
+	return {
+		...textProps,
+		move: textProps.move
+			? {
+					id: textProps.move.id,
+					date: new Date(textProps.move.date),
+					type: textProps.move.type,
+					author: textProps.move.author,
+			  }
+			: null,
+	};
 }
 
 export async function textPropertiesToNode(

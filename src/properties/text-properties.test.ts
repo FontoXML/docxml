@@ -1,6 +1,5 @@
 import { describe } from 'std/testing/bdd';
 
-import { it } from 'node:test';
 import { hpt, twip } from '../utilities/length.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
 import { createXmlRoundRobinTest } from '../utilities/tests.ts';
@@ -18,7 +17,6 @@ const test = createXmlRoundRobinTest<TextProperties>(
 const date = new Date();
 
 describe('Text formatting', () => {
-
 	test(
 		`<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
 				<w:color w:val="red" />
