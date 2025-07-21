@@ -42,6 +42,8 @@ import type { Field } from './Field.ts';
 import type { FootnoteAnchor } from './FootnoteAnchor.ts';
 import type { FootnoteReference } from './FootnoteReference.ts';
 import type { Move } from './Move.ts';
+import type { MoveRangeEnd } from './MoveRangeEnd.ts';
+import type { MoveRangeStart } from './MoveRangeStart.ts';
 import type { Text } from './Text.ts';
 import type { TextAddition } from './TextAddition.ts';
 import type { TextDeletion } from './TextDeletion.ts';
@@ -62,6 +64,8 @@ export type ParagraphChild =
 	| Field
 	| FootnoteReference
 	| Move
+	| MoveRangeEnd
+	| MoveRangeStart
 	| FootnoteAnchor;
 
 /**
@@ -93,6 +97,8 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'FootnoteReference',
 		'FootnoteAnchor',
 		'Move',
+		'MoveRangeEnd',
+		'MoveRangeStart',
 	];
 	public static override readonly mixed: boolean = false;
 	#sectionProperties: SectionProperties | null = null;
@@ -180,7 +186,11 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 						${QNS.w}bookmarkStart |
 						${QNS.w}bookmarkEnd | 
 						${QNS.w}moveTo | 
-						${QNS.w}moveFrom 
+						${QNS.w}moveFrom | 
+						${QNS.w}moveFromRangeStart
+						${QNS.w}moveFromRangeEnd | 
+						${QNS.w}moveToRangeStart | 
+						${QNS.w}moveToRangeEnd 
 					) }
 				}
 			`,
