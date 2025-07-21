@@ -49,6 +49,14 @@ const moveToParagraph = new Paragraph(
 	})
 );
 
+const betweenParagraph = new Paragraph(
+	{},
+	new Text(
+		{},
+		'This will go before a completely move paragraph, but will show up as after it. '
+	)
+);
+
 const moveFromParagraph = new Paragraph(
 	{
 		pilcrow: {
@@ -133,6 +141,7 @@ const moveTextParagraph = new Paragraph(
 const section = new Section(
 	{},
 	moveToParagraph,
+	betweenParagraph,
 	moveFromParagraph,
 	moveTextParagraph
 );
