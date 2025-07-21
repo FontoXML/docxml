@@ -17,7 +17,7 @@ export type MoveRangeStartProps = ChangeInformation & {
 export type MoveRangeStartChild = never;
 
 /**
- * A type for indicating the start of a range of moved content. 
+ * A type for indicating the start of a range of moved content.
  * In OOXML, these are self-closing tags.
  */
 export class MoveRangeStart extends Component<
