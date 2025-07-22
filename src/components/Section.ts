@@ -33,7 +33,6 @@ import type { Table } from './Table.ts';
  * A type describing the components accepted as children of {@link Section}.
  */
 export type SectionChild =
-	| Move
 	| Paragraph
 	| Table
 	| BookmarkRangeStart
