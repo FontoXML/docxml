@@ -1,20 +1,20 @@
 import { GenericRenderer } from 'xml_renderer';
 
-import { Archive } from './classes/Archive.ts';
-import { Bookmarks } from './classes/Bookmarks.ts';
-import type { AnyComponent } from './classes/Component.ts';
+import { Archive } from './classes/src/Archive.ts';
+import { Bookmarks } from './classes/src/Bookmarks.ts';
+import type { AnyComponent } from './classes/src/Component.ts';
 import { FileLocation, RelationshipType } from './enums.ts';
-import { ContentTypesXml } from './files/ContentTypesXml.ts';
-import { CustomPropertiesXml } from './files/CustomPropertiesXml.ts';
+import { ContentTypesXml } from './files/src/ContentTypesXml.ts';
+import { CustomPropertiesXml } from './files/src/CustomPropertiesXml.ts';
 import {
 	type DocumentChild,
 	type DocumentRoot,
 	DocumentXml,
-} from './files/DocumentXml.ts';
-import { RelationshipsXml } from './files/RelationshipsXml.ts';
-import type { SettingsI } from './files/SettingsXml.ts';
-import { parse } from './utilities/dom.ts';
-import { jsx } from './utilities/jsx.ts';
+} from './files/src/DocumentXml.ts';
+import { RelationshipsXml } from './files/src/RelationshipsXml.ts';
+import type { SettingsI } from './files/src/SettingsXml.ts';
+import { parse } from './utilities/src/dom.ts';
+import { jsx } from './utilities/src/jsx.ts';
 
 type SyncRuleResult = AnyComponent | string | null;
 type AsyncRuleResult = Promise<SyncRuleResult>;
