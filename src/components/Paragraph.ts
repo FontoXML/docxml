@@ -187,7 +187,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 						${QNS.w}bookmarkEnd | 
 						${QNS.w}moveTo | 
 						${QNS.w}moveFrom | 
-						${QNS.w}moveFromRangeStart
+						${QNS.w}moveFromRangeStart |
 						${QNS.w}moveFromRangeEnd | 
 						${QNS.w}moveToRangeStart | 
 						${QNS.w}moveToRangeEnd 
