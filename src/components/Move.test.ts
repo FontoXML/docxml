@@ -156,7 +156,7 @@ describe('Move content in track changes...', () => {
 		);
 	});
 
-	it('turns object of a moveFrom into the correct node', async () => {
+	it('turns object of a moveFrom into the a <moveFrom> node', async () => {
 		expect(serialize(await moveFromObject.toNode([]))).toEqual(
 			serialize(
 				create(
