@@ -143,12 +143,12 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 	}
 
 	// Check for a track changes movement element in our node.
-	const nodeName = evaluateXPathToFirstNode(
+	const nodeName = evaluateXPathToFirstNode<Element>(
 		`./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]`,
 		node
-	) as Element;
+	);
 
-	const textProps = evaluateXPathToMap<TextProperties>(
+	const props = evaluateXPathToMap<TextProperties>(
 		`map {
 			"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
 			"color": ./${QNS.w}color/@${QNS.w}val/string(),
@@ -190,17 +190,12 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		{ nodeName: nodeName ? nodeName.localName : null }
 	);
 
-	return {
-		...textProps,
-		move: textProps.move
-			? {
-					id: textProps.move.id,
-					date: new Date(textProps.move.date),
-					type: textProps.move.type,
-					author: textProps.move.author,
-			  }
-			: null,
-	};
+	if (props.move) {
+		// Convert the date string to a Date object.
+		props.move.date = new Date(props.move.date);
+	}
+
+	return props;
 }
 
 export async function textPropertiesToNode(

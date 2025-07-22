@@ -42,8 +42,8 @@ describe('End-to-end', () => {
 				`
 			));
 
-		it('Color', async () =>
-			await expectDocxToContain(
+		it('Color', () =>
+			expectDocxToContain(
 				docx,
 				RelationshipType.officeDocument,
 				`
@@ -52,8 +52,8 @@ describe('End-to-end', () => {
 				`
 			));
 
-		it('Italic', async () =>
-			await expectDocxToContain(
+		it('Italic', () =>
+			expectDocxToContain(
 				docx,
 				RelationshipType.officeDocument,
 				`
@@ -62,8 +62,8 @@ describe('End-to-end', () => {
 				`
 			));
 
-		it('Bold', async () =>
-			await expectDocxToContain(
+		it('Bold', () =>
+			expectDocxToContain(
 				docx,
 				RelationshipType.officeDocument,
 				`
@@ -72,8 +72,8 @@ describe('End-to-end', () => {
 				`
 			));
 
-		it('Underlined', async () => {
-			await expectDocxToContain(
+		it('Underlined', () => {
+			expectDocxToContain(
 				docx,
 				RelationshipType.officeDocument,
 				`
@@ -81,7 +81,7 @@ describe('End-to-end', () => {
 					return $rpr/${QNS.w}u/@${QNS.w}val = 'single'
 				`
 			);
-			await expectDocxToContain(
+			expectDocxToContain(
 				docx,
 				RelationshipType.officeDocument,
 				`
@@ -91,8 +91,8 @@ describe('End-to-end', () => {
 			);
 		});
 
-		it('Language', async () =>
-			await expectDocxToContain(
+		it('Language', () =>
+			expectDocxToContain(
 				docx,
 				RelationshipType.officeDocument,
 				`
