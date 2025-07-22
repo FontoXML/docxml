@@ -138,6 +138,8 @@ export type TextProperties = {
 	 * Read more here:  https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EXMJW.html
 	 */
 	move?: MoveProps | null;
+
+	change?: (Omit<TextProperties, 'change'> & ChangeInformation) | null;
 };
 
 export function textPropertiesFromNode(node?: Node | null): TextProperties {
@@ -218,7 +220,8 @@ export async function textPropertiesToNode(
 		!data.isStrike &&
 		!data.shading &&
 		!data.font &&
-		!data.move
+		!data.move &&
+		!data.change
 	) {
 		return null;
 	}
@@ -270,8 +273,15 @@ export async function textPropertiesToNode(
 				if (exists($font('hAnsi'))) then attribute ${QNS.w}hAnsi {
 					$font('hAnsi')
 				} else ()
-			} else (), 
+			} else (),
+		if (exists($change)) then element rPrChange { 
+			attribute id { $change('id') },
+			attribute date { $change('date') },
+			attribute author { $change('author') }, 
+			$change('node')
+		} else () , 
 			$move
+
 		}`,
 		{
 			style: data.style || null,
@@ -307,6 +317,14 @@ export async function textPropertiesToNode(
 							hAnsi: data.font.hAnsi || null,
 					  }
 					: null,
+			change: data.change
+				? {
+						id: data.change.id,
+						date: new Date(data.change.date).toISOString(),
+						author: data.change.author,
+						node: textPropertiesToNode(data.change),
+				  }
+				: null,
 			/*
 			 * Although the Move component is used here and it can have children,
 			 * since the move information is sent as properties rather than as an
