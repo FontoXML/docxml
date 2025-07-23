@@ -3,12 +3,12 @@ import { beforeAll, describe, it } from 'std/testing/bdd';
 
 import { Docx } from './Docx.ts';
 import { FileLocation } from './enums.ts';
-import { file } from './utilities/tests.ts';
+import { file } from './utilities/src/tests.ts';
 
 describe('Docx', () => {
 	let bundle: Docx;
 	beforeAll(async () => {
-		bundle = await Docx.fromArchive(file('test/simple.docx'));
+		bundle = await Docx.fromArchive(file('../test/simple.docx'));
 	});
 
 	it('correct files', async () => {

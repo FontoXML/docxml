@@ -11,7 +11,7 @@ import Docx, {
 	type HeaderXml,
 	RelationshipType,
 } from './mod.ts';
-import { getColorizedJsxForComponent } from './src/utilities/debug.ts';
+import { getColorizedJsxForComponent } from './src/utilities/src/debug.ts';
 
 const docx = await Docx.fromArchive(Deno.args[0]);
 

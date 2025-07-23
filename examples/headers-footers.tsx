@@ -1,6 +1,6 @@
 /** @jsx Docx.jsx */
 import Docx, { cm, Image, Paragraph, Section, Text } from '../mod.ts';
-import { WatermarkText } from '../src/components/WatermarkText.ts';
+import { WatermarkText } from '../src/components/document/src/WatermarkText.ts';
 
 const docx = Docx.fromNothing();
 

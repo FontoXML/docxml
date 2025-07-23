@@ -22,7 +22,7 @@ import {
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
-import '../..//document/src/Text.ts';
+import '../../document/src/Text.ts';
 
 /**
  * A type specifying the children of {@link Move}.

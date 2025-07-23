@@ -17,7 +17,7 @@ describe('Footnotes', () => {
 	let footnotes: FootnotesXml;
 
 	beforeAll(async () => {
-		const arch = await archive('test/simple.docx');
+		const arch = await archive('../test/simple.docx');
 		contentTypes = await ContentTypesXml.fromArchive(
 			arch,
 			'[Content_Types].xml'

@@ -2,11 +2,11 @@ import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
 import { Cell } from '../../../../mod.ts';
-import { Archive } from '../../../classes/Archive.ts';
-import type { ComponentContext } from '../../../classes/Component.ts';
-import { create } from '../../../utilities/dom.ts';
-import { NamespaceUri } from '../../../utilities/namespaces.ts';
-import { evaluateXPathToFirstNode } from '../../../utilities/xquery.ts';
+import { Archive } from '../../../classes/src/Archive.ts';
+import type { ComponentContext } from '../../../classes/src/Component.ts';
+import { create } from '../../../utilities/src/dom.ts';
+import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
+import { evaluateXPathToFirstNode } from '../../../utilities/src/xquery.ts';
 
 const emptyContext: ComponentContext = {
 	archive: new Archive(),

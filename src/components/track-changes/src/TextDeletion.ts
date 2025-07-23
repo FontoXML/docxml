@@ -1,6 +1,6 @@
 // Import without assignment ensures Deno does not tree-shake this component. To avoid circular
 // definitions, components register themselves in a side-effect of their module.
-import '../..//document/src/Text.ts';
+import '../../document/src/Text.ts';
 
 import {
 	Component,

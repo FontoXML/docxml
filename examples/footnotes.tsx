@@ -3,9 +3,9 @@ import Docx, { Cell, Image, Paragraph, Row, Section, Table } from '../mod.ts';
 import {
 	type FootnoteProps,
 	FootnoteReference,
-} from '../src/components/FootnoteReference.ts';
-import { Text } from '../src/components/Text.ts';
-import { cm, inch, pt } from '../src/utilities/length.ts';
+} from '../src/components/document/src/FootnoteReference.ts';
+import { Text } from '../src/components/document/src/Text.ts';
+import { cm, inch, pt } from '../src/utilities/src/length.ts';
 
 const docxFile = Docx.fromNothing();
 

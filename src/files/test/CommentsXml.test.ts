@@ -13,7 +13,7 @@ describe('Comments', () => {
 	let contentTypes: ContentTypesXml;
 	let comments: CommentsXml;
 	beforeEach(async () => {
-		const arch = await archive('test/simple.docx');
+		const arch = await archive('../test/simple.docx');
 		contentTypes = await ContentTypesXml.fromArchive(
 			arch,
 			'[Content_Types].xml'

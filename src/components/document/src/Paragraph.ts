@@ -5,14 +5,15 @@
 import '../../comments/src/Comment.ts';
 import '../../comments/src/CommentRangeEnd.ts';
 import '../../comments/src/CommentRangeStart.ts';
+import '../../document/src/Text.ts';
 import '../../track-changes/src/TextAddition.ts';
 import '../../track-changes/src/TextDeletion.ts';
 import './BookmarkRangeEnd.ts';
 import './BookmarkRangeStart.ts';
 import './Field.ts';
 import './Hyperlink.ts';
-import './Text.ts';
 
+import type { Hyperlink } from '../../../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,
@@ -32,19 +33,18 @@ import { create } from '../../../utilities/src/dom.ts';
 import { hex, type Id } from '../../../utilities/src/id.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
-import type { Hyperlink } from '../../mod.ts';
+import type { Comment } from '../../comments/src/Comment.ts';
+import type { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
+import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
+import type { Text } from '../../document/src/Text.ts';
+import type { Move } from '../../track-changes/src/Move.ts';
+import type { TextAddition } from '../../track-changes/src/TextAddition.ts';
+import type { TextDeletion } from '../../track-changes/src/TextDeletion.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
-import type { Comment } from './Comment.ts';
-import type { CommentRangeEnd } from './CommentRangeEnd.ts';
-import type { CommentRangeStart } from './CommentRangeStart.ts';
 import type { Field } from './Field.ts';
 import type { FootnoteAnchor } from './FootnoteAnchor.ts';
 import type { FootnoteReference } from './FootnoteReference.ts';
-import type { Move } from './Move.ts';
-import type { Text } from './Text.ts';
-import type { TextAddition } from './TextAddition.ts';
-import type { TextDeletion } from './TextDeletion.ts';
 
 /**
  * A type describing the components accepted as children of {@link Paragraph}.

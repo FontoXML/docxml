@@ -10,11 +10,11 @@ import Docx, {
 	Text,
 	twip,
 } from '../mod.ts';
-import { QNS } from './utilities/namespaces.ts';
+import { QNS } from './utilities/src/namespaces.ts';
 import {
 	expectDocumentToContain,
 	expectDocxToContain,
-} from './utilities/tests.ts';
+} from './utilities/src/tests.ts';
 
 describe('End-to-end', () => {
 	describe('Text run formatting', () => {

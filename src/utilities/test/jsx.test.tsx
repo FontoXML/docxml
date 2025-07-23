@@ -4,7 +4,7 @@ import { describe, it } from 'std/testing/bdd';
 
 // deno-lint-ignore verbatim-module-syntax
 import { jsx, Text } from '../../../mod.ts';
-import { Component } from '../../classes/Component.ts';
+import { Component } from '../../classes/src/Component.ts';
 
 describe('JSX', () => {
 	class Comp extends Component<{ skeet: boolean; boop?: string }> {}
