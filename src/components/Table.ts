@@ -27,14 +27,14 @@ import { type Length, twip } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { TableGridModel } from '../utilities/tables.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
+import type { Insertion } from './Insertion.ts';
 import type { Row } from './Row.ts';
-import type { RowAddition } from './RowAddition.ts';
 import type { RowDeletion } from './RowDeletion.ts';
 
 /**
  * A type describing the components accepted as children of {@link Table}.
  */
-export type TableChild = Row | RowAddition | RowDeletion;
+export type TableChild = Row | Insertion | RowDeletion;
 
 /**
  * A type describing the props accepted by {@link Table}.

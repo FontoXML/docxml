@@ -38,7 +38,7 @@ export type RowAdditionChild = RowChild;
 /**
  * A type describing the props accepted by {@link RowAddition}.
  */
-export type RowAdditionProps = ChangeInformation & TableRowProperties;
+export type RowAdditionProps = ChangeInformation;
 
 /**
  * A component that represents a change-tracked table row that was inserted. Works the same way as

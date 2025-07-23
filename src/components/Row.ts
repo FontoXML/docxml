@@ -26,7 +26,6 @@ import {
 	evaluateXPathToNodes,
 } from '../utilities/xquery.ts';
 import type { Cell } from './Cell.ts';
-import type { RowAddition } from './RowAddition.ts';
 import type { RowDeletion } from './RowDeletion.ts';
 import { Table } from './Table.ts';
 
@@ -67,7 +66,7 @@ export function parsePropsAndChildNodes(
  * Creates an XML node for a given row.
  */
 export async function createNodeFromRow(
-	row: Row | RowAddition | RowDeletion,
+	row: Row | RowDeletion,
 	ancestry: ComponentAncestor[]
 ): Promise<Node> {
 	const table = ancestry.find(

@@ -8,6 +8,7 @@ import Docx, {
 	Text,
 } from '../../mod.ts';
 import { Cell } from '../../src/components/Cell.ts';
+import { Insertion } from '../../src/components/Insertion.ts';
 import { Row } from '../../src/components/Row.ts';
 
 // Create a new .docx file with track changes enabled.
@@ -22,14 +23,11 @@ const testTable = new Table(
 		{},
 		new Cell({}, new Paragraph({}, new Text({}, ' my old friend.')))
 	),
-	new RowAddition(
-		{
-			id: 1,
-			author: 'Inés',
-			date: new Date(),
-		},
-		new Cell({}, new Paragraph({}, new Text({}, ' it is time')))
-	),
+	new Insertion({
+		id: 1,
+		author: 'Inés',
+		date: new Date(),
+	}),
 	new RowDeletion(
 		{ id: 2, author: 'Inés', date: new Date() },
 		new Cell({}, new Paragraph({}, new Text({}, ' sunlight comes')))
@@ -53,11 +51,11 @@ await Docx.fromJsx(
 				<Paragraph> my old friend.</Paragraph>
 			</Cell>
 		</Row>
-		<RowAddition id={1} author="ines" date={new Date()}>
+		<Insertion id={1} author="ines" date={new Date()}>
 			<Cell>
 				<Paragraph> it is time</Paragraph>
 			</Cell>
-		</RowAddition>
+		</Insertion>
 		<RowDeletion id={2} author="ines" date={new Date()}>
 			<Cell>
 				<Paragraph> sunlight comes</Paragraph>
