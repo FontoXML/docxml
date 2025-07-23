@@ -7,7 +7,7 @@ import {
 	type ComponentDefinition,
 } from '../../../classes/src/Component.ts';
 import { FileMime, RelationshipType } from '../../../enums.ts';
-import type { RelationshipsXml } from '../../../files/RelationshipsXml.ts';
+import type { RelationshipsXml } from '../../../files/src/RelationshipsXml.ts';
 import { registerComponent } from '../../../utilities/src/components.ts';
 import { create } from '../../../utilities/src/dom.ts';
 import { extensionListUris } from '../../../utilities/src/drawingml-extensions.ts';

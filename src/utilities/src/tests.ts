@@ -13,8 +13,8 @@ import type { Docx } from '../../Docx.ts';
 import { FileLocation, type RelationshipType } from '../../enums.ts';
 import { ContentTypesXml } from '../../files/src/ContentTypesXml.ts';
 import { castRelationshipToClass } from '../../files/src/index.ts';
-import { create } from '../src/dom.ts';
 import { evaluateXPathToBoolean } from '../src/xquery.ts';
+import { create } from './dom.ts';
 
 const ZIPS = new Map<string, Archive>();
 

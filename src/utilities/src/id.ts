@@ -1,7 +1,7 @@
 import {
 	checkForForbiddenParameters,
 	isValidNumber,
-} from '../src/parameter-checking.ts';
+} from './parameter-checking.ts';
 
 /**
  * An object that describes an identifier.

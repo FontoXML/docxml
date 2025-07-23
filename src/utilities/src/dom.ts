@@ -10,7 +10,7 @@ import {
 	evaluateXPathToFirstNode,
 	type INodesFactory,
 	XQUERY_3_1_LANGUAGE,
-} from '../src/xquery.ts';
+} from './xquery.ts';
 
 /**
  * Serialize an XML node to string using Slimdom's own serializer function, but with the "standard"

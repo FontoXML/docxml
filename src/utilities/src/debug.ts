@@ -1,7 +1,7 @@
 import { blue, dim, green, red } from 'std/fmt/colors';
 
 import type { AnyComponent } from '../../classes/src/Component.ts';
-import type { Length } from '../src/length.ts';
+import type { Length } from './length.ts';
 
 const color = {
 	nodeName: red,
