@@ -7,7 +7,7 @@
 // Import the file that registers custom XPath functions to the fontoxpath global;
 import fontoxpath from 'fontoxpath';
 
-import { DOCXML_NS_URI } from './xquery-functions.ts';
+import { DOCXML_NS_URI } from '../src/xquery-functions.ts';
 
 export type { INodesFactory } from 'fontoxpath';
 

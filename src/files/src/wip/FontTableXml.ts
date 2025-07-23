@@ -1,6 +1,6 @@
-import type { Archive } from '../../classes/Archive.ts';
-import { UnhandledXmlFile } from '../../classes/XmlFile.ts';
-import { FileMime } from '../../enums.ts';
+import type { Archive } from '../../../classes/src/Archive.ts';
+import { UnhandledXmlFile } from '../../../classes/src/XmlFile.ts';
+import { FileMime } from '../../../enums.ts';
 
 export class FontTableXml extends UnhandledXmlFile {
 	public static override contentType = FileMime.fontTable;

@@ -1,10 +1,10 @@
 import { expect } from 'std/expect';
 import { beforeAll, describe, it } from 'std/testing/bdd';
 
-import { serialize } from '../utilities/dom.ts';
-import { archive } from '../utilities/tests.ts';
-import { ContentTypesXml } from './ContentTypesXml.ts';
-import { RelationshipsXml } from './RelationshipsXml.ts';
+import { serialize } from '../../utilities/src/dom.ts';
+import { archive } from '../../utilities/src/tests.ts';
+import { ContentTypesXml } from '../src/ContentTypesXml.ts';
+import { RelationshipsXml } from '../src/RelationshipsXml.ts';
 
 describe('Relationships', () => {
 	let relationships: RelationshipsXml;

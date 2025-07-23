@@ -1,14 +1,14 @@
-import type { Archive } from '../classes/Archive.ts';
-import { NumberMap } from '../classes/NumberMap.ts';
-import { XmlFile } from '../classes/XmlFile.ts';
-import { FileMime } from '../enums.ts';
-import { create } from '../utilities/dom.ts';
+import type { Archive } from '../../classes/src/Archive.ts';
+import { NumberMap } from '../../classes/src/NumberMap.ts';
+import { XmlFile } from '../../classes/src/XmlFile.ts';
+import { FileMime } from '../../enums.ts';
+import { create } from '../../utilities/src/dom.ts';
 import {
 	ALL_NAMESPACE_DECLARATIONS,
 	NamespaceUri,
 	QNS,
-} from '../utilities/namespaces.ts';
-import { evaluateXPathToArray } from '../utilities/xquery.ts';
+} from '../../utilities/src/namespaces.ts';
+import { evaluateXPathToArray } from '../../utilities/src/xquery.ts';
 
 export enum CustomPropertyType {
 	Text = 'lpwstr',

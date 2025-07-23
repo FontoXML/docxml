@@ -1,9 +1,9 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
-import { RelationshipType } from '../enums.ts';
-import { pt } from '../utilities/length.ts';
-import { SettingsXml } from './SettingsXml.ts';
+import { RelationshipType } from '../../enums.ts';
+import { pt } from '../../utilities/src/length.ts';
+import { SettingsXml } from '../src/SettingsXml.ts';
 
 describe('SettingsXml', () => {
 	it('evenAndOddHeaders', () => {

@@ -2,8 +2,8 @@
 import { expect } from 'std/expect';
 import { it } from 'std/testing/bdd';
 
-import { Docx } from '../Docx.ts';
-import { Hyperlink } from './Hyperlink.ts';
+import { Docx } from '../../../Docx.ts';
+import { Hyperlink } from '../src/Hyperlink.ts';
 
 it('Hyperlinks register their relationship on serialization time', async () => {
 	const doc1 = Docx.fromNothing();

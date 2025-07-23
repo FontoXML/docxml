@@ -1,13 +1,13 @@
 import { expect } from 'std/expect';
 import { beforeEach, describe, it } from 'std/testing/bdd';
 
-import { Paragraph } from '../components/Paragraph.ts';
-import { Text } from '../components/Text.ts';
-import { parse, serialize } from '../utilities/dom.ts';
-import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
-import { archive } from '../utilities/tests.ts';
-import { CommentsXml } from './CommentsXml.ts';
-import { ContentTypesXml } from './ContentTypesXml.ts';
+import { Paragraph } from '../../components/document/src/Paragraph.ts';
+import { Text } from '../../components/document/src/Text.ts';
+import { parse, serialize } from '../../utilities/src/dom.ts';
+import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/src/namespaces.ts';
+import { archive } from '../../utilities/src/tests.ts';
+import { CommentsXml } from '../src/CommentsXml.ts';
+import { ContentTypesXml } from '../src/ContentTypesXml.ts';
 
 describe('Comments', () => {
 	let contentTypes: ContentTypesXml;

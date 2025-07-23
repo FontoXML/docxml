@@ -1,13 +1,13 @@
 import { describe } from 'std/testing/bdd';
 
-import { hpt, twip } from '../utilities/length.ts';
-import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
-import { createXmlRoundRobinTest } from '../utilities/tests.ts';
+import { hpt, twip } from '../../utilities/src/length.ts';
+import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/src/namespaces.ts';
+import { createXmlRoundRobinTest } from '../../utilities/src/tests.ts';
 import {
 	type TextProperties,
 	textPropertiesFromNode,
 	textPropertiesToNode,
-} from './text-properties.ts';
+} from '../src/text-properties.ts';
 
 const test = createXmlRoundRobinTest<TextProperties>(
 	textPropertiesFromNode,

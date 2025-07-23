@@ -1,9 +1,9 @@
-import type { Archive } from '../../classes/Archive.ts';
-import { XmlFile } from '../../classes/XmlFile.ts';
-import { FileMime } from '../../enums.ts';
-import { create } from '../../utilities/dom.ts';
-import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/namespaces.ts';
-import { evaluateXPathToArray } from '../../utilities/xquery.ts';
+import type { Archive } from '../../../classes/src/Archive.ts';
+import { XmlFile } from '../../../classes/src/XmlFile.ts';
+import { FileMime } from '../../../enums.ts';
+import { create } from '../../../utilities/src/dom.ts';
+import { ALL_NAMESPACE_DECLARATIONS } from '../../../utilities/src/namespaces.ts';
+import { evaluateXPathToArray } from '../../../utilities/src/xquery.ts';
 
 export class CorePropertiesXml extends XmlFile {
 	public static override contentType = FileMime.coreProperties;

@@ -1,18 +1,18 @@
 /** @jsx Docx.jsx */
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
-import { Cell } from '../components/Cell.ts';
-import { Row } from '../components/Row.ts';
-import { Table } from '../components/Table.ts';
-import { Docx } from '../Docx.ts';
-import { parse } from './dom.ts';
-import { cm, emu, hpt, inch, pt, twip } from './length.ts';
-import { NamespaceUri, QNS } from './namespaces.ts';
+import { Cell } from '../../components/document/src/Cell.ts';
+import { Row } from '../../components/document/src/Row.ts';
+import { Table } from '../../components/document/src/Table.ts';
+import { Docx } from '../../Docx.ts';
+import { parse } from '../src/dom.ts';
+import { cm, emu, hpt, inch, pt, twip } from '../src/length.ts';
+import { NamespaceUri, QNS } from '../src/namespaces.ts';
 import {
 	evaluateXPath,
 	evaluateXPathToMap,
 	evaluateXPathToNumber,
-} from './xquery.ts';
+} from '../src/xquery.ts';
 
 describe('XQuery functions', () => {
 	it('docxml:length', () => {

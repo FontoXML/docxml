@@ -5,8 +5,8 @@ import {
 	type ComponentFunction,
 	type ComponentProps,
 	isComponentDefinition,
-} from '../classes/Component.ts';
-import { Text } from '../components/Text.ts';
+} from '../../classes/src/Component.ts';
+import { Text } from '../../components/document/src/Text.ts';
 
 type QueuedComponent<C extends Component> = {
 	component: ComponentComponentFunction<C> | ComponentDefinition<C>;

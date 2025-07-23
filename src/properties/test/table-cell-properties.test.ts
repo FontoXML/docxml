@@ -1,15 +1,15 @@
 import { describe } from 'std/testing/bdd';
 
-import { parse } from '../utilities/dom.ts';
-import { opt } from '../utilities/length.ts';
-import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
-import { createXmlRoundRobinTest } from '../utilities/tests.ts';
-import { evaluateXPathToFirstNode } from '../utilities/xquery.ts';
+import { parse } from '../../utilities/src/dom.ts';
+import { opt } from '../../utilities/src/length.ts';
+import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/src/namespaces.ts';
+import { createXmlRoundRobinTest } from '../../utilities/src/tests.ts';
+import { evaluateXPathToFirstNode } from '../../utilities/src/xquery.ts';
 import {
 	type TableCellProperties,
 	tableCellPropertiesFromNode,
 	tableCellPropertiesToNode,
-} from './table-cell-properties.ts';
+} from '../src/table-cell-properties.ts';
 
 const test = createXmlRoundRobinTest<TableCellProperties>(
 	tableCellPropertiesFromNode,

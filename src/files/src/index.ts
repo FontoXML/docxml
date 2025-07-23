@@ -1,7 +1,7 @@
-import type { ContentTypesXml } from '../../mod.ts';
-import type { Archive } from '../classes/Archive.ts';
-import { UnhandledXmlFile } from '../classes/XmlFile.ts';
-import { RelationshipType } from '../enums.ts';
+import type { ContentTypesXml } from '../../../mod.ts';
+import type { Archive } from '../../classes/src/Archive.ts';
+import { UnhandledXmlFile } from '../../classes/src/XmlFile.ts';
+import { RelationshipType } from '../../enums.ts';
 import { CommentsXml } from './CommentsXml.ts';
 import { CustomPropertiesXml } from './CustomPropertiesXml.ts';
 import { DocumentXml } from './DocumentXml.ts';

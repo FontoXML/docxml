@@ -1,5 +1,5 @@
-import type { Cell } from '../components/Cell.ts';
-import type { Table } from '../components/Table.ts';
+import type { Cell } from '../../components/document/src/Cell.ts';
+import type { Table } from '../../components/document/src/Table.ts';
 
 type CellCoordinate = `${number},${number}`;
 

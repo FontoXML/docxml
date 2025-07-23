@@ -28,7 +28,7 @@ import {
 	createNodeFromRow,
 	parsePropsAndChildNodes,
 	type RowChild,
-} from './Row.ts';
+} from '../../document/src/Row.ts';
 
 /**
  * A type describing the components accepted as children of {@link RowAddition}.

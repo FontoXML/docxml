@@ -1,15 +1,18 @@
 import { basename, dirname } from '@util-path';
 
-import type { ContentTypesXml } from '../../mod.ts';
-import type { Archive } from '../classes/Archive.ts';
-import { NumberMap } from '../classes/NumberMap.ts';
-import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
-import { Paragraph } from '../components/Paragraph.ts';
-import { FileLocation, FileMime } from '../enums.ts';
-import { create } from '../utilities/dom.ts';
-import { type Id, int } from '../utilities/id.ts';
-import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToArray } from '../utilities/xquery.ts';
+import type { ContentTypesXml } from '../../../mod.ts';
+import type { Archive } from '../../classes/src/Archive.ts';
+import { NumberMap } from '../../classes/src/NumberMap.ts';
+import { XmlFileWithContentTypes } from '../../classes/src/XmlFile.ts';
+import { Paragraph } from '../../components/document/src/Paragraph.ts';
+import { FileLocation, FileMime } from '../../enums.ts';
+import { create } from '../../utilities/src/dom.ts';
+import { type Id, int } from '../../utilities/src/id.ts';
+import {
+	ALL_NAMESPACE_DECLARATIONS,
+	QNS,
+} from '../../utilities/src/namespaces.ts';
+import { evaluateXPathToArray } from '../../utilities/src/xquery.ts';
 import { CommentsExtendedXml } from './CommentsExtendedXml.ts';
 import { RelationshipsXml } from './RelationshipsXml.ts';
 

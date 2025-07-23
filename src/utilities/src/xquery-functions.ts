@@ -1,7 +1,7 @@
 import fontoxpath from 'fontoxpath';
 
-import { convert } from './length.ts';
-import { QNS } from './namespaces.ts';
+import { convert } from '../src/length.ts';
+import { QNS } from '../src/namespaces.ts';
 
 export const DOCXML_NS_URI = 'https://github.com/fontoxml/docxml';
 

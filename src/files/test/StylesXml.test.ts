@@ -1,8 +1,8 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
-import { serialize } from '../utilities/dom.ts';
-import { StylesXml } from './StylesXml.ts';
+import { serialize } from '../../utilities/src/dom.ts';
+import { StylesXml } from '../src/StylesXml.ts';
 
 describe('Styles', () => {
 	it('Serializes paragraph styles correctly', async () => {

@@ -1,5 +1,5 @@
-import { QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToMap } from '../utilities/xquery.ts';
+import { QNS } from '../../utilities/src/namespaces.ts';
+import { evaluateXPathToMap } from '../../utilities/src/xquery.ts';
 
 export type ChangeInformation = {
 	id: number;

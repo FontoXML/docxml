@@ -1,20 +1,23 @@
-import type { Archive } from '../classes/Archive.ts';
-import { NumberMap } from '../classes/NumberMap.ts';
-import { XmlFile } from '../classes/XmlFile.ts';
-import { FileMime } from '../enums.ts';
+import type { Archive } from '../../classes/src/Archive.ts';
+import { NumberMap } from '../../classes/src/NumberMap.ts';
+import { XmlFile } from '../../classes/src/XmlFile.ts';
+import { FileMime } from '../../enums.ts';
 import {
 	type ParagraphProperties,
 	paragraphPropertiesFromNode,
 	paragraphPropertiesToNode,
-} from '../properties/paragraph-properties.ts';
+} from '../../properties/src/paragraph-properties.ts';
 import {
 	type TextProperties,
 	textPropertiesFromNode,
 	textPropertiesToNode,
-} from '../properties/text-properties.ts';
-import { create } from '../utilities/dom.ts';
-import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToMap } from '../utilities/xquery.ts';
+} from '../../properties/src/text-properties.ts';
+import { create } from '../../utilities/src/dom.ts';
+import {
+	ALL_NAMESPACE_DECLARATIONS,
+	QNS,
+} from '../../utilities/src/namespaces.ts';
+import { evaluateXPathToMap } from '../../utilities/src/xquery.ts';
 
 type AbstractNumbering = {
 	id: number;

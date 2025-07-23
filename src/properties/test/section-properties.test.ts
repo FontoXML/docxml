@@ -1,16 +1,16 @@
 import { describe } from 'std/testing/bdd';
 
-import { twip } from '../utilities/length.ts';
-import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
+import { twip } from '../../utilities/src/length.ts';
+import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/src/namespaces.ts';
 import {
 	createObjectRoundRobinTest,
 	createXmlRoundRobinTest,
-} from '../utilities/tests.ts';
+} from '../../utilities/src/tests.ts';
 import {
 	type SectionProperties,
 	sectionPropertiesFromNode,
 	sectionPropertiesToNode,
-} from './section-properties.ts';
+} from '../src/section-properties.ts';
 
 const test = createXmlRoundRobinTest<SectionProperties>(
 	sectionPropertiesFromNode,

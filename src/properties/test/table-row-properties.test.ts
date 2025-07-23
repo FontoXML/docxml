@@ -1,13 +1,13 @@
 import { describe } from 'std/testing/bdd';
 
-import { pt } from '../utilities/length.ts';
-import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
-import { createXmlRoundRobinTest } from '../utilities/tests.ts';
+import { pt } from '../../utilities/src/length.ts';
+import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/src/namespaces.ts';
+import { createXmlRoundRobinTest } from '../../utilities/src/tests.ts';
 import {
 	type TableRowProperties,
 	tableRowPropertiesFromNode,
 	tableRowPropertiesToNode,
-} from './table-row-properties.ts';
+} from '../src/table-row-properties.ts';
 
 const test = createXmlRoundRobinTest<TableRowProperties>(
 	tableRowPropertiesFromNode,

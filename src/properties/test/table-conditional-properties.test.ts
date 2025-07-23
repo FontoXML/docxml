@@ -1,13 +1,13 @@
 import { describe } from 'std/testing/bdd';
 
-import { opt, pt } from '../utilities/length.ts';
-import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
-import { createXmlRoundRobinTest } from '../utilities/tests.ts';
+import { opt, pt } from '../../utilities/src/length.ts';
+import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/src/namespaces.ts';
+import { createXmlRoundRobinTest } from '../../utilities/src/tests.ts';
 import {
 	type TableConditionalProperties,
 	tableConditionalPropertiesFromNode,
 	tableConditionalPropertiesToNode,
-} from './table-conditional-properties.ts';
+} from '../src/table-conditional-properties.ts';
 
 const test = createXmlRoundRobinTest<TableConditionalProperties>(
 	(x) => tableConditionalPropertiesFromNode(x as NonNullable<typeof x>),

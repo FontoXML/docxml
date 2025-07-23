@@ -1,21 +1,24 @@
 import { basename, dirname } from '@util-path';
 
-import type { ContentTypesXml } from '../../mod.ts';
-import type { Archive } from '../classes/Archive.ts';
-import type { ComponentContext } from '../classes/Component.ts';
-import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
-import type { Paragraph } from '../components/Paragraph.ts';
+import type { ContentTypesXml } from '../../../mod.ts';
+import type { Archive } from '../../classes/src/Archive.ts';
+import type { ComponentContext } from '../../classes/src/Component.ts';
+import { XmlFileWithContentTypes } from '../../classes/src/XmlFile.ts';
+import type { Paragraph } from '../../components/document/src/Paragraph.ts';
 import {
 	type SectionChild,
 	Section,
 	sectionChildComponentNames,
-} from '../components/Section.ts';
-import type { Table } from '../components/Table.ts';
-import { FileLocation, FileMime, RelationshipType } from '../enums.ts';
-import { createChildComponentsFromNodes } from '../utilities/components.ts';
-import { create } from '../utilities/dom.ts';
-import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToNodes } from '../utilities/xquery.ts';
+} from '../../components/document/src/Section.ts';
+import type { Table } from '../../components/document/src/Table.ts';
+import { FileLocation, FileMime, RelationshipType } from '../../enums.ts';
+import { createChildComponentsFromNodes } from '../../utilities/src/components.ts';
+import { create } from '../../utilities/src/dom.ts';
+import {
+	ALL_NAMESPACE_DECLARATIONS,
+	QNS,
+} from '../../utilities/src/namespaces.ts';
+import { evaluateXPathToNodes } from '../../utilities/src/xquery.ts';
 import { CommentsExtendedXml } from './CommentsExtendedXml.ts';
 import { CommentsXml } from './CommentsXml.ts';
 import { FootnotesXml } from './FootnotesXml.ts';

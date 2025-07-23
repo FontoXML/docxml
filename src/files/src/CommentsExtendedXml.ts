@@ -1,12 +1,15 @@
-import type { ContentTypesXml } from '../../mod.ts';
-import type { Archive } from '../classes/Archive.ts';
-import { NumberMap } from '../classes/NumberMap.ts';
-import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
-import { FileMime } from '../enums.ts';
-import { create } from '../utilities/dom.ts';
-import { hex, type Id } from '../utilities/id.ts';
-import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToArray } from '../utilities/xquery.ts';
+import type { ContentTypesXml } from '../../../mod.ts';
+import type { Archive } from '../../classes/src/Archive.ts';
+import { NumberMap } from '../../classes/src/NumberMap.ts';
+import { XmlFileWithContentTypes } from '../../classes/src/XmlFile.ts';
+import { FileMime } from '../../enums.ts';
+import { create } from '../../utilities/src/dom.ts';
+import { hex, type Id } from '../../utilities/src/id.ts';
+import {
+	ALL_NAMESPACE_DECLARATIONS,
+	QNS,
+} from '../../utilities/src/namespaces.ts';
+import { evaluateXPathToArray } from '../../utilities/src/xquery.ts';
 
 type CommentEx = {
 	id: Id;

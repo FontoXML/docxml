@@ -1,10 +1,10 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
-import { Text, TextDeletion } from '../../mod.ts';
-import { Docx } from '../Docx.ts';
-import { create, serialize } from '../utilities/dom.ts';
-import { NamespaceUri } from '../utilities/namespaces.ts';
+import { Text, TextDeletion } from '../../../../mod.ts';
+import { Docx } from '../../../Docx.ts';
+import { create, serialize } from '../../../utilities/src/dom.ts';
+import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
 
 describe('Text', () => {
 	const timeStamp = new Date();

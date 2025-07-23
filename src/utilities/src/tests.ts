@@ -7,14 +7,14 @@ import { resolve } from '@util-path';
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
-import { Archive } from '../classes/Archive.ts';
-import type { XmlFile } from '../classes/XmlFile.ts';
-import type { Docx } from '../Docx.ts';
-import { FileLocation, type RelationshipType } from '../enums.ts';
-import { ContentTypesXml } from '../files/ContentTypesXml.ts';
-import { castRelationshipToClass } from '../files/index.ts';
-import { create } from './dom.ts';
-import { evaluateXPathToBoolean } from './xquery.ts';
+import { Archive } from '../../classes/src/Archive.ts';
+import type { XmlFile } from '../../classes/src/XmlFile.ts';
+import type { Docx } from '../../Docx.ts';
+import { FileLocation, type RelationshipType } from '../../enums.ts';
+import { ContentTypesXml } from '../../files/src/ContentTypesXml.ts';
+import { castRelationshipToClass } from '../../files/src/index.ts';
+import { create } from '../src/dom.ts';
+import { evaluateXPathToBoolean } from '../src/xquery.ts';
 
 const ZIPS = new Map<string, Archive>();
 

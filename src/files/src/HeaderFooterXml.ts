@@ -1,17 +1,17 @@
 import { basename, dirname } from '@util-path';
 
-import type { ContentTypesXml } from '../../mod.ts';
-import type { Archive } from '../classes/Archive.ts';
-import type { AnyComponent } from '../classes/Component.ts';
-import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
-import { Paragraph } from '../components/Paragraph.ts';
-import { Table } from '../components/Table.ts';
-import type { WatermarkText } from '../components/WatermarkText.ts';
-import { FileMime } from '../enums.ts';
-import { createChildComponentsFromNodes } from '../utilities/components.ts';
-import { create } from '../utilities/dom.ts';
-import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
-import { evaluateXPathToNodes } from '../utilities/xquery.ts';
+import type { ContentTypesXml } from '../../../mod.ts';
+import type { Archive } from '../../classes/src/Archive.ts';
+import type { AnyComponent } from '../../classes/src/Component.ts';
+import { XmlFileWithContentTypes } from '../../classes/src/XmlFile.ts';
+import { Paragraph } from '../../components/document/src/Paragraph.ts';
+import { Table } from '../../components/document/src/Table.ts';
+import type { WatermarkText } from '../../components/document/src/WatermarkText.ts';
+import { FileMime } from '../../enums.ts';
+import { createChildComponentsFromNodes } from '../../utilities/src/components.ts';
+import { create } from '../../utilities/src/dom.ts';
+import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/src/namespaces.ts';
+import { evaluateXPathToNodes } from '../../utilities/src/xquery.ts';
 import { type File, RelationshipsXml } from './RelationshipsXml.ts';
 
 export type HeaderFooterChild = Paragraph | Table;

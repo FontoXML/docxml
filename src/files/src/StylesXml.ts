@@ -1,34 +1,37 @@
-import type { Archive } from '../classes/Archive.ts';
-import { XmlFile } from '../classes/XmlFile.ts';
-import { FileMime } from '../enums.ts';
+import type { Archive } from '../../classes/src/Archive.ts';
+import { XmlFile } from '../../classes/src/XmlFile.ts';
+import { FileMime } from '../../enums.ts';
 import {
 	type ParagraphProperties,
 	paragraphPropertiesFromNode,
 	paragraphPropertiesToNode,
-} from '../properties/paragraph-properties.ts';
+} from '../../properties/src/paragraph-properties.ts';
 import {
 	type TableConditionalProperties,
 	type TableConditionalTypes,
 	tableConditionalPropertiesFromNode,
 	tableConditionalPropertiesToNode,
-} from '../properties/table-conditional-properties.ts';
+} from '../../properties/src/table-conditional-properties.ts';
 import {
 	type TableProperties,
 	tablePropertiesFromNode,
 	tablePropertiesToNode,
-} from '../properties/table-properties.ts';
+} from '../../properties/src/table-properties.ts';
 import {
 	type TextProperties,
 	textPropertiesFromNode,
 	textPropertiesToNode,
-} from '../properties/text-properties.ts';
-import { create } from '../utilities/dom.ts';
-import { createRandomId } from '../utilities/identifiers.ts';
-import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
+} from '../../properties/src/text-properties.ts';
+import { create } from '../../utilities/src/dom.ts';
+import { createRandomId } from '../../utilities/src/identifiers.ts';
+import {
+	ALL_NAMESPACE_DECLARATIONS,
+	QNS,
+} from '../../utilities/src/namespaces.ts';
 import {
 	evaluateXPathToArray,
 	evaluateXPathToFirstNode,
-} from '../utilities/xquery.ts';
+} from '../../utilities/src/xquery.ts';
 import { ThemeXml } from './ThemeXml.ts';
 
 type ParagraphStyle = {

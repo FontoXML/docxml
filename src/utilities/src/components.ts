@@ -2,7 +2,7 @@ import type {
 	AnyComponent,
 	ComponentContext,
 	ComponentDefinition,
-} from '../classes/Component.ts';
+} from '../../classes/src/Component.ts';
 
 const componentByName = new Map<string, ComponentDefinition>();
 

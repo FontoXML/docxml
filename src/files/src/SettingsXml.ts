@@ -1,17 +1,20 @@
 import { basename, dirname } from '@util-path';
 
-import type { ContentTypesXml, Length } from '../../mod.ts';
-import type { Archive } from '../classes/Archive.ts';
-import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
-import type { FootnoteProps } from '../components/FootnoteReference.ts';
-import { FileMime, RelationshipType } from '../enums.ts';
-import { create } from '../utilities/dom.ts';
-import { twip } from '../utilities/length.ts';
-import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
+import type { ContentTypesXml, Length } from '../../../mod.ts';
+import type { Archive } from '../../classes/src/Archive.ts';
+import { XmlFileWithContentTypes } from '../../classes/src/XmlFile.ts';
+import type { FootnoteProps } from '../../components/document/src/FootnoteReference.ts';
+import { FileMime, RelationshipType } from '../../enums.ts';
+import { create } from '../../utilities/src/dom.ts';
+import { twip } from '../../utilities/src/length.ts';
+import {
+	ALL_NAMESPACE_DECLARATIONS,
+	QNS,
+} from '../../utilities/src/namespaces.ts';
 import {
 	evaluateXPathToMap,
 	evaluateXPathToNumber,
-} from '../utilities/xquery.ts';
+} from '../../utilities/src/xquery.ts';
 import { type File, RelationshipsXml } from './RelationshipsXml.ts';
 
 export type SettingsI = {

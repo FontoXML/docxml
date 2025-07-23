@@ -1,12 +1,12 @@
 import { expect } from 'std/expect';
 import { beforeEach, describe, it } from 'std/testing/bdd';
 
-import { parse, serialize } from '../utilities/dom.ts';
-import { int } from '../utilities/id.ts';
-import { ALL_NAMESPACE_DECLARATIONS } from '../utilities/namespaces.ts';
-import { archive } from '../utilities/tests.ts';
-import { CommentsExtendedXml } from './CommentsExtendedXml.ts';
-import { ContentTypesXml } from './ContentTypesXml.ts';
+import { parse, serialize } from '../../utilities/src/dom.ts';
+import { int } from '../../utilities/src/id.ts';
+import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/src/namespaces.ts';
+import { archive } from '../../utilities/src/tests.ts';
+import { CommentsExtendedXml } from '../src/CommentsExtendedXml.ts';
+import { ContentTypesXml } from '../src/ContentTypesXml.ts';
 
 describe('CommentsExtended', () => {
 	let contentTypes: ContentTypesXml;

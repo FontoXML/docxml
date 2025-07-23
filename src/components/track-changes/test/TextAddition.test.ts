@@ -2,10 +2,10 @@ import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
 import Docx from '@fontoxml/docxml';
-import { create, serialize } from '../utilities/dom.ts';
-import { NamespaceUri } from '../utilities/namespaces.ts';
-import { Text } from './Text.ts';
-import { TextAddition } from './TextAddition.ts';
+import { create, serialize } from '../../../utilities/src/dom.ts';
+import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
+import { Text } from '../../document/src/Text.ts';
+import { TextAddition } from '../../track-changes/src/TextAddition.ts';
 
 describe('Text', () => {
 	const timeStamp = new Date();

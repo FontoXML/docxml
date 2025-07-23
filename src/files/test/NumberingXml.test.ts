@@ -1,8 +1,8 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
-import { parse, serialize } from '../utilities/dom.ts';
-import { NumberingXml } from './NumberingXml.ts';
+import { parse, serialize } from '../../utilities/src/dom.ts';
+import { NumberingXml } from '../src/NumberingXml.ts';
 
 describe('Numbering', () => {
 	const numbering = NumberingXml.fromNode(

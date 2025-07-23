@@ -1,10 +1,10 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
-import { Cell } from '../components/Cell.ts';
-import { Row } from '../components/Row.ts';
-import { Table } from '../components/Table.ts';
-import { TableGridModel } from './tables.ts';
+import { Cell } from '../../components/document/src/Cell.ts';
+import { Row } from '../../components/document/src/Row.ts';
+import { Table } from '../../components/document/src/Table.ts';
+import { TableGridModel } from '../src/tables.ts';
 
 function getAllCells(table: Table) {
 	return table.children.reduce<Cell[]>(

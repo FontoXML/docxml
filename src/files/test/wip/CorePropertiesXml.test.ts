@@ -1,8 +1,8 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
-import { serialize } from '../../utilities/dom.ts';
-import { CorePropertiesXml } from './CorePropertiesXml.ts';
+import { serialize } from '../../../utilities/src/dom.ts';
+import { CorePropertiesXml } from '../../src/wip/CorePropertiesXml.ts';
 
 describe('CoreProperties', () => {
 	it('serializes an empty instance correctly', async () => {

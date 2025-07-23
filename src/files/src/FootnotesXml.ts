@@ -1,21 +1,24 @@
 import { basename, dirname } from '@util-path';
 
-import type { Archive } from '../classes/Archive.ts';
-import type { Component } from '../classes/Component.ts';
-import { NumberMap } from '../classes/NumberMap.ts';
-import { XmlFileWithContentTypes } from '../classes/XmlFile.ts';
-import { FootnoteAnchor } from '../components/FootnoteAnchor.ts';
-import { FootnoteContinuationSeparator } from '../components/FootnoteContinuationSeparator.ts';
-import '../components/FootnoteReference.ts';
-import { FootnoteSeparator } from '../components/FootnoteSeparator.ts';
-import { Image } from '../components/Image.ts';
-import { Paragraph } from '../components/Paragraph.ts';
-import { Table } from '../components/Table.ts';
-import { Text } from '../components/Text.ts';
-import { FileMime } from '../enums.ts';
-import { create } from '../utilities/dom.ts';
-import { ALL_NAMESPACE_DECLARATIONS, QNS } from '../utilities/namespaces.ts';
-import { evaluateXPathToArray } from '../utilities/xquery.ts';
+import type { Archive } from '../../classes/src/Archive.ts';
+import type { Component } from '../../classes/src/Component.ts';
+import { NumberMap } from '../../classes/src/NumberMap.ts';
+import { XmlFileWithContentTypes } from '../../classes/src/XmlFile.ts';
+import { FootnoteAnchor } from '../../components/document/src/FootnoteAnchor.ts';
+import { FootnoteContinuationSeparator } from '../../components/document/src/FootnoteContinuationSeparator.ts';
+import '../../components/document/src/FootnoteReference.ts';
+import { FootnoteSeparator } from '../../components/document/src/FootnoteSeparator.ts';
+import { Image } from '../../components/document/src/Image.ts';
+import { Paragraph } from '../../components/document/src/Paragraph.ts';
+import { Table } from '../../components/document/src/Table.ts';
+import { Text } from '../../components/document/src/Text.ts';
+import { FileMime } from '../../enums.ts';
+import { create } from '../../utilities/src/dom.ts';
+import {
+	ALL_NAMESPACE_DECLARATIONS,
+	QNS,
+} from '../../utilities/src/namespaces.ts';
+import { evaluateXPathToArray } from '../../utilities/src/xquery.ts';
 import type { ContentTypesXml } from './ContentTypesXml.ts';
 import { type File, RelationshipsXml } from './RelationshipsXml.ts';
 

@@ -1,16 +1,16 @@
 import { expect } from 'std/expect';
 import { beforeAll, describe, it } from 'std/testing/bdd';
-import { Cell } from '../components/Cell.ts';
-import { Image } from '../components/Image.ts';
-import { Paragraph } from '../components/Paragraph.ts';
-import { Row } from '../components/Row.ts';
-import { Table } from '../components/Table.ts';
-import { Text } from '../components/Text.ts';
-import { serialize } from '../utilities/dom.ts';
-import { cm, pt } from '../utilities/length.ts';
-import { archive } from '../utilities/tests.ts';
-import { ContentTypesXml } from './ContentTypesXml.ts';
-import { FootnotesXml } from './FootnotesXml.ts';
+import { Cell } from '../../components/document/src/Cell.ts';
+import { Image } from '../../components/document/src/Image.ts';
+import { Paragraph } from '../../components/document/src/Paragraph.ts';
+import { Row } from '../../components/document/src/Row.ts';
+import { Table } from '../../components/document/src/Table.ts';
+import { Text } from '../../components/document/src/Text.ts';
+import { serialize } from '../../utilities/src/dom.ts';
+import { cm, pt } from '../../utilities/src/length.ts';
+import { archive } from '../../utilities/src/tests.ts';
+import { ContentTypesXml } from '../src/ContentTypesXml.ts';
+import { FootnotesXml } from '../src/FootnotesXml.ts';
 
 describe('Footnotes', () => {
 	let contentTypes: ContentTypesXml;

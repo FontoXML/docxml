@@ -12,14 +12,14 @@ import {
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
+import type { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
+import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
+import type { TextAddition } from '../../track-changes/src/TextAddition.ts';
+import type { TextDeletion } from '../../track-changes/src/TextDeletion.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
-import type { CommentRangeEnd } from './CommentRangeEnd.ts';
-import type { CommentRangeStart } from './CommentRangeStart.ts';
 import type { Hyperlink } from './Hyperlink.ts';
 import type { Text } from './Text.ts';
-import type { TextAddition } from './TextAddition.ts';
-import type { TextDeletion } from './TextDeletion.ts';
 
 /**
  * A type describing the components accepted as children of {@link Field}.
