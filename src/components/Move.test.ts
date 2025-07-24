@@ -138,6 +138,7 @@ describe('Move content in track changes...', () => {
 		);
 	});
 
+
 	it('serializes and deserialized correctly', async () => {
 		expect(serialize(await moveToObject.toNode([]))).toEqual(
 			serialize(
