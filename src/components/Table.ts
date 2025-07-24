@@ -27,14 +27,13 @@ import { type Length, twip } from '../utilities/length.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { TableGridModel } from '../utilities/tables.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
-import type { Insertion } from './Insertion.ts';
 import type { Row } from './Row.ts';
 import type { RowDeletion } from './RowDeletion.ts';
 
 /**
  * A type describing the components accepted as children of {@link Table}.
  */
-export type TableChild = Row | Insertion | RowDeletion;
+export type TableChild = Row | RowDeletion;
 
 /**
  * A type describing the props accepted by {@link Table}.
@@ -47,11 +46,7 @@ export type TableProps = TableProperties & {
  * A component that represents a table.
  */
 export class Table extends Component<TableProps, TableChild> {
-	public static override readonly children: string[] = [
-		'Row',
-		'RowAddition',
-		'RowDeletion',
-	];
+	public static override readonly children: string[] = ['Row', 'RowDeletion'];
 	public static override readonly mixed: boolean = false;
 
 	/**

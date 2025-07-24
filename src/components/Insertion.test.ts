@@ -2,10 +2,11 @@ import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 import { Archive } from '../classes/Archive.ts';
 import type { ComponentContext } from '../classes/Component.ts';
-import { create } from '../utilities/dom.ts';
+import { create, serialize } from '../utilities/dom.ts';
 import { NamespaceUri } from '../utilities/namespaces.ts';
 import { Cell } from './Cell.ts';
 import { Row } from './Row.ts';
+import { Table } from './Table.ts';
 
 describe('Insertion', () => {
 	const date = new Date();
@@ -15,11 +16,26 @@ describe('Insertion', () => {
 		relationships: null,
 	};
 
-	describe('Inserted run content', () => {});
+	describe('Inserted run content', () => {
+		/** 			const moveToObject = new Row(
+			{}
+			new Insertion(
+				{
+					id: 0,
+					date: date,
+					author: 'Gabe',
+					type: 'to',
+				}
+			)
+		);
+				const newRowInsertion = Row.fromNode(insertedRowNode, emptyContext);
+
+		**/
+	});
 	describe('Inserted numbering properties', () => {});
 	describe('Inserted paragraph', () => {});
 	describe('Inserted table row', () => {
-		const insertedRowToAsPropNode = create(
+		const rowWithInsertionNode = create(
 			`
             <w:tr xmlns:w="${NamespaceUri.w}">
                 <w:trPr>
@@ -39,21 +55,43 @@ describe('Insertion', () => {
             </w:tr>`,
 			emptyContext
 		);
-		const insertedRowAsPropObject = new Row(
+
+		const rowWithInsertionAsProp = new Row(
 			{
 				insertion: { author: 'Luis', date: date, id: 1 },
 			},
 			new Cell({})
 		);
-		const newInsertedRowToAsProp = Row.fromNode(
-			insertedRowToAsPropNode,
+		const rowWithInsertionAsNode = Row.fromNode(
+			rowWithInsertionNode,
 			emptyContext
 		);
 
-		it('turns node into expected Row insertion objects', () => {
-			expect(newInsertedRowToAsProp.props.insertion).toEqual(
-				insertedRowAsPropObject.props.insertion
+		it('Row node has expected insertion objects', () => {
+			expect(rowWithInsertionAsNode.props.insertion).toEqual(
+				rowWithInsertionAsProp.props.insertion
 			);
 		});
+
+		it('serializes and deserialized correctly', async () => {
+			const testTable = new Table({});
+			expect(
+				serialize(await rowWithInsertionAsProp.toNode([testTable]))
+			).toEqual(
+				serialize(
+					create(
+						`<tr xmlns="${NamespaceUri.w}">
+							<trPr>
+								<ins xmlns:ns1="${
+									NamespaceUri.w
+								}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}"/>
+							</trPr>
+            			</tr>`
+					)
+				)
+			);
+		});
+
+		//toNode() rowWithInsertionAsProp y un create comparar
 	});
 });

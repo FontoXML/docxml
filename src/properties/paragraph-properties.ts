@@ -1,3 +1,4 @@
+import { Insertion, type InsertionProps } from '../components/Insertion.ts';
 import { create } from '../utilities/dom.ts';
 import type { Length } from '../utilities/length.ts';
 import { NamespaceUri, QNS } from '../utilities/namespaces.ts';
@@ -100,8 +101,8 @@ export type ParagraphProperties = {
 				date: Date;
 		  } & Omit<ParagraphProperties, 'change'>);
 	/**
-	 * Used for formatting of the `rPr` elements at the top level of a paragraph. 
-	 * This is text property changes applied to the whole parent paragraph. 
+	 * Used for formatting of the `rPr` elements at the top level of a paragraph.
+	 * This is text property changes applied to the whole parent paragraph.
 	 */
 	pilcrow?: TextProperties | null;
 
@@ -131,6 +132,15 @@ export type ParagraphProperties = {
 			position: Length | null;
 		}>
 	>;
+
+	/**
+	 * A property used to indicate when a paragraph has been inserted.
+	 *
+	 * If present, the containing paragraph element will appear as a track-change inserted paragraph.
+	 *
+	 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EZY5V.html
+	 */
+	insertion?: null | InsertionProps;
 };
 
 export function paragraphPropertiesFromNode(
@@ -183,7 +193,12 @@ export function paragraphPropertiesFromNode(
 						"type": @${QNS.w}val/string(),
 						"leader": @${QNS.w}leader/string(),
 						"position": docxml:length(@${QNS.w}pos, 'twip')
-					}}
+					}},
+					"insertion": ./${QNS.w}ins/map {
+						"id": @${QNS.w}id/number(), 
+						"author": @${QNS.w}author/string(), 
+						"date": @${QNS.w}date/string()
+					}
 				}`,
 				node
 		  ) || {}
@@ -316,7 +331,8 @@ export async function paragraphPropertiesToNode(
 								$tab('position')
 							} else ()
 						}
-				} else ()
+				} else (),
+				$insertion
 			}
 		`,
 		{
@@ -373,6 +389,9 @@ export async function paragraphPropertiesToNode(
 						leader: tab.leader,
 						position: getTwipOrNull(tab.position),
 				  }))
+				: null,
+			insertion: data.insertion
+				? await new Insertion(data.insertion).toNode([])
 				: null,
 		}
 	);

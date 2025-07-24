@@ -59,6 +59,7 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 		'Move',
 		this.name,
 	];
+	// ToDo add MoveRange, Deletion
 
 	public static override readonly mixed: boolean = false;
 

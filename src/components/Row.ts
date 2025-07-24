@@ -87,7 +87,7 @@ export async function createNodeFromRow(
 			}
 		`,
 		{
-			trPr: tableRowPropertiesToNode(row.props),
+			trPr: await tableRowPropertiesToNode(row.props),
 			children: await Promise.all(
 				table.model.getCellsInRow(y).map((cell, x) => {
 					const info = table.model.getCellInfo(cell);
