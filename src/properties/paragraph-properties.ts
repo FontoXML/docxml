@@ -100,7 +100,8 @@ export type ParagraphProperties = {
 				date: Date;
 		  } & Omit<ParagraphProperties, 'change'>);
 	/**
-	 * Formatting of the pilcrow sign
+	 * Used for formatting of the `rPr` elements at the top level of a paragraph. 
+	 * This is text property changes applied to the whole parent paragraph. 
 	 */
 	pilcrow?: TextProperties | null;
 

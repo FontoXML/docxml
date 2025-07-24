@@ -143,7 +143,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 	}
 
 	// Check for a track changes movement element in our node.
-	const nodeName = evaluateXPathToFirstNode(
+	const nodeName = evaluateXPathToFirstNode<Element>(
 		`./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]`,
 		node
 	) as Element;
@@ -201,6 +201,56 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 			  }
 			: null,
 	};
+  
+	const props = evaluateXPathToMap<TextProperties>(
+		`map {
+			"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
+			"color": ./${QNS.w}color/@${QNS.w}val/string(),
+			"shading": ./${QNS.w}shd/docxml:ct-shd(.),
+			"isUnderlined": ./${QNS.w}u/@${QNS.w}val/string(),
+			"isBold": map {
+				"simple": docxml:ct-on-off(./${QNS.w}b),
+				"complex": docxml:ct-on-off(./${QNS.w}bCs)
+			},
+			"isItalic": map {
+				"simple": docxml:ct-on-off(./${QNS.w}i),
+				"complex": docxml:ct-on-off(./${QNS.w}iCs)
+			},
+			"isSmallCaps": docxml:ct-on-off(./${QNS.w}smallCaps),
+			"isCaps": docxml:ct-on-off(./${QNS.w}caps),
+			"verticalAlign": ./${QNS.w}vertAlign/@${QNS.w}val/string(),
+			"language": ./${QNS.w}lang/@${QNS.w}val/string(),
+			"fontSize": map {
+				"simple": docxml:length(${QNS.w}sz/@${QNS.w}val, "hpt"),
+				"complex": docxml:length(${QNS.w}szCs/@${QNS.w}val, "hpt")
+			},
+			"minimumKerningFontSize": docxml:length(${QNS.w}kern/@${QNS.w}val, "hpt"),
+			"isStrike": docxml:ct-on-off(./${QNS.w}strike),
+			"spacing": docxml:length(${QNS.w}spacing/@${QNS.w}val, 'twip'),
+			"font": ./${QNS.w}rFonts/map {
+				"cs": @${QNS.w}cs/string(),
+				"ascii": @${QNS.w}ascii/string(),
+				"hAnsi": @${QNS.w}hAnsi/string()
+			},
+			"move": ./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]/map {
+				"id": @${QNS.w}id/number(), 
+				"author": @${QNS.w}author/string(), 
+				"date": @${QNS.w}date/string(),
+				"type": if ($nodeName eq 'moveTo') then 'to' else 'from'
+			}
+		}`,
+		node,
+		null,
+		{ nodeName: nodeName ? nodeName.localName : null }
+	);
+
+	if (props.move) {
+		// Convert the date string to a Date object.
+		props.move.date = new Date(props.move.date);
+	}
+
+	return props;
+  
 }
 
 export async function textPropertiesToNode(

@@ -89,10 +89,7 @@ export class Move extends Component<MoveProps, MoveChild> {
 			`,
 			{
 				...this.props,
-				type: this.props.type,
-				id: this.props.id,
 				date: new Date(this.props.date).toISOString(),
-				author: this.props.author,
 				children: await this.childrenToNode(ancestry),
 			}
 		);
@@ -138,10 +135,8 @@ export class Move extends Component<MoveProps, MoveChild> {
 		);
 		return new Move(
 			{
-				author: changeProps.author,
+				...changeProps,
 				date: new Date(changeProps.date),
-				id: changeProps.id,
-				type: changeProps.type,
 			},
 			...createChildComponentsFromNodes<MoveChild>(
 				this.children,

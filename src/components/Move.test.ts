@@ -127,7 +127,7 @@ describe('Move content in track changes...', () => {
 		emptyContext
 	);
 
-	it('turns node into correct Move objects', () => {
+	it('turns node into expected Move objects', () => {
 		expect(newMoveTo).toEqual(moveToObject);
 		expect(newMoveFrom).toEqual(moveFromObject);
 		expect(newMoveToAsProp.props.pilcrow?.move).toEqual(
@@ -138,7 +138,8 @@ describe('Move content in track changes...', () => {
 		);
 	});
 
-	it('turns Move object into the correct node', async () => {
+
+	it('serializes and deserialized correctly', async () => {
 		expect(serialize(await moveToObject.toNode([]))).toEqual(
 			serialize(
 				create(
@@ -156,7 +157,7 @@ describe('Move content in track changes...', () => {
 		);
 	});
 
-	it('turns object of a moveFrom into the correct node', async () => {
+	it('turns object of a moveFrom into the a <moveFrom> node', async () => {
 		expect(serialize(await moveFromObject.toNode([]))).toEqual(
 			serialize(
 				create(
