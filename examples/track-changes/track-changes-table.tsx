@@ -23,11 +23,6 @@ const testTable = new Table(
 		{},
 		new Cell({}, new Paragraph({}, new Text({}, ' my old friend.')))
 	),
-	new Insertion({
-		id: 1,
-		author: 'Inés',
-		date: new Date(),
-	}),
 	new RowDeletion(
 		{ id: 2, author: 'Inés', date: new Date() },
 		new Cell({}, new Paragraph({}, new Text({}, ' sunlight comes')))

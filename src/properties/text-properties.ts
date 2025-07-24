@@ -1,3 +1,4 @@
+import { Insertion, type InsertionProps } from '../components/Insertion.ts';
 import { Move, type MoveProps } from '../components/Move.ts';
 import { create } from '../utilities/dom.ts';
 import type { Length } from '../utilities/length.ts';
@@ -135,6 +136,15 @@ export type TextProperties = {
 	 * Read more here:  https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EXMJW.html
 	 */
 	move?: MoveProps | null;
+
+	/**
+	 * A property used to indicate when a paragraph has been inserted.
+	 *
+	 * If present, the containing paragraph element will appear as a track-change inserted paragraph.
+	 *
+	 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EZY5V.html
+	 */
+	insertion?: null | InsertionProps;
 };
 
 export function textPropertiesFromNode(node?: Node | null): TextProperties {
@@ -183,12 +193,22 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"author": @${QNS.w}author/string(), 
 				"date": @${QNS.w}date/string(),
 				"type": if ($nodeName eq 'moveTo') then 'to' else 'from'
+			},
+			"insertion": ./${QNS.w}ins/map {
+				"id": @${QNS.w}id/number(), 
+				"author": @${QNS.w}author/string(), 
+				"date": @${QNS.w}date/string()
 			}
 		}`,
 		node,
 		null,
 		{ nodeName: nodeName ? nodeName.localName : null }
 	);
+
+	if (props.insertion) {
+		// Convert the date string to a Date object.
+		props.insertion.date = new Date(props.insertion.date);
+	}
 
 	if (props.move) {
 		// Convert the date string to a Date object.
@@ -215,7 +235,8 @@ export async function textPropertiesToNode(
 		!data.isStrike &&
 		!data.shading &&
 		!data.font &&
-		!data.move
+		!data.move &&
+		!data.insertion
 	) {
 		return null;
 	}
@@ -268,7 +289,8 @@ export async function textPropertiesToNode(
 					$font('hAnsi')
 				} else ()
 			} else (), 
-			$move
+			$move,
+			$insertion
 		}`,
 		{
 			style: data.style || null,
@@ -310,6 +332,9 @@ export async function textPropertiesToNode(
 			 * object, we can be sure that no more children will ever be created.
 			 */
 			move: data.move ? await new Move(data.move).toNode([]) : null,
+			insertion: data.insertion
+				? await new Insertion(data.insertion).toNode([])
+				: null,
 		}
 	);
 }

@@ -9,7 +9,6 @@ import {
 	type ComponentContext,
 	type ComponentDefinition,
 } from '../classes/Component.ts';
-import type { TableRowProperties } from '../properties/table-row-properties.ts';
 import {
 	type ChangeInformation,
 	getChangeInformation,
