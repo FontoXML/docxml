@@ -3,23 +3,21 @@
 import './Text.ts';
 
 import { Component } from '../classes/Component.ts';
-import type { ChangeInformation } from '../utilities/changes.ts';
 import { registerComponent } from '../utilities/components.ts';
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
 
-/**
- * A type for indicating the start of a range of moved text. In OOXML, these are self-closing tags.
- */
 export type MoveRangeEndChild = never;
 
-export type MoveRangeEndProps = Pick<ChangeInformation, 'id'> & {
+export type MoveRangeEndProps = {
+	id: number;
 	type: 'from' | 'to';
 };
 
 /**
- * A component that represents a change-tracked text that was inserted.
+ * A type for indicating the end of a range of moved content.
+ * In OOXML, these are self-closing tags.
  */
 export class MoveRangeEnd extends Component<
 	MoveRangeEndProps,

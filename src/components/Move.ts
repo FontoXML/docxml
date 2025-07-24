@@ -22,6 +22,8 @@ import {
 import { create } from '../utilities/dom.ts';
 import { QNS } from '../utilities/namespaces.ts';
 import { evaluateXPathToMap } from '../utilities/xquery.ts';
+import type { MoveRangeEnd } from './MoveRangeEnd.ts';
+import type { MoveRangeStart } from './MoveRangeStart.ts';
 import './Text.ts';
 
 /**
@@ -35,7 +37,9 @@ export type MoveChild =
 	| TextAddition
 	| TextDeletion
 	| Text
-	| Move;
+	| Move
+	| MoveRangeStart
+	| MoveRangeEnd;
 
 /**
  * A type describing the props accepted by {@link Move}.
