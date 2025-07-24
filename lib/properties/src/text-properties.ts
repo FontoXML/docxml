@@ -22,10 +22,6 @@ function explodeSimpleOrComplex<Generic>(
 	if (value === null) {
 		return { simple: null, complex: null };
 	}
-	if (typeof value === 'boolean') {
-		(value as SimpleOrComplex<Generic>).simple === false &&
-			(value as SimpleOrComplex<Generic>).complex === false;
-	}
 	if (
 		(value as SimpleOrComplex<Generic>).simple === undefined &&
 		(value as SimpleOrComplex<Generic>).complex === undefined
@@ -144,7 +140,21 @@ export type TextProperties = {
 	 */
 	move?: MoveProps | null;
 
+	/**
+	 * A property used to indicate that the visual properties of this text have changed somehow.
+	 * Use with the {@link SettingsXml} settings for enabling track changes to visualize
+	 * how your document has changed.
+	 */
 	change?: (ChangeInformation & Omit<TextProperties, 'change'>) | null;
+};
+
+type IntermediateProps = Omit<TextProperties, 'change'> & {
+	change?: {
+		id: number;
+		author: string;
+		date: Date;
+		node: Node | undefined;
+	};
 };
 
 export function textPropertiesFromNode(node?: Node | null): TextProperties {
@@ -159,8 +169,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 	);
 
 	const props = node
-		? // deno-lint-ignore no-explicit-any
-		  evaluateXPathToMap<any>(
+		? evaluateXPathToMap<IntermediateProps>(
 				`map {
 			"style": ./${QNS.w}rStyle/@${QNS.w}val/string(),
 			"color": ./${QNS.w}color/@${QNS.w}val/string(),
@@ -200,7 +209,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"id": @${QNS.w}id/number(), 
 				"author": @${QNS.w}author/string(), 
 				"date": @${QNS.w}date/string(), 
-				"_node": ./${QNS.w}rPr
+				"node": ./${QNS.w}rPr
 			}
 		}`,
 				node,
@@ -213,8 +222,8 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		props.change = {
 			...props.change,
 			date: new Date(props.change.date),
-			...textPropertiesFromNode(props.change._node),
-			_node: undefined,
+			...textPropertiesFromNode(props.change.node),
+			node: undefined,
 		};
 	} else {
 		delete props.change;
@@ -225,7 +234,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		props.move.date = new Date(props.move.date);
 	}
 
-	return props;
+	return props as TextProperties;
 }
 
 export async function textPropertiesToNode(
