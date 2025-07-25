@@ -34,7 +34,8 @@ export type CellChild =
 	| Table
 	| BookmarkRangeStart
 	| BookmarkRangeEnd
-	| Insertion;
+	| Insertion
+	| Deletion;
 
 /**
  * A type describing the props accepted by {@link Cell}.

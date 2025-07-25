@@ -1,4 +1,4 @@
-import { Insertion, type InsertionProps } from '../../../mod.ts';
+import { Deletion, Insertion, type InsertionProps } from '../../../mod.ts';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
 import { QNS } from '../../utilities/src/namespaces.ts';
@@ -29,6 +29,14 @@ export type TableRowProperties = {
 	 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EA14V.html
 	 */
 	insertion?: null | InsertionProps;
+	/**
+	 * A property used to indicate when a row has been deleted.
+	 *
+	 * If present, the containing row element will appear as a track-change deleted row.
+	 *
+	 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_del_topic_ID0EH23V.html
+	 */
+	deletion?: null | InsertionProps;
 };
 
 export function tableRowPropertiesFromNode(
@@ -44,12 +52,18 @@ export function tableRowPropertiesFromNode(
 						"id": @${QNS.w}id/number(), 
 						"author": @${QNS.w}author/string(), 
 						"date": @${QNS.w}date/string()
+					},
+					"deletion": ./${QNS.w}del/map {
+						"id": @${QNS.w}id/number(), 
+						"author": @${QNS.w}author/string(), 
+						"date": @${QNS.w}date/string()
 					}
 				}`,
 				node
 		  )
 		: {};
 
+	// Convert the date string to a Date object.
 	if (props.insertion) {
 		// Convert the date string to a Date object.
 		props.insertion.date = props.insertion.date
@@ -58,6 +72,10 @@ export function tableRowPropertiesFromNode(
 		props.insertion.author = props.insertion.author
 			? props.insertion.author
 			: undefined;
+	}
+
+	if (props.deletion) {
+		props.deletion.date = new Date(props.deletion.date);
 	}
 
 	return props;
@@ -77,7 +95,8 @@ export async function tableRowPropertiesToNode(
 				attribute ${QNS.w}w { round($cellSpacing('twip')) },
 				attribute ${QNS.w}type { "dxa" }
 			} else (),
-			$insertion
+			$insertion,
+			$deletion
 		}`,
 		{
 			isHeaderRow: tcpr.isHeaderRow || false,
@@ -85,6 +104,9 @@ export async function tableRowPropertiesToNode(
 			cellSpacing: tcpr.cellSpacing || null,
 			insertion: tcpr.insertion
 				? await new Insertion(tcpr.insertion).toNode([])
+				: null,
+			deletion: tcpr.deletion
+				? await new Deletion(tcpr.deletion).toNode([])
 				: null,
 		}
 	);
