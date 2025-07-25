@@ -156,11 +156,6 @@ export {
 	type RowDeletionProps,
 } from './lib/components/track-changes/src/RowDeletion.ts';
 export {
-	TextAddition,
-	type TextAdditionChild,
-	type TextAdditionProps,
-} from './lib/components/track-changes/src/TextAddition.ts';
-export {
 	TextDeletion,
 	type TextDeletionChild,
 	type TextDeletionProps,

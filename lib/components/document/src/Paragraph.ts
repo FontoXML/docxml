@@ -6,7 +6,6 @@ import '../../comments/src/Comment.ts';
 import '../../comments/src/CommentRangeEnd.ts';
 import '../../comments/src/CommentRangeStart.ts';
 import '../../document/src/Text.ts';
-import '../../track-changes/src/TextAddition.ts';
 import '../../track-changes/src/TextDeletion.ts';
 import './BookmarkRangeEnd.ts';
 import './BookmarkRangeStart.ts';
@@ -53,7 +52,6 @@ import type { FootnoteReference } from './FootnoteReference.ts';
  */
 export type ParagraphChild =
 	| Text
-	| TextAddition
 	| TextDeletion
 	| CommentRangeStart
 	| CommentRangeEnd
@@ -91,7 +89,6 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'CommentRangeStart',
 		'Hyperlink',
 		'Text',
-		'TextAddition',
 		'TextDeletion',
 		'Field',
 		'FootnoteReference',
@@ -180,7 +177,6 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 						${QNS.w}hyperlink |
 						${QNS.w}fldSimple |
 						${QNS.w}del |
-						${QNS.w}ins |
 						${QNS.w}commentRangeStart |
 						${QNS.w}commentRangeEnd |
 						${QNS.w}bookmarkStart |
