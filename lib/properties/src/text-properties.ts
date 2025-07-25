@@ -2,6 +2,7 @@ import {
 	Move,
 	type MoveProps,
 } from '../../components/track-changes/src/Move.ts';
+import type { ChangeInformation } from '../../utilities/src/changes.ts';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
 import { NamespaceUri, QNS } from '../../utilities/src/namespaces.ts';
@@ -141,9 +142,12 @@ export type TextProperties = {
 	move?: MoveProps | null;
 
 	/**
-	 * A property used to indicate that the visual properties of this text have changed somehow.
-	 * Use with the {@link SettingsXml} settings for enabling track changes to visualize
-	 * how your document has changed.
+	 * A property used to indicate that the way this text is deiplayed has changed somehow.
+	 * When track changes are enabled in Word, these properties will apppear as
+	 * having been editied.
+	 *
+	 * Move information about text run propertie can be found here:
+	 * https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_rPrChange_topic_ID0E4JSW.html?hl=rprchange
 	 */
 	change?: (ChangeInformation & Omit<TextProperties, 'change'>) | null;
 };
