@@ -27,7 +27,6 @@ import {
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
-import { TextDeletion } from '../../track-changes/src/TextDeletion.ts';
 import type { Break } from './Break.ts';
 import type { FieldRangeEnd } from './FieldRangeEnd.ts';
 import type { FieldRangeInstruction } from './FieldRangeInstruction.ts';
@@ -87,9 +86,6 @@ export class Text extends Component<TextProps, TextChild> {
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
-		const asTextDeletion = ancestry.some(
-			(ancestor) => ancestor instanceof TextDeletion
-		);
 		const anc = [this, ...ancestry];
 		return create(
 			`
@@ -104,9 +100,8 @@ export class Text extends Component<TextProps, TextChild> {
 					this.children.map((child) => {
 						if (typeof child === 'string') {
 							return create(
-								`element ${QNS.w}${
-									asTextDeletion ? 'delText' : 't'
-								} {
+								`element ${QNS.w}t
+								{
 									attribute xml:space { "preserve" },
 									$text
 								}`,
