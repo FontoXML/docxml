@@ -1,14 +1,12 @@
 /** @jsx  Docx.jsx */
 import Docx, {
 	Paragraph,
-	RowAddition,
 	RowDeletion,
 	Section,
 	Table,
 	Text,
 } from '../../mod.ts';
 import { Cell } from '../../src/components/Cell.ts';
-import { Insertion } from '../../src/components/Insertion.ts';
 import { Row } from '../../src/components/Row.ts';
 
 // Create a new .docx file with track changes enabled.
@@ -16,11 +14,13 @@ const docxFile = Docx.fromNothing().withSettings({
 	isTrackChangesEnabled: true,
 });
 
+const date = new Date();
+
 // Create a new table that includes a row, a row deletion, and a row addition.
 const testTable = new Table(
 	{},
 	new Row(
-		{},
+		{ insertion: { author: 'Luis', date: date, id: 1 } },
 		new Cell({}, new Paragraph({}, new Text({}, ' my old friend.')))
 	),
 	new RowDeletion(
@@ -41,16 +41,11 @@ await docxFile.toFile('track-changes-table.docx');
 // Alternatively, you can use JSX:
 await Docx.fromJsx(
 	<Table>
-		<Row>
+		<Row insertion={{ id: 1, author: 'ines', date: new Date() }}>
 			<Cell>
 				<Paragraph> my old friend.</Paragraph>
 			</Cell>
 		</Row>
-		<Insertion id={1} author="ines" date={new Date()}>
-			<Cell>
-				<Paragraph> it is time</Paragraph>
-			</Cell>
-		</Insertion>
 		<RowDeletion id={2} author="ines" date={new Date()}>
 			<Cell>
 				<Paragraph> sunlight comes</Paragraph>

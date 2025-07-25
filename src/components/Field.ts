@@ -18,9 +18,6 @@ import type { CommentRangeEnd } from './CommentRangeEnd.ts';
 import type { CommentRangeStart } from './CommentRangeStart.ts';
 import type { Hyperlink } from './Hyperlink.ts';
 import type { Text } from './Text.ts';
-import type { TextAddition } from './TextAddition.ts';
-import type { TextDeletion } from './TextDeletion.ts';
-
 /**
  * A type describing the components accepted as children of {@link Field}.
  */
@@ -29,8 +26,6 @@ export type FieldChild =
 	| BookmarkRangeEnd
 	| CommentRangeStart
 	| CommentRangeEnd
-	| TextDeletion
-	| TextAddition
 	| Text
 	| Hyperlink;
 
@@ -66,8 +61,6 @@ export class Field extends Component<FieldProps, FieldChild> {
 		'BookmarkRangeEnd',
 		'CommentRangeStart',
 		'CommentRangeEnd',
-		'TextDeletion',
-		'TextAddition',
 		'Text',
 		'Hyperlink',
 	];
