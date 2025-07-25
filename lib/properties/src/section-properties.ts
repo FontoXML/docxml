@@ -88,6 +88,9 @@ export type SectionProperties = {
 	 */
 	isTitlePage?: null | boolean;
 
+	/**
+	 * Change tracking info about this section--used for Word's track changes feature.
+	 */
 	change?: null | (Omit<SectionProperties, 'change'> & ChangeInformation);
 };
 
