@@ -1,10 +1,15 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
+<<<<<<< HEAD
 
+=======
+import { Paragraph, Text } from '../../../../mod.ts';
+>>>>>>> 2aa1863 (DEV-24696 Paragraph addition)
 import { Archive } from '../../../classes/src/Archive.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create, serialize } from '../../../utilities/src/dom.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
+<<<<<<< HEAD
 import { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
 import { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
 import { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
@@ -18,6 +23,8 @@ import { Insertion } from '../src/Insertion.ts';
 import { Move } from '../src/Move.ts';
 import { MoveRangeEnd } from '../src/MoveRangeEnd.ts';
 import { MoveRangeStart } from '../src/MoveRangeStart.ts';
+=======
+>>>>>>> 2aa1863 (DEV-24696 Paragraph addition)
 
 describe('Insertion', () => {
 	const date = new Date();
@@ -27,6 +34,7 @@ describe('Insertion', () => {
 		relationships: null,
 	};
 
+<<<<<<< HEAD
 	describe('Inserted run content', () => {
 		describe('Text', () => {
 			const insertedTextNode = create(
@@ -552,6 +560,9 @@ describe('Insertion', () => {
 
 	describe('Inserted paragraph', () => {
 		// Aquí solo como propiedad para el párrafo
+=======
+	describe('Inserted paragraph', () => {
+>>>>>>> 2aa1863 (DEV-24696 Paragraph addition)
 		const insertedParagraphNode = create(
 			`<w:p xmlns:w="${NamespaceUri.w}">
 				<w:pPr>
@@ -560,7 +571,11 @@ describe('Insertion', () => {
 					</w:rPr>
 				</w:pPr>
 				<w:r>
+<<<<<<< HEAD
 					<w:t>This is a new paragraph</w:t>
+=======
+					<w:t>This is paragraph one.</w:t>
+>>>>>>> 2aa1863 (DEV-24696 Paragraph addition)
 				</w:r>
 			</w:p>
 			`,
@@ -569,7 +584,11 @@ describe('Insertion', () => {
 
 		const insertedParagraphAsProp = new Paragraph(
 			{ pilcrow: { insertion: { author: 'Luis', date: date, id: 1 } } },
+<<<<<<< HEAD
 			new Text({}, 'This is a new paragraph')
+=======
+			new Text({}, 'This is paragraph one.')
+>>>>>>> 2aa1863 (DEV-24696 Paragraph addition)
 		);
 
 		const insertedParagraphAsNode = Paragraph.fromNode(
@@ -595,15 +614,22 @@ describe('Insertion', () => {
 									}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}" />
 								</rPr>
 							</pPr>
+<<<<<<< HEAD
 								<r>
 									<t xml:space="preserve">This is a new paragraph</t>
 								</r>				
+=======
+							<r>
+								<t xml:space="preserve">This is paragraph one.</t>
+							</r>
+>>>>>>> 2aa1863 (DEV-24696 Paragraph addition)
 						</p>`
 					)
 				)
 			);
 		});
 	});
+<<<<<<< HEAD
 
 	describe('Inserted table row', () => {
 		const insertedRowNode = create(
@@ -660,4 +686,6 @@ describe('Insertion', () => {
 			);
 		});
 	});
+=======
+>>>>>>> 2aa1863 (DEV-24696 Paragraph addition)
 });
