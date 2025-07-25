@@ -126,6 +126,11 @@ export {
 	type WatermarkTextProps,
 } from './lib/components/document/src/WatermarkText.ts';
 export {
+	Insertion,
+	type InsertionChild,
+	type InsertionProps,
+} from './lib/components/track-changes/src/Insertion.ts';
+export {
 	Move,
 	type MoveChild,
 	type MoveProps,
