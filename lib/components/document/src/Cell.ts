@@ -1,4 +1,4 @@
-import { Insertion } from '../../../../mod.ts';
+import type { Insertion } from '../../../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,
