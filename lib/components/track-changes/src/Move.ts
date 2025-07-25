@@ -113,7 +113,6 @@ export class Move extends Component<MoveProps, MoveChild> {
 				"children": array{./(
 					${QNS.w}r |
 					${QNS.w}del |
-					${QNS.w}ins |
 					${QNS.w}commentRangeStart |
 					${QNS.w}commentRangeEnd |
 					${QNS.w}bookmarkStart |
