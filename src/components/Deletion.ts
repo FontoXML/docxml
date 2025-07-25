@@ -19,39 +19,38 @@ import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import type { CommentRangeEnd } from './CommentRangeEnd.ts';
 import type { CommentRangeStart } from './CommentRangeStart.ts';
-import type { Deletion } from './Deletion.ts';
+import type { Insertion } from './Insertion.ts';
 import type { Move } from './Move.ts';
 import type { Text } from './Text.ts';
 
 /**
- * A type specifying the children of {@link Insertion}.
+ * A type specifying the children of {@link Deletion}.
  */
-export type InsertionChild =
+export type DeletionChild =
 	| BookmarkRangeStart
 	| BookmarkRangeEnd
 	| CommentRangeStart
 	| CommentRangeEnd
 	| Text
 	| Move
-	| Insertion
-	| Deletion;
-// ToDo add MoveRange
+	| Deletion
+	| Insertion;
+// ToDo add MoveRange, Addition
 
 /**
- * A type describing the props accepted by {@link Insertion}.
+ * A type describing the props accepted by {@link Deletion}.
  */
-export type InsertionProps = ChangeInformation;
+export type DeletionProps = ChangeInformation;
 
 /**
  *
  * Additional documentation is here:
- * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EOW6V.html
- * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EVH6V.html
- *  - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EZY5V.html
- *  - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EA14V.html
- *  - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EHJ5V.html
+ * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_del_topic_ID0ESZZV.html
+ * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_del_topic_ID0EMM3V.html
+ *  - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_del_topic_ID0EH23V.html
+ *  - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_del_topic_ID0EOK4V.html
  */
-export class Insertion extends Component<InsertionProps, InsertionChild> {
+export class Deletion extends Component<DeletionProps, DeletionChild> {
 	public static override readonly children: string[] = [
 		'BookmarkRangeEnd',
 		'BookmarkRangeStart',
@@ -59,7 +58,7 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 		'CommentRangeEnd',
 		'Text',
 		'Move',
-		'Deletion',
+		'Insertion',
 		this.name,
 	];
 	// ToDo add MoveRange, Deletion
@@ -72,7 +71,7 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		return create(
 			`
-				element ${QNS.w}ins {
+				element ${QNS.w}del {
 					attribute ${QNS.w}id { $id },
 					attribute ${QNS.w}author { $author },
 					attribute ${QNS.w}date { $date },
@@ -91,17 +90,17 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return node.nodeName === 'w:ins';
+		return node.nodeName === 'w:del';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node, context: ComponentContext): Insertion {
+	static override fromNode(node: Node, context: ComponentContext): Deletion {
 		const props = getChangeInformation(node);
-		return new Insertion(
+		return new Deletion(
 			props,
-			...createChildComponentsFromNodes<InsertionChild>(
+			...createChildComponentsFromNodes<DeletionChild>(
 				this.children,
 				evaluateXPathToNodes(`./${QNS.w}r`, node),
 				context
@@ -110,4 +109,4 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 	}
 }
 
-registerComponent(Insertion as unknown as ComponentDefinition);
+registerComponent(Deletion as unknown as ComponentDefinition);

@@ -1,3 +1,4 @@
+import { Deletion } from '../components/Deletion.ts';
 import { Insertion, type InsertionProps } from '../components/Insertion.ts';
 import { Move, type MoveProps } from '../components/Move.ts';
 import { create } from '../utilities/dom.ts';
@@ -136,7 +137,6 @@ export type TextProperties = {
 	 * Read more here:  https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EXMJW.html
 	 */
 	move?: MoveProps | null;
-
 	/**
 	 * A property used to indicate when a paragraph has been inserted.
 	 *
@@ -145,6 +145,14 @@ export type TextProperties = {
 	 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EZY5V.html
 	 */
 	insertion?: null | InsertionProps;
+	/**
+	 * A property used to indicate when a paragraph has been deleted.
+	 *
+	 * If present, the containing paragraph element will appear as a track-change deleted paragraph.
+	 *
+	 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_del_topic_ID0EMM3V.html
+	 */
+	deletion?: null | InsertionProps;
 };
 
 export function textPropertiesFromNode(node?: Node | null): TextProperties {
@@ -198,6 +206,11 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"id": @${QNS.w}id/number(), 
 				"author": @${QNS.w}author/string(), 
 				"date": @${QNS.w}date/string()
+			},
+			"deletion": ./${QNS.w}del/map {
+				"id": @${QNS.w}id/number(), 
+				"author": @${QNS.w}author/string(), 
+				"date": @${QNS.w}date/string()
 			}
 		}`,
 		node,
@@ -205,13 +218,16 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		{ nodeName: nodeName ? nodeName.localName : null }
 	);
 
+	// Convert the date string to a Date object.
 	if (props.insertion) {
-		// Convert the date string to a Date object.
 		props.insertion.date = new Date(props.insertion.date);
 	}
 
+	if (props.deletion) {
+		props.deletion.date = new Date(props.deletion.date);
+	}
+
 	if (props.move) {
-		// Convert the date string to a Date object.
 		props.move.date = new Date(props.move.date);
 	}
 
@@ -236,7 +252,8 @@ export async function textPropertiesToNode(
 		!data.shading &&
 		!data.font &&
 		!data.move &&
-		!data.insertion
+		!data.insertion &&
+		!data.deletion
 	) {
 		return null;
 	}
@@ -290,7 +307,8 @@ export async function textPropertiesToNode(
 				} else ()
 			} else (), 
 			$move,
-			$insertion
+			$insertion,
+			$deletion
 		}`,
 		{
 			style: data.style || null,
@@ -334,6 +352,9 @@ export async function textPropertiesToNode(
 			move: data.move ? await new Move(data.move).toNode([]) : null,
 			insertion: data.insertion
 				? await new Insertion(data.insertion).toNode([])
+				: null,
+			deletion: data.deletion
+				? await new Deletion(data.deletion).toNode([])
 				: null,
 		}
 	);
