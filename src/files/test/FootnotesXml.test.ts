@@ -17,7 +17,7 @@ describe('Footnotes', () => {
 	let footnotes: FootnotesXml;
 
 	beforeAll(async () => {
-		const arch = await archive('../test/simple.docx');
+		const arch = await archive('../assets/simple.docx');
 		contentTypes = await ContentTypesXml.fromArchive(
 			arch,
 			'[Content_Types].xml'
@@ -277,7 +277,7 @@ describe('Footnotes', () => {
 
 	it('Images are added with correct relationships', async () => {
 		const image = new Image({
-			data: Deno.readFile('test/spacekees.jpeg'),
+			data: Deno.readFile('assets/spacekees.jpeg'),
 			width: cm(2.54),
 			height: cm(2.54),
 			title: 'Title',

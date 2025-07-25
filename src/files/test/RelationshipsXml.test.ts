@@ -10,7 +10,7 @@ describe('Relationships', () => {
 	let relationships: RelationshipsXml;
 	let contentTypes: ContentTypesXml;
 	beforeAll(async () => {
-		const arch = await archive('../test/simple.docx');
+		const arch = await archive('../assets/simple.docx');
 		contentTypes = await ContentTypesXml.fromArchive(
 			arch,
 			'[Content_Types].xml'

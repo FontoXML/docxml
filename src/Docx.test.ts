@@ -8,7 +8,7 @@ import { file } from './utilities/src/tests.ts';
 describe('Docx', () => {
 	let bundle: Docx;
 	beforeAll(async () => {
-		bundle = await Docx.fromArchive(file('../test/simple.docx'));
+		bundle = await Docx.fromArchive(file('../assets/simple.docx'));
 	});
 
 	it('correct files', async () => {
