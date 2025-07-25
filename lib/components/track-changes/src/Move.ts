@@ -10,7 +10,6 @@ import type {
 	MoveRangeEnd,
 	MoveRangeStart,
 	Text,
-	TextDeletion,
 } from '../../../../mod.ts';
 import {
 	Component,
@@ -35,7 +34,6 @@ export type MoveChild =
 	| BookmarkRangeEnd
 	| CommentRangeStart
 	| CommentRangeEnd
-	| TextDeletion
 	| Text
 	| Move
 	| MoveRangeStart
@@ -63,7 +61,6 @@ export class Move extends Component<MoveProps, MoveChild> {
 		'BookmarkRangeStart',
 		'CommentRangeStart',
 		'CommentRangeEnd',
-		'TextDeletion',
 		'Text',
 		'Move',
 		'MoveRangeStart',

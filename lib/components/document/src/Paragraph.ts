@@ -6,7 +6,6 @@ import '../../comments/src/Comment.ts';
 import '../../comments/src/CommentRangeEnd.ts';
 import '../../comments/src/CommentRangeStart.ts';
 import '../../document/src/Text.ts';
-import '../../track-changes/src/TextDeletion.ts';
 import './BookmarkRangeEnd.ts';
 import './BookmarkRangeStart.ts';
 import './Field.ts';
@@ -53,7 +52,6 @@ import type { Hyperlink } from './Hyperlink.ts';
  */
 export type ParagraphChild =
 	| Text
-	| TextDeletion
 	| CommentRangeStart
 	| CommentRangeEnd
 	| Comment
@@ -92,7 +90,6 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'CommentRangeStart',
 		'Hyperlink',
 		'Text',
-		'TextDeletion',
 		'Field',
 		'FootnoteReference',
 		'FootnoteAnchor',

@@ -1,6 +1,6 @@
 import './Text.ts';
 
-import type { Insertion } from '../../../../mod.ts';
+import type { Deletion, Insertion } from '../../../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,
@@ -30,10 +30,10 @@ export type FieldChild =
 	| BookmarkRangeEnd
 	| CommentRangeStart
 	| CommentRangeEnd
-	| TextDeletion
 	| Text
 	| Hyperlink
-	| Insertion;
+	| Insertion
+	| Deletion;
 
 /**
  * A type describing the props accepted by {@link Field}.
@@ -67,10 +67,10 @@ export class Field extends Component<FieldProps, FieldChild> {
 		'BookmarkRangeEnd',
 		'CommentRangeStart',
 		'CommentRangeEnd',
-		'TextDeletion',
 		'Text',
 		'Hyperlink',
 		'Insertion',
+		'Deletion',
 	];
 
 	public static override readonly mixed: boolean = false;
