@@ -118,7 +118,6 @@ export class Field extends Component<FieldProps, FieldChild> {
 					${QNS.w}r |
 					${QNS.w}hyperlink |
 					${QNS.w}del |
-					${QNS.w}ins |
 					${QNS.w}commentRangeStart |
 					${QNS.w}commentRangeEnd |
 					${QNS.w}bookmarkRangeStart |
