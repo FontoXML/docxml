@@ -179,7 +179,6 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 						${QNS.w}hyperlink |
 						${QNS.w}fldSimple |
 						${QNS.w}del |
-						${QNS.w}ins |
 						${QNS.w}commentRangeStart |
 						${QNS.w}commentRangeEnd |
 						${QNS.w}bookmarkStart |
