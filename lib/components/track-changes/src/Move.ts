@@ -122,7 +122,11 @@ export class Move extends Component<MoveProps, MoveChild> {
 					${QNS.w}bookmarkStart |
 					${QNS.w}bookmarkEnd | 
 					${QNS.w}moveTo | 
-					${QNS.w}moveFrom
+					${QNS.w}moveFrom | 
+					${QNS.w}moveToRangeStart | 
+					${QNS.w}moveToRangeEnd | 
+					${QNS.w}moveFromRangeStart | 
+					${QNS.w}moveFromRangeEnd
 				)}, 
 				"changeProps": map { 
 					"id": @${QNS.w}id/number(),
