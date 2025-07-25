@@ -3,6 +3,7 @@ import type {
 	BookmarkRangeStart,
 	CommentRangeEnd,
 	CommentRangeStart,
+	Deletion,
 	Move,
 	Text,
 } from '../../../../mod.ts';
@@ -38,8 +39,8 @@ export type InsertionChild =
 	| Move
 	| Insertion
 	| MoveRangeStart
-	| MoveRangeEnd;
-// ToDo add Deletion
+	| MoveRangeEnd
+	| Deletion;
 
 /**
  * A type describing the props accepted by {@link Insertion}.
@@ -66,6 +67,7 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 		'Move',
 		'MoveRangeStart',
 		'MoveRangeEnd',
+		'Deletion',
 		this.name,
 	];
 	// ToDo add MoveRange, Deletion

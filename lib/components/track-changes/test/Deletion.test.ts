@@ -1,6 +1,6 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
-import { Paragraph, Text } from '../../../../mod.ts';
+import { Deletion, Paragraph, Text } from '../../../../mod.ts';
 import { Archive } from '../../../classes/src/Archive.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create, serialize } from '../../../utilities/src/dom.ts';
@@ -25,7 +25,9 @@ describe('Deletion', () => {
 					</w:rPr>
 				</w:pPr>
 				<w:r>
-					<w:t>This is paragraph one.</w:t>
+					<w:del w:id="1" w:author="Luis" w:date="${date.toISOString()}">
+						<w:delText>This is a deleted paragraph</w:delText>
+					</w:del>
 				</w:r>
 			</w:p>
 			`,
@@ -34,7 +36,10 @@ describe('Deletion', () => {
 
 		const deletedParagraphAsProp = new Paragraph(
 			{ pilcrow: { deletion: { author: 'Luis', date: date, id: 1 } } },
-			new Text({}, 'This is paragraph one.')
+			new Deletion(
+				{ author: 'Luis', date: date, id: 1 },
+				new Text({}, 'This is a deleted paragraph')
+			)
 		);
 
 		const deletedParagraphAsNode = Paragraph.fromNode(
@@ -60,9 +65,13 @@ describe('Deletion', () => {
 									}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}" />
 								</rPr>
 							</pPr>
-							<r>
-								<t xml:space="preserve">This is paragraph one.</t>
-							</r>
+							<del xmlns:ns2="${
+								NamespaceUri.w
+							}" ns2:id="1" ns2:author="Luis" ns2:date="${date.toISOString()}">
+									<r>
+										<delText xml:space="preserve">This is a deleted paragraph</delText>
+									</r>
+							</del>
 						</p>`
 					)
 				)

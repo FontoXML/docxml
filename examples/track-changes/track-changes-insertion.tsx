@@ -1,5 +1,11 @@
 /** @jsx  Docx.jsx */
-import Docx, { Insertion, Paragraph, Section, Text } from '../../mod.ts';
+import Docx, {
+	Deletion,
+	Insertion,
+	Paragraph,
+	Section,
+	Text,
+} from '../../mod.ts';
 
 // Create a new .docx file with track changes enabled.
 const docxFile = Docx.fromNothing().withSettings({
@@ -19,11 +25,10 @@ const testInsertedParagraph = new Paragraph(
 
 const testDeletedParagraph = new Paragraph(
 	{ pilcrow: { deletion: { author: 'Ángel', date: date, id: 1 } } },
-	new Text({}, ' my new friend.')
-);
-const testDeletedParagraph = new Paragraph(
-	{ pilcrow: { deletion: { author: 'Ángel', date: date, id: 1 } } },
-	new Text({}, ' my new friend.')
+	new Deletion(
+		{ author: 'Ángel', date: date, id: 1 },
+		new Text({}, 'my new friend.')
+	)
 );
 
 // Create a section as the parent of our new paragraph.

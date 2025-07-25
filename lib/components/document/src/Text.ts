@@ -10,6 +10,7 @@ import './NonBreakingHyphen.ts';
 import './Symbol.ts';
 import './Tab.ts';
 
+import { Deletion } from '../../../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,
@@ -86,6 +87,9 @@ export class Text extends Component<TextProps, TextChild> {
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
+		const asTextDeletion = ancestry.some(
+			(ancestor) => ancestor instanceof Deletion
+		);
 		const anc = [this, ...ancestry];
 		return create(
 			`
@@ -100,8 +104,9 @@ export class Text extends Component<TextProps, TextChild> {
 					this.children.map((child) => {
 						if (typeof child === 'string') {
 							return create(
-								`element ${QNS.w}t
-								{
+								`element ${QNS.w}${
+									asTextDeletion ? 'delText' : 't'
+								} {
 									attribute xml:space { "preserve" },
 									$text
 								}`,

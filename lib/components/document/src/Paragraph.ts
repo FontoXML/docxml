@@ -12,6 +12,7 @@ import './BookmarkRangeStart.ts';
 import './Field.ts';
 import './Hyperlink.ts';
 
+import type { Deletion, Hyperlink, Insertion } from '../../../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,
@@ -65,7 +66,8 @@ export type ParagraphChild =
 	| MoveRangeStart
 	| MoveRangeEnd
 	| FootnoteAnchor
-	| Insertion;
+	| Insertion
+	| Deletion;
 
 /**
  * A type describing the props accepted by {@link Paragraph}.
@@ -98,6 +100,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'MoveRangeStart',
 		'MoveRangeEnd',
 		'Insertion',
+		'Deletion',
 	];
 	public static override readonly mixed: boolean = false;
 	#sectionProperties: SectionProperties | null = null;
