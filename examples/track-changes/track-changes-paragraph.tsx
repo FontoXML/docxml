@@ -1,5 +1,5 @@
 /** @jsx  Docx.jsx */
-import Docx, { Paragraph, Section, Text } from '../../mod.ts';
+import Docx, { Insertion, Paragraph, Section, Text } from '../../mod.ts';
 
 // Create a new .docx file with track changes enabled.
 const docxFile = Docx.fromNothing().withSettings({
@@ -11,7 +11,10 @@ const date = new Date();
 // Create a new inserted paragraph
 const testParagraph = new Paragraph(
 	{ pilcrow: { insertion: { author: 'Luis', date: date, id: 1 } } },
-	new Text({}, ' my old friend.')
+	new Insertion(
+		{ author: 'Luis', date: date, id: 1 },
+		new Text({}, 'my old friend.')
+	)
 );
 
 // Create a section as the parent of our new paragraph.
@@ -28,7 +31,9 @@ await Docx.fromJsx(
 	<Paragraph
 		pilcrow={{ insertion: { id: 1, author: 'ines', date: new Date() } }}
 	>
-		{' '}
-		my old friend.
+		<Insertion id={0} author="Ines" date={new Date()}>
+			{' '}
+			my old friend.
+		</Insertion>
 	</Paragraph>
 ).toFile('track-changes-paragraph-jsx.docx');

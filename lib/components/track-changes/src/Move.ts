@@ -5,6 +5,7 @@ import type {
 	BookmarkRangeStart,
 	CommentRangeEnd,
 	CommentRangeStart,
+	Insertion,
 	MoveRangeEnd,
 	MoveRangeStart,
 	Text,
@@ -37,7 +38,8 @@ export type MoveChild =
 	| Text
 	| Move
 	| MoveRangeStart
-	| MoveRangeEnd;
+	| MoveRangeEnd
+	| Insertion;
 
 /**
  * A type describing the props accepted by {@link Move}.
@@ -64,6 +66,7 @@ export class Move extends Component<MoveProps, MoveChild> {
 		'Move',
 		'MoveRangeStart',
 		'MoveRangeEnd',
+		'Insertion',
 	];
 
 	public static override readonly mixed: boolean = false;
@@ -112,6 +115,7 @@ export class Move extends Component<MoveProps, MoveChild> {
 			`map { 
 				"children": array{./(
 					${QNS.w}r |
+					${QNS.w}ins |
 					${QNS.w}del |
 					${QNS.w}commentRangeStart |
 					${QNS.w}commentRangeEnd |

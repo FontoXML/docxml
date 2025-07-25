@@ -1,6 +1,6 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
-import { Paragraph, Text } from '../../../../mod.ts';
+import { Insertion, Paragraph, Text } from '../../../../mod.ts';
 import { Archive } from '../../../classes/src/Archive.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create, serialize } from '../../../utilities/src/dom.ts';
@@ -23,7 +23,9 @@ describe('Insertion', () => {
 					</w:rPr>
 				</w:pPr>
 				<w:r>
-					<w:t>This is paragraph one.</w:t>
+					<w:ins w:id="1" w:author="Luis" w:date="${date.toISOString()}">
+						<w:t>This is a new paragraph</w:t>
+					</w:ins>
 				</w:r>
 			</w:p>
 			`,
@@ -32,7 +34,10 @@ describe('Insertion', () => {
 
 		const insertedParagraphAsProp = new Paragraph(
 			{ pilcrow: { insertion: { author: 'Luis', date: date, id: 1 } } },
-			new Text({}, 'This is paragraph one.')
+			new Insertion(
+				{ author: 'Luis', date: date, id: 1 },
+				new Text({}, 'This is paragraph one.')
+			)
 		);
 
 		const insertedParagraphAsNode = Paragraph.fromNode(
@@ -58,9 +63,14 @@ describe('Insertion', () => {
 									}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}" />
 								</rPr>
 							</pPr>
-							<r>
-								<t xml:space="preserve">This is paragraph one.</t>
-							</r>
+							<ins xmlns:ns2="${
+								NamespaceUri.w
+							}" ns2:id="1" ns2:author="Luis" ns2:date="${date.toISOString()}">
+									<r>
+										<t xml:space="preserve">This is paragraph one.</t>
+									</r>
+							</ins>
+							
 						</p>`
 					)
 				)
