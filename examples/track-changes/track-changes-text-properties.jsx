@@ -1,9 +1,9 @@
 /** @jsx  Docx.jsx */
 import Docx, {
+	Insertion,
 	Paragraph,
 	Section,
 	Text,
-	TextAddition,
 	TextDeletion,
 } from '../../mod.ts';
 
@@ -24,7 +24,7 @@ const testParagraph = new Paragraph(
 		},
 		new Text({}, 'nighttime')
 	),
-	new TextAddition(
+	new Insertion(
 		{ id: 2, author: 'Paul Simon', date: new Date() },
 		new Text({}, 'darkness')
 	),
@@ -32,7 +32,7 @@ const testParagraph = new Paragraph(
 
 	// This will set our current text style as italics. It will also create a recorded change
 	// that indicates the text style **was** bold, but is no longer.
-	new TextAddition(
+	new Insertion(
 		{ id: 1, author: 'Gabe', date: new Date() },
 		new Text(
 			{
