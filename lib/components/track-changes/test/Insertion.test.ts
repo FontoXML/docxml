@@ -14,6 +14,8 @@ import { Archive } from '../../../classes/src/Archive.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create, serialize } from '../../../utilities/src/dom.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
+import { MoveRangeEnd } from '../src/MoveRangeEnd.ts';
+import { MoveRangeStart } from '../src/MoveRangeStart.ts';
 
 describe('Insertion', () => {
 	const date = new Date();
@@ -381,6 +383,95 @@ describe('Insertion', () => {
 									</moveFrom>
 								</ins>
 								
+							</p>`
+						)
+					)
+				);
+			});
+		});
+		describe('MoveRangeStart and MoveRangeEnd', () => {
+			const insertedMoveRangeToNode = create(
+				`<w:p xmlns:w="${NamespaceUri.w}">
+					<w:ins w:id="1" w:author="Luis" w:date="${date.toISOString()}">
+						<w:moveToRangeStart xmlns:w="${
+							NamespaceUri.w
+						}" w:id="0" w:date="${date.toISOString()}" w:author="Gabe" w:name="Move_to_1" />
+						<w:moveToRangeEnd xmlns:w="${NamespaceUri.w}" w:id="0" />
+						<w:moveFromRangeStart xmlns:w="${
+							NamespaceUri.w
+						}" w:id="1" w:date="${date.toISOString()}" w:author="Angel" w:name="Move_from_1" />
+						<w:moveFromRangeEnd xmlns:w="${NamespaceUri.w}" w:id="1" />
+					</w:ins>
+				</w:p>
+				`,
+				emptyContext
+			);
+
+			const insertedMoveRange = new Insertion(
+				{ author: 'Luis', date: date, id: 1 },
+				new MoveRangeStart({
+					id: 0,
+					date: date,
+					author: 'Gabe',
+					type: 'to',
+					name: 'Move_to_1',
+				}),
+				new MoveRangeEnd({
+					id: 0,
+					type: 'to',
+				}),
+				new MoveRangeStart({
+					id: 1,
+					date: date,
+					author: 'Angel',
+					type: 'from',
+					name: 'Move_from_1',
+				}),
+				new MoveRangeEnd({
+					id: 1,
+					type: 'from',
+				})
+			);
+
+			const insertedCommentRangeAsObject = new Paragraph(
+				{},
+				insertedMoveRange
+			);
+
+			const insertedCommentRangeEndAsNode = Paragraph.fromNode(
+				insertedMoveRangeToNode,
+				emptyContext
+			);
+
+			it('Move nodes have expected insertion objects', () => {
+				// It should present the two insertions
+				expect(insertedCommentRangeEndAsNode.children).toHaveLength(1);
+				expect(insertedCommentRangeEndAsNode.children[0]).toEqual(
+					insertedMoveRange
+				);
+			});
+
+			it('serializes and deserialized correctly', async () => {
+				expect(
+					serialize(await insertedCommentRangeAsObject.toNode([]))
+				).toEqual(
+					serialize(
+						create(
+							`<p xmlns="${NamespaceUri.w}">
+								<ins xmlns:ns1="${
+									NamespaceUri.w
+								}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}">
+									<moveToRangeStart xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}" 
+									ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe" ns1:name="Move_to_1" />
+									<moveToRangeEnd xmlns="${NamespaceUri.w}" xmlns:ns2="${
+								NamespaceUri.w
+							}" ns2:id="0" />
+									<moveFromRangeStart xmlns="${NamespaceUri.w}" xmlns:ns3="${NamespaceUri.w}" 
+									ns3:id="1" ns3:date="${date.toISOString()}" ns3:author="Angel" ns3:name="Move_from_1" />
+									<moveFromRangeEnd xmlns="${NamespaceUri.w}" xmlns:ns4="${
+								NamespaceUri.w
+							}" ns4:id="1" />
+								</ins>	
 							</p>`
 						)
 					)

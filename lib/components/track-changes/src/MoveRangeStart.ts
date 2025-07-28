@@ -88,7 +88,7 @@ export class MoveRangeStart extends Component<
 			type: type,
 			id: id,
 			name: name,
-			date: date,
+			date: new Date(date),
 			author: author,
 		});
 	}

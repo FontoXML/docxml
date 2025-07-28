@@ -23,6 +23,8 @@ import {
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
+import type { MoveRangeEnd } from './MoveRangeEnd.ts';
+import type { MoveRangeStart } from './MoveRangeStart.ts';
 
 /**
  * A type specifying the children of {@link Insertion}.
@@ -34,8 +36,10 @@ export type InsertionChild =
 	| CommentRangeEnd
 	| Text
 	| Move
-	| Insertion;
-// ToDo add MoveRange, Deletion
+	| Insertion
+	| MoveRangeStart
+	| MoveRangeEnd;
+// ToDo add Deletion
 
 /**
  * A type describing the props accepted by {@link Insertion}.
@@ -59,6 +63,8 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 		'CommentRangeEnd',
 		'Text',
 		'Move',
+		'MoveRangeStart',
+		'MoveRangeEnd',
 		this.name,
 	];
 	// ToDo add MoveRange, Deletion
@@ -111,7 +117,11 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 								./${QNS.w}commentRangeStart,
 								./${QNS.w}commentRangeEnd,
 								./${QNS.w}moveTo,
-								./${QNS.w}moveFrom
+								./${QNS.w}moveToRangeStart,
+								./${QNS.w}moveToRangeEnd,
+								./${QNS.w}moveFrom,
+								./${QNS.w}moveFromRangeStart,
+								./${QNS.w}moveFromRangeEnd
 							}
 						}
 					`,
