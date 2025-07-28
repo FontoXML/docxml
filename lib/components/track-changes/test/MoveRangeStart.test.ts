@@ -25,7 +25,7 @@ describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 	);
 	it('Create MoveToRangeStart from node', () => {
 		expect(moveToRangeStart.props.author).toBe('Gabe');
-		expect(moveToRangeStart.props.date).toBe(date.toISOString());
+		expect(moveToRangeStart.props.date).toEqual(date);
 		expect(moveToRangeStart.props.id).toBe(0);
 		expect(moveToRangeStart.props.name).toBe('Move_to_1');
 		expect(moveToRangeStart.props.type).toBe('to');

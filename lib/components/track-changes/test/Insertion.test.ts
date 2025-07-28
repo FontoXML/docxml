@@ -433,27 +433,27 @@ describe('Insertion', () => {
 				})
 			);
 
-			const insertedCommentRangeAsObject = new Paragraph(
+			const insertedMoveRangeAsObject = new Paragraph(
 				{},
 				insertedMoveRange
 			);
 
-			const insertedCommentRangeEndAsNode = Paragraph.fromNode(
+			const insertedMoveRangeEndAsNode = Paragraph.fromNode(
 				insertedMoveRangeToNode,
 				emptyContext
 			);
 
-			it('Move nodes have expected insertion objects', () => {
+			it('Move range nodes have expected insertion objects', () => {
 				// It should present the two insertions
-				expect(insertedCommentRangeEndAsNode.children).toHaveLength(1);
-				expect(insertedCommentRangeEndAsNode.children[0]).toEqual(
+				expect(insertedMoveRangeEndAsNode.children).toHaveLength(1);
+				expect(insertedMoveRangeEndAsNode.children[0]).toEqual(
 					insertedMoveRange
 				);
 			});
 
 			it('serializes and deserialized correctly', async () => {
 				expect(
-					serialize(await insertedCommentRangeAsObject.toNode([]))
+					serialize(await insertedMoveRangeAsObject.toNode([]))
 				).toEqual(
 					serialize(
 						create(
