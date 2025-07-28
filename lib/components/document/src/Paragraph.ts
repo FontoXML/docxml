@@ -39,7 +39,6 @@ import type { Text } from '../../document/src/Text.ts';
 import type { Move } from '../../track-changes/src/Move.ts';
 import type { MoveRangeEnd } from '../../track-changes/src/MoveRangeEnd.ts';
 import type { MoveRangeStart } from '../../track-changes/src/MoveRangeStart.ts';
-import type { TextAddition } from '../../track-changes/src/TextAddition.ts';
 import type { TextDeletion } from '../../track-changes/src/TextDeletion.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
