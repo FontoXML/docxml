@@ -31,9 +31,9 @@ export class MoveRangeStart extends Component<
 		return create(
 			`	let $attrs := [
 					attribute ${QNS.w}id { $id }, 
-					attribute ${QNS.w}date { $date }, 
-					attribute ${QNS.w}author { $author }, 
-					attribute ${QNS.w}name { $name }
+					attribute ${QNS.w}name { $name },
+					if ($date) then attribute ${QNS.w}date { $date } else (),
+					if ($author) then attribute ${QNS.w}author { $author } else ()
 				]
 				return (
 					switch ($type)
@@ -50,7 +50,10 @@ export class MoveRangeStart extends Component<
 			`,
 			{
 				...this.props,
-				date: this.props.date.toISOString(),
+				author: this.props.author ? this.props.author : undefined,
+				date: this.props.date
+					? this.props.date.toISOString()
+					: undefined,
 			}
 		);
 	}
@@ -73,8 +76,8 @@ export class MoveRangeStart extends Component<
 		const { id, name, date, author } = evaluateXPathToMap<{
 			id: number;
 			name: string;
-			date: Date;
-			author: string;
+			date?: Date;
+			author?: string;
 		}>(
 			`map { 
 				"id": ./@${QNS.w}id/number(), 
@@ -88,8 +91,8 @@ export class MoveRangeStart extends Component<
 			type: type,
 			id: id,
 			name: name,
-			date: date,
-			author: author,
+			date: date ? date : undefined,
+			author: author ? author : undefined,
 		});
 	}
 }

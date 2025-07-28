@@ -50,7 +50,7 @@ describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 				create(
 					`<moveToRangeStart xmlns="${NamespaceUri.w}" xmlns:ns1="${
 						NamespaceUri.w
-					}" ns1:id="2" ns1:date="${date.toISOString()}" ns1:author="Gabe" ns1:name="To_Range_Object" />`
+					}" ns1:id="2" ns1:name="To_Range_Object" ns1:date="${date.toISOString()}" ns1:author="Gabe" />`
 				)
 			)
 		);
@@ -70,7 +70,7 @@ describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 				create(
 					`<moveFromRangeStart xmlns="${NamespaceUri.w}" xmlns:ns1="${
 						NamespaceUri.w
-					}" ns1:id="3" ns1:date="${date.toISOString()}" ns1:author="Angel" ns1:name="From_Range_Object" />`
+					}" ns1:id="3" ns1:name="From_Range_Object"  ns1:date="${date.toISOString()}" ns1:author="Angel"  />`
 				)
 			)
 		);
