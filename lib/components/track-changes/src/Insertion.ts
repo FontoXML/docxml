@@ -22,7 +22,7 @@ import {
 } from '../../../utilities/src/components.ts';
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
-import { evaluateXPathToNodes } from '../../../utilities/src/xquery.ts';
+import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
 
 /**
  * A type specifying the children of {@link Insertion}.
@@ -98,11 +98,31 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 	 */
 	static override fromNode(node: Node, context: ComponentContext): Insertion {
 		const props = getChangeInformation(node);
+		const { children } = evaluateXPathToMap<{
+			rpr: Node;
+			children: Node[];
+		}>(
+			`
+						map {
+							"children": array{
+								./${QNS.w}r,
+								./${QNS.w}bookmarkStart,
+								./${QNS.w}bookmarkEnd,
+								./${QNS.w}commentRangeStart,
+								./${QNS.w}commentRangeEnd,
+								./${QNS.w}moveTo,
+								./${QNS.w}moveFrom
+							}
+						}
+					`,
+			node
+		);
+
 		return new Insertion(
 			props,
 			...createChildComponentsFromNodes<InsertionChild>(
 				this.children,
-				evaluateXPathToNodes(`./${QNS.w}r`, node),
+				children,
 				context
 			)
 		);
