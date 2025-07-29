@@ -46,6 +46,64 @@ const moveToParagraph = new Paragraph(
 	new MoveRangeEnd({
 		type: 'to',
 		id: 4,
+	}),
+	// Without date
+	new MoveRangeStart({
+		type: 'to',
+		name: 'move_1',
+		author: 'Inés',
+		id: 5,
+	}),
+	new Move(
+		{
+			type: 'to',
+			id: 5,
+			author: 'Inés',
+		},
+		new Text({}, 'To the people who look at the stars and wish.')
+	),
+	new MoveRangeEnd({
+		type: 'to',
+		id: 5,
+	}),
+	// Without author
+	new MoveRangeStart({
+		type: 'to',
+		name: 'move_2',
+		date: date,
+		id: 6,
+	}),
+	new Move(
+		{
+			type: 'to',
+			id: 6,
+			date: date,
+		},
+		new Text({}, 'There are different kinds of darkness.')
+	),
+	new MoveRangeEnd({
+		type: 'to',
+		id: 6,
+	}),
+	// Without author and date
+	new MoveRangeStart({
+		type: 'to',
+		name: 'move_3',
+		id: 7,
+	}),
+	new Move(
+		{
+			type: 'to',
+			id: 7,
+		},
+		new Text(
+			{},
+			'No one was my master— but I might be master of everything, if I wished. If I dared.'
+		)
+	),
+	new MoveRangeEnd({
+		type: 'to',
+		id: 7,
 	})
 );
 
@@ -87,6 +145,63 @@ const moveFromParagraph = new Paragraph(
 	new MoveRangeEnd({
 		type: 'from',
 		id: 4,
+	}),
+	// Without date
+	new MoveRangeStart({
+		type: 'from',
+		name: 'move_1',
+		author: 'Inés',
+		id: 5,
+	}),
+	new Move(
+		{
+			type: 'from',
+			id: 5,
+			author: 'Inés',
+		},
+		new Text({}, 'To the people who look at the stars and wish.')
+	),
+	new MoveRangeEnd({
+		type: 'from',
+		id: 5,
+	}),
+	// Without author
+	new MoveRangeStart({
+		type: 'from',
+		name: 'move_2',
+		id: 6,
+	}),
+	new Move(
+		{
+			type: 'from',
+			id: 6,
+			date: date,
+		},
+		new Text({}, 'There are different kinds of darkness.')
+	),
+	new MoveRangeEnd({
+		type: 'from',
+		id: 6,
+	}),
+	// Without author and date
+	new MoveRangeStart({
+		type: 'from',
+		name: 'move_3',
+		id: 7,
+	}),
+	new Move(
+		{
+			type: 'from',
+			id: 7,
+		},
+		new Text(
+			{},
+			'No one was my master— but I might be master of everything, if I wished. If I dared.'
+		)
+	),
+	new MoveRangeEnd({
+		type: 'from',
+		id: 7,
 	})
 );
 
