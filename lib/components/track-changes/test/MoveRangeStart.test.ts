@@ -59,7 +59,7 @@ describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 	});
 
 	it('Create MoveToRangeStart without author from node', () => {
-		expect(moveToRangeStartWithoutAuthor.props.author).toBe(null);
+		expect(moveToRangeStartWithoutAuthor.props.author).toBe(undefined);
 		expect(moveToRangeStartWithoutAuthor.props.date).toBe(
 			date.toISOString()
 		);
@@ -70,7 +70,7 @@ describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 
 	it('Create MoveToRangeStart without date from node', () => {
 		expect(moveToRangeStartWithoutDate.props.author).toBe('Angel');
-		expect(moveToRangeStartWithoutDate.props.date).toBe(null);
+		expect(moveToRangeStartWithoutDate.props.date).toBe(undefined);
 		expect(moveToRangeStartWithoutDate.props.id).toBe(1);
 		expect(moveToRangeStartWithoutDate.props.name).toBe('Move_to_1');
 		expect(moveToRangeStartWithoutDate.props.type).toBe('to');
@@ -82,7 +82,7 @@ describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 	});
 
 	it('Create MoveFromRangeStart without author from node', () => {
-		expect(moveFromRangeStartWithoutAuthor.props.author).toBe(null);
+		expect(moveFromRangeStartWithoutAuthor.props.author).toBe(undefined);
 		expect(moveFromRangeStartWithoutAuthor.props.date).toBe(
 			date.toISOString()
 		);
@@ -93,7 +93,7 @@ describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 
 	it('Create MoveFromRangeStart without date from node', () => {
 		expect(moveFromRangeStartWithoutDate.props.author).toBe('Angel');
-		expect(moveFromRangeStartWithoutDate.props.date).toBe(null);
+		expect(moveFromRangeStartWithoutDate.props.date).toBe(undefined);
 		expect(moveFromRangeStartWithoutDate.props.id).toBe(1);
 		expect(moveFromRangeStartWithoutDate.props.name).toBe('Move_from_1');
 		expect(moveFromRangeStartWithoutDate.props.type).toBe('from');

@@ -31,9 +31,9 @@ export class MoveRangeStart extends Component<
 		return create(
 			`	let $attrs := [
 					attribute ${QNS.w}id { $id }, 
-					attribute ${QNS.w}name { $name },
 					if ($date) then attribute ${QNS.w}date { $date } else (),
-					if ($author) then attribute ${QNS.w}author { $author } else ()
+					if ($author) then attribute ${QNS.w}author { $author } else (),
+					attribute ${QNS.w}name { $name }
 				]
 				return (
 					switch ($type)
@@ -50,10 +50,8 @@ export class MoveRangeStart extends Component<
 			`,
 			{
 				...this.props,
-				author: this.props.author ? this.props.author : undefined,
-				date: this.props.date
-					? this.props.date.toISOString()
-					: undefined,
+				author: this.props.author ? this.props.author : null,
+				date: this.props.date ? this.props.date.toISOString() : null,
 			}
 		);
 	}

@@ -93,8 +93,8 @@ export class Move extends Component<MoveProps, MoveChild> {
 				...this.props,
 				date: this.props.date
 					? new Date(this.props.date).toISOString()
-					: undefined,
-				author: this.props.author ? this.props.author : undefined,
+					: null,
+				author: this.props.author ? this.props.author : null,
 				children: await this.childrenToNode(ancestry),
 			}
 		);

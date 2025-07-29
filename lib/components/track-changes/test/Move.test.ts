@@ -132,6 +132,30 @@ describe('Move content in track changes...', () => {
 			</w:r>
 		</w:p>`
 	);
+	const moveFromAsPropNodeWithoutAuthor = create(
+		`<w:p xmlns:w="${NamespaceUri.w}">
+			<w:pPr>
+				<w:rPr>
+					<w:moveFrom w:id="2" w:date="${date.toISOString()}" />
+				</w:rPr>
+			</w:pPr>
+			<w:r>
+				<w:t>I'm just a poor boy</w:t>
+			</w:r>
+		</w:p>`
+	);
+	const moveFromAsPropNodeWithoutDate = create(
+		`<w:p xmlns:w="${NamespaceUri.w}">
+			<w:pPr>
+				<w:rPr>
+					<w:moveFrom w:id="2" w:author="Ines" />
+				</w:rPr>
+			</w:pPr>
+			<w:r>
+				<w:t>I'm just a poor boy</w:t>
+			</w:r>
+		</w:p>`
+	);
 
 	// Testing a move inside a paragraph.
 	const moveToObject = new Paragraph(
@@ -253,6 +277,33 @@ describe('Move content in track changes...', () => {
 		new Text({}, "I'm just a poor boy")
 	);
 
+	const moveFromAsPropObjectWithoutAuthor = new Paragraph(
+		{
+			pilcrow: {
+				move: {
+					id: 2,
+					date: date,
+					type: 'from',
+				},
+			},
+		},
+		new Text({}, "I'm just a poor boy")
+	);
+
+	const moveFromAsPropObjectWithoutDate = new Paragraph(
+		{
+			pilcrow: {
+				move: {
+					id: 2,
+					author: 'Ines',
+					type: 'from',
+				},
+			},
+		},
+		new Text({}, "I'm just a poor boy")
+	);
+
+	// MoveTo as an object
 	const newMoveTo = Paragraph.fromNode(moveToNode, emptyContext);
 	const newMoveToWithoutAuthor = Paragraph.fromNode(
 		moveToNodeWithoutAuthor,
@@ -263,6 +314,7 @@ describe('Move content in track changes...', () => {
 		emptyContext
 	);
 
+	// MoveFrom as an object
 	const newMoveFrom = Move.fromNode(moveFromNode, emptyContext);
 	const newMoveFromWithoutAuthor = Move.fromNode(
 		moveFromNodeWithoutAuthor,
@@ -273,6 +325,7 @@ describe('Move content in track changes...', () => {
 		emptyContext
 	);
 
+	// MoveTo as property
 	const newMoveToAsProp = Paragraph.fromNode(moveToAsPropNode, emptyContext);
 	const newMoveToAsPropWithoutAuthor = Paragraph.fromNode(
 		moveToAsPropNodeWithoutAuthor,
@@ -283,8 +336,17 @@ describe('Move content in track changes...', () => {
 		emptyContext
 	);
 
+	// MoveFrom as property
 	const newMoveFromAsProp = Paragraph.fromNode(
 		moveFromAsPropNode,
+		emptyContext
+	);
+	const newMoveFromAsPropWithoutAuthor = Paragraph.fromNode(
+		moveFromAsPropNodeWithoutAuthor,
+		emptyContext
+	);
+	const newMoveFromAsPropWithoutDate = Paragraph.fromNode(
+		moveFromAsPropNodeWithoutDate,
 		emptyContext
 	);
 
@@ -309,6 +371,12 @@ describe('Move content in track changes...', () => {
 
 		expect(newMoveFromAsProp.props.pilcrow?.move).toEqual(
 			moveFromAsPropObject.props.pilcrow?.move
+		);
+		expect(newMoveFromAsPropWithoutAuthor.props.pilcrow?.move).toEqual(
+			moveFromAsPropObjectWithoutAuthor.props.pilcrow?.move
+		);
+		expect(newMoveFromAsPropWithoutDate.props.pilcrow?.move).toEqual(
+			moveFromAsPropObjectWithoutDate.props.pilcrow?.move
 		);
 	});
 
@@ -337,6 +405,34 @@ describe('Move content in track changes...', () => {
 					`<moveFrom 
 						xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}"
 						ns1:id="1" ns1:date="${date.toISOString()}" ns1:author="Angel" >
+						<r>
+							<t xml:space="preserve" >This is a moveFrom node.</t>
+						</r>
+					</moveFrom>`
+				)
+			)
+		);
+
+		expect(serialize(await moveFromObjectWithoutAuthor.toNode([]))).toEqual(
+			serialize(
+				create(
+					`<moveFrom 
+						xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}"
+						ns1:id="1" ns1:date="${date.toISOString()}">
+						<r>
+							<t xml:space="preserve" >This is a moveFrom node.</t>
+						</r>
+					</moveFrom>`
+				)
+			)
+		);
+
+		expect(serialize(await moveFromObjectWithoutDate.toNode([]))).toEqual(
+			serialize(
+				create(
+					`<moveFrom 
+						xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}"
+						ns1:id="1" ns1:author="Angel">
 						<r>
 							<t xml:space="preserve" >This is a moveFrom node.</t>
 						</r>

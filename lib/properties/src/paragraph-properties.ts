@@ -298,8 +298,8 @@ export async function paragraphPropertiesToNode(
 
 				if (exists($change)) then element ${QNS.w}pPrChange {
 					attribute ${QNS.w}id { $change('id') },
-					attribute ${QNS.w}author { $change('author') },
-					attribute ${QNS.w}date { $change('date') },
+					if ($change('date')) then attribute ${QNS.w}date { $change('date') } else (),
+					if ($change('author')) then attribute ${QNS.w}author { $change('author') } else (),
 					$change('node')
 				} else (),
 

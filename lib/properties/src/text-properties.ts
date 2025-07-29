@@ -234,9 +234,12 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		delete props.change;
 	}
 
-	if (props.move?.date) {
+	if (props.move) {
 		// Convert the date string to a Date object.
-		props.move.date = new Date(props.move.date);
+		props.move.date = props.move.date
+			? new Date(props.move.date)
+			: undefined;
+		props.move.author = props.move.author ? props.move.author : undefined;
 	}
 
 	return props as TextProperties;

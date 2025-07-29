@@ -60,7 +60,6 @@ export class RowDeletion extends Component<RowDeletionProps, RowDeletionChild> {
 			node.insertBefore(trPr, node.firstChild);
 		}
 
-		console.log('AAAAAAA ' + this.props.date);
 		trPr.insertBefore(
 			create(
 				`
