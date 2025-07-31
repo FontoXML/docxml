@@ -115,7 +115,8 @@ export class Move extends Component<MoveProps, MoveChild> {
 			children: Node[];
 			changeProps: MoveProps;
 		}>(
-			`map { 
+			`
+			map { 
 				"children": array{./(
 					${QNS.w}r |
 					${QNS.w}del |
@@ -131,14 +132,13 @@ export class Move extends Component<MoveProps, MoveChild> {
 					${QNS.w}moveFromRangeStart | 
 					${QNS.w}moveFromRangeEnd
 				)}, 
-				"changeProps": map:merge((
-					map {
-						"id": @${QNS.w}id/number(),
-						"type": if ($nodeName eq 'moveTo') then 'to' else 'from'
-					},
-					if (@${QNS.w}date) then map { "date": @${QNS.w}date/string() } else map {},
-					if (@${QNS.w}author) then map { "author": @${QNS.w}author/string() } else map {}
-				))
+				"changeProps": map { 
+					"id": @${QNS.w}id/number(),
+					"type": if ($nodeName eq 'moveTo') then 'to' else 'from',
+					"date": if (@${QNS.w}date) then @${QNS.w}date/string() else (),
+					"author": if (@${QNS.w}author) then @${QNS.w}author/string() else ()
+				}
+
 			}`,
 			node,
 			null,
