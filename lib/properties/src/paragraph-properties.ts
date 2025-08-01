@@ -169,7 +169,7 @@ export function paragraphPropertiesFromNode(
 						"depth": ./${QNS.w}ilvl/@${QNS.w}val/number()
 					},
 					"change": ${QNS.w}pPrChange/map {
-						"id": @${QNS.w}id/string(),
+						"id": @${QNS.w}id/number(),
 						"author": @${QNS.w}author/string(),
 						"date": @${QNS.w}date/string(),
 						"_node": ./${QNS.w}pPr
@@ -193,9 +193,7 @@ export function paragraphPropertiesFromNode(
 		data.change = {
 			...data.change,
 			date: data.change.date ? new Date(data.change.date) : undefined,
-			author: data.change.author
-				? new Date(data.change.author)
-				: undefined,
+			author: data.change.author ? data.change.author : undefined,
 			...paragraphPropertiesFromNode(data.change._node),
 			_node: undefined,
 		};

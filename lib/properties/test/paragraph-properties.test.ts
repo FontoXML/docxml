@@ -133,7 +133,7 @@ describe('Paragraph formatting', () => {
 		test(
 			`
 			<w:pPr ${ALL_NAMESPACE_DECLARATIONS}>
-				<w:pPrChange w:id="99" date="${date.toISOString()}" author="Inés"> 
+				<w:pPrChange w:id="99" w:date="${date.toISOString()}" w:author="Inés"> 
 					<w:pPr>
 						<w:pStyle w:val="Header" />
 					</w:pPr>
@@ -153,7 +153,7 @@ describe('Paragraph formatting', () => {
 		test(
 			`
             <w:pPr ${ALL_NAMESPACE_DECLARATIONS}>
-                <w:pPrChange w:id="99" date="${date.toISOString()}"> 
+                <w:pPrChange w:id="99" w:date="${date.toISOString()}"> 
                     <w:pPr>
                         <w:pStyle w:val="Header" />
                     </w:pPr>
@@ -172,7 +172,7 @@ describe('Paragraph formatting', () => {
 		test(
 			`
                 <w:pPr ${ALL_NAMESPACE_DECLARATIONS}>
-                    <w:pPrChange w:id="99" author="Inés"> 
+                    <w:pPrChange w:id="99" w:author="Inés"> 
                         <w:pPr>
                             <w:pStyle w:val="Header" />
                         </w:pPr>
