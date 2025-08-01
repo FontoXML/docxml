@@ -73,7 +73,7 @@ describe('Text formatting', () => {
 				date: date,
 				id: 99,
 				color: 'blue',
-				isBold: { simple: false, complex: false} 
+				isBold: { simple: false, complex: false },
 			},
 		}
 	);
@@ -90,6 +90,22 @@ describe('Complex character formatting', () => {
 			isBold: { simple: false, complex: true },
 			isItalic: { simple: false, complex: true },
 			fontSize: { simple: null, complex: hpt(23) },
+		}
+	);
+});
+
+describe('Insertion property', () => {
+	test(
+		`
+		<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:ins w:author="Gabe" w:date="${date.toISOString()}" w:id="1" /> 
+		</w:rPr>`,
+		{
+			insertion: {
+				author: 'Gabe',
+				date: date,
+				id: 1,
+			},
 		}
 	);
 });
