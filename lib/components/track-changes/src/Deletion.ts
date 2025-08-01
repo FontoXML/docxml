@@ -5,6 +5,8 @@ import type {
 	CommentRangeStart,
 	Insertion,
 	Move,
+	MoveRangeEnd,
+	MoveRangeStart,
 	Text,
 } from '../../../../mod.ts';
 import {
@@ -23,7 +25,7 @@ import {
 } from '../../../utilities/src/components.ts';
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
-import { evaluateXPathToNodes } from '../../../utilities/src/xquery.ts';
+import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
 
 /**
  * A type specifying the children of {@link Deletion}.
@@ -35,9 +37,10 @@ export type DeletionChild =
 	| CommentRangeEnd
 	| Text
 	| Move
+	| MoveRangeStart
+	| MoveRangeEnd
 	| Deletion
 	| Insertion;
-// ToDo add MoveRange, Addition
 
 /**
  * A type describing the props accepted by {@link Deletion}.
@@ -60,6 +63,8 @@ export class Deletion extends Component<DeletionProps, DeletionChild> {
 		'CommentRangeEnd',
 		'Text',
 		'Move',
+		'MoveRangeStart',
+		'MoveRangeEnd',
 		'Insertion',
 		this.name,
 	];
@@ -100,11 +105,35 @@ export class Deletion extends Component<DeletionProps, DeletionChild> {
 	 */
 	static override fromNode(node: Node, context: ComponentContext): Deletion {
 		const props = getChangeInformation(node);
+		const { children } = evaluateXPathToMap<{
+			rpr: Node;
+			children: Node[];
+		}>(
+			`
+						map {
+							"children": array{
+								./${QNS.w}r,
+								./${QNS.w}bookmarkStart,
+								./${QNS.w}bookmarkEnd,
+								./${QNS.w}commentRangeStart,
+								./${QNS.w}commentRangeEnd,
+								./${QNS.w}moveTo,
+								./${QNS.w}moveToRangeStart,
+								./${QNS.w}moveToRangeEnd,
+								./${QNS.w}moveFrom,
+								./${QNS.w}moveFromRangeStart,
+								./${QNS.w}moveFromRangeEnd
+							}
+						}
+					`,
+			node
+		);
+
 		return new Deletion(
 			props,
 			...createChildComponentsFromNodes<DeletionChild>(
 				this.children,
-				evaluateXPathToNodes(`./${QNS.w}r`, node),
+				children,
 				context
 			)
 		);
