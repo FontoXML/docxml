@@ -1,7 +1,7 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 import { Archive } from '../../classes/src/Archive.ts';
-import { ComponentContext } from '../../classes/src/Component.ts';
+import type { ComponentContext } from '../../classes/src/Component.ts';
 import { getChangeInformation } from '../src/changes.ts';
 import { create } from '../src/dom.ts';
 import { NamespaceUri } from '../src/namespaces.ts';

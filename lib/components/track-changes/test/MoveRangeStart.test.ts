@@ -8,49 +8,15 @@ import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
 
 describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 	const date = new Date();
-	const moveToRangeStart = MoveRangeStart.fromNode(
-		create(
-			`<w:moveToRangeStart xmlns:w="${
-				NamespaceUri.w
-			}" w:id="0" w:date="${date.toISOString()}" w:author="Gabe" w:name="Move_to_1" />`
-		)
-	);
-
-	const moveToRangeStartWithoutAuthor = MoveRangeStart.fromNode(
-		create(
-			`<w:moveToRangeStart xmlns:w="${
-				NamespaceUri.w
-			}" w:id="1" w:date="${date.toISOString()}" w:name="Move_to_1" />`
-		)
-	);
-	const moveToRangeStartWithoutDate = MoveRangeStart.fromNode(
-		create(
-			`<w:moveToRangeStart xmlns:w="${NamespaceUri.w}" w:id="1" w:author="Angel" w:name="Move_to_1" />`
-		)
-	);
-
-	const moveFromRangeStart = MoveRangeStart.fromNode(
-		create(
-			`<w:moveFromRangeStart xmlns:w="${
-				NamespaceUri.w
-			}" w:id="1" w:date="${date.toISOString()}" w:author="Angel" w:name="Move_from_1" />`
-		)
-	);
-
-	const moveFromRangeStartWithoutAuthor = MoveRangeStart.fromNode(
-		create(
-			`<w:moveFromRangeStart xmlns:w="${
-				NamespaceUri.w
-			}" w:id="1" w:date="${date.toISOString()}" w:name="Move_from_1" />`
-		)
-	);
-	const moveFromRangeStartWithoutDate = MoveRangeStart.fromNode(
-		create(
-			`<w:moveFromRangeStart xmlns:w="${NamespaceUri.w}" w:id="1" w:author="Angel" w:name="Move_from_1" />`
-		)
-	);
 
 	it('Create MoveToRangeStart from node', () => {
+		const moveToRangeStart = MoveRangeStart.fromNode(
+			create(
+				`<w:moveToRangeStart xmlns:w="${
+					NamespaceUri.w
+				}" w:id="0" w:date="${date.toISOString()}" w:author="Gabe" w:name="Move_to_1" />`
+			)
+		);
 		expect(moveToRangeStart.props.author).toBe('Gabe');
 		expect(moveToRangeStart.props.date).toBe(date.toISOString());
 		expect(moveToRangeStart.props.id).toBe(0);
@@ -59,6 +25,13 @@ describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 	});
 
 	it('Create MoveToRangeStart without author from node', () => {
+		const moveToRangeStartWithoutAuthor = MoveRangeStart.fromNode(
+			create(
+				`<w:moveToRangeStart xmlns:w="${
+					NamespaceUri.w
+				}" w:id="1" w:date="${date.toISOString()}" w:name="Move_to_1" />`
+			)
+		);
 		expect(moveToRangeStartWithoutAuthor.props.author).toBe(undefined);
 		expect(moveToRangeStartWithoutAuthor.props.date).toBe(
 			date.toISOString()
@@ -69,6 +42,11 @@ describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 	});
 
 	it('Create MoveToRangeStart without date from node', () => {
+		const moveToRangeStartWithoutDate = MoveRangeStart.fromNode(
+			create(
+				`<w:moveToRangeStart xmlns:w="${NamespaceUri.w}" w:id="1" w:author="Angel" w:name="Move_to_1" />`
+			)
+		);
 		expect(moveToRangeStartWithoutDate.props.author).toBe('Angel');
 		expect(moveToRangeStartWithoutDate.props.date).toBe(undefined);
 		expect(moveToRangeStartWithoutDate.props.id).toBe(1);
@@ -77,11 +55,25 @@ describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 	});
 
 	it('Create MoveFromRangeStart from node', () => {
+		const moveFromRangeStart = MoveRangeStart.fromNode(
+			create(
+				`<w:moveFromRangeStart xmlns:w="${
+					NamespaceUri.w
+				}" w:id="1" w:date="${date.toISOString()}" w:author="Angel" w:name="Move_from_1" />`
+			)
+		);
 		expect(moveFromRangeStart.props.type).toBe('from');
 		expect(moveFromRangeStart.props.author).toBe('Angel');
 	});
 
 	it('Create MoveFromRangeStart without author from node', () => {
+		const moveFromRangeStartWithoutAuthor = MoveRangeStart.fromNode(
+			create(
+				`<w:moveFromRangeStart xmlns:w="${
+					NamespaceUri.w
+				}" w:id="1" w:date="${date.toISOString()}" w:name="Move_from_1" />`
+			)
+		);
 		expect(moveFromRangeStartWithoutAuthor.props.author).toBe(undefined);
 		expect(moveFromRangeStartWithoutAuthor.props.date).toBe(
 			date.toISOString()
@@ -92,6 +84,11 @@ describe('MoveToRangeStart and MoveFromRangeStart elements...', () => {
 	});
 
 	it('Create MoveFromRangeStart without date from node', () => {
+		const moveFromRangeStartWithoutDate = MoveRangeStart.fromNode(
+			create(
+				`<w:moveFromRangeStart xmlns:w="${NamespaceUri.w}" w:id="1" w:author="Angel" w:name="Move_from_1" />`
+			)
+		);
 		expect(moveFromRangeStartWithoutDate.props.author).toBe('Angel');
 		expect(moveFromRangeStartWithoutDate.props.date).toBe(undefined);
 		expect(moveFromRangeStartWithoutDate.props.id).toBe(1);
