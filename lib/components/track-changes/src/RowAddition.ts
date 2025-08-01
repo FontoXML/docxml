@@ -71,7 +71,7 @@ export class RowAddition extends Component<RowAdditionProps, RowAdditionChild> {
 				`,
 				{
 					...this.props,
-					date: this.props.date,
+					date: this.props.date?.toISOString(),
 				}
 			),
 			null
