@@ -155,6 +155,11 @@ export {
 	type RowDeletionChild,
 	type RowDeletionProps,
 } from './lib/components/track-changes/src/RowDeletion.ts';
+export {
+	TextDeletion,
+	type TextDeletionChild,
+	type TextDeletionProps,
+} from './lib/components/track-changes/src/TextDeletion.ts';
 export { FileMime } from './lib/enums.ts';
 
 // Shared properties
