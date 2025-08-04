@@ -47,8 +47,9 @@ export type InsertionChild =
 export type InsertionProps = ChangeInformation;
 
 /**
+ * A component that represents a change-tracked for an inserted element.
  *
- * Additional documentation is here:
+ * The documentation with each of the possible cases can be found here.
  * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EOW6V.html
  * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EVH6V.html
  *  - https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EZY5V.html

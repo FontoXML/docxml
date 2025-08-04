@@ -153,9 +153,9 @@ export type TextProperties = {
 	change?: (ChangeInformation & Omit<TextProperties, 'change'>) | null;
 
 	/**
-	 * A property used to indicate when a paragraph has been inserted.
+	 * A property used to indicate when a text run has been inserted.
 	 *
-	 * If present, the containing paragraph element will appear as a track-change inserted paragraph.
+	 * If present, the containing text run element will appear as a track-change inserted text run.
 	 *
 	 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EZY5V.html
 	 */
@@ -384,7 +384,7 @@ export async function textPropertiesToNode(
 				  }
 				: null,
 			/*
-			 * Although the Move, Insertion components are used here and it can have children,
+			 * Although the Move and Insertion components are used here and it can have children,
 			 * since the move information is sent as properties rather than as an
 			 * object, we can be sure that no more children will ever be created.
 			 */

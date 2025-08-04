@@ -12,7 +12,6 @@ import './BookmarkRangeStart.ts';
 import './Field.ts';
 import './Hyperlink.ts';
 
-import type { Hyperlink, Insertion } from '../../../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,
@@ -36,6 +35,7 @@ import type { Comment } from '../../comments/src/Comment.ts';
 import type { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
 import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
 import type { Text } from '../../document/src/Text.ts';
+import type { Insertion } from '../../track-changes/src/Insertion.ts';
 import type { Move } from '../../track-changes/src/Move.ts';
 import type { MoveRangeEnd } from '../../track-changes/src/MoveRangeEnd.ts';
 import type { MoveRangeStart } from '../../track-changes/src/MoveRangeStart.ts';
@@ -45,6 +45,7 @@ import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import type { Field } from './Field.ts';
 import type { FootnoteAnchor } from './FootnoteAnchor.ts';
 import type { FootnoteReference } from './FootnoteReference.ts';
+import type { Hyperlink } from './Hyperlink.ts';
 
 /**
  * A type describing the components accepted as children of {@link Paragraph}.
