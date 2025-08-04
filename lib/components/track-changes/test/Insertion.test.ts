@@ -19,10 +19,10 @@ import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts'
 import type { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
 import type { Text } from '../../document/src/Text.ts';
-import type { Deletion } from './Deletion.ts';
-import type { Move } from './Move.ts';
-import type { MoveRangeEnd } from './MoveRangeEnd.ts';
-import type { MoveRangeStart } from './MoveRangeStart.ts';
+import type { Deletion } from '../src/Deletion.ts';
+import type { Move } from '../src/Move.ts';
+import type { MoveRangeEnd } from '../src/MoveRangeEnd.ts';
+import type { MoveRangeStart } from '../src/MoveRangeStart.ts';
 
 /**
  * A type specifying the children of {@link Insertion}.
