@@ -6,8 +6,6 @@ import Docx, {
 	Paragraph,
 	Section,
 	Text,
-	TextAddition,
-	TextDeletion,
 } from '../../mod.ts';
 
 // Create a new Word document with track changes enabled.
