@@ -165,8 +165,8 @@ export type TextProperties = {
 type IntermediateProps = Omit<TextProperties, 'change'> & {
 	change?: {
 		id: number;
-		author: string;
-		date: Date;
+		author?: string;
+		date?: Date;
 		node: Node | undefined;
 	};
 };
@@ -240,7 +240,8 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 	if (props.change) {
 		props.change = {
 			...props.change,
-			date: new Date(props.change.date),
+			date: props.change.date ? new Date(props.change.date) : undefined,
+			author: props.change.author ? props.change.author : undefined,
 			...textPropertiesFromNode(props.change.node),
 			node: undefined,
 		};
@@ -248,13 +249,22 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		delete props.change;
 	}
 
-	// Convert the date string to a Date object.
 	if (props.insertion) {
-		props.insertion.date = new Date(props.insertion.date);
+		// Convert the date string to a Date object.
+		props.insertion.date = props.insertion.date
+			? new Date(props.insertion.date)
+			: undefined;
+		props.insertion.author = props.insertion.author
+			? props.insertion.author
+			: undefined;
 	}
 
 	if (props.move) {
-		props.move.date = new Date(props.move.date);
+		// Convert the date string to a Date object.
+		props.move.date = props.move.date
+			? new Date(props.move.date)
+			: undefined;
+		props.move.author = props.move.author ? props.move.author : undefined;
 	}
 
 	return props as TextProperties;
@@ -333,9 +343,9 @@ export async function textPropertiesToNode(
 				} else ()
 			} else (),
 			if (exists($change)) then element ${QNS.w}rPrChange { 
-				attribute ${QNS.w}date { $change('date') },
 				attribute ${QNS.w}id { $change('id') },
-				attribute ${QNS.w}author { $change('author') }, 
+				if ($change('date')) then attribute ${QNS.w}date { $change('date') } else (),
+				if ($change('author')) then attribute ${QNS.w}author { $change('author') } else (),
 				$change('node')
 			} else (),
 			$move,
@@ -378,8 +388,12 @@ export async function textPropertiesToNode(
 			change: data.change
 				? {
 						id: data.change.id,
-						author: data.change.author,
-						date: new Date(data.change.date).toISOString(),
+						author: data.change.author
+							? data.change.author
+							: undefined,
+						date: data.change.date
+							? new Date(data.change.date).toISOString()
+							: undefined,
 						node: await textPropertiesToNode(data.change),
 				  }
 				: null,
