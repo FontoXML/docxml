@@ -97,6 +97,7 @@ describe('Insertion', () => {
 				);
 			});
 		});
+
 		describe('BookmarkRangeStart and BookmarkRangeEnd ', () => {
 			const insertedBookmarkRangeNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
@@ -392,6 +393,7 @@ describe('Insertion', () => {
 				);
 			});
 		});
+
 		describe('MoveRangeStart and MoveRangeEnd', () => {
 			const insertedMoveRangeToNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
@@ -482,6 +484,7 @@ describe('Insertion', () => {
 			});
 		});
 	});
+
 	describe('Inserted paragraph', () => {
 		// Aquí solo como propiedad para el párrafo
 		const insertedParagraphNode = create(

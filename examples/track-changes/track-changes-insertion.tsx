@@ -24,16 +24,13 @@ const testSection = new Section({}, testParagraph);
 docxFile.document.set(testSection);
 
 // Save our document.
-await docxFile.toFile('track-changes-paragraph.docx');
+await docxFile.toFile('track-changes-insertion.docx');
 
 // Alternatively, you can use JSX:
 await Docx.fromJsx(
-	<Paragraph
-		pilcrow={{ insertion: { id: 1, author: 'ines', date: new Date() } }}
-	>
-		<Insertion id={0} author="Ines" date={new Date()}>
-			{' '}
+	<Paragraph pilcrow={{ insertion: { id: 1, author: 'ines', date: date } }}>
+		<Insertion id={0} author="Ines" date={date}>
 			my old friend.
 		</Insertion>
 	</Paragraph>
-).toFile('track-changes-paragraph-jsx.docx');
+).toFile('track-changes-insertion-jsx.docx');

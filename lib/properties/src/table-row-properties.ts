@@ -52,7 +52,12 @@ export function tableRowPropertiesFromNode(
 
 	if (props.insertion) {
 		// Convert the date string to a Date object.
-		props.insertion.date = new Date(props.insertion.date);
+		props.insertion.date = props.insertion.date
+			? new Date(props.insertion.date)
+			: undefined;
+		props.insertion.author = props.insertion.author
+			? props.insertion.author
+			: undefined;
 	}
 
 	return props;
