@@ -126,6 +126,11 @@ export {
 	type WatermarkTextProps,
 } from './lib/components/document/src/WatermarkText.ts';
 export {
+	Insertion,
+	type InsertionChild,
+	type InsertionProps,
+} from './lib/components/track-changes/src/Insertion.ts';
+export {
 	Move,
 	type MoveChild,
 	type MoveProps,
@@ -141,20 +146,10 @@ export {
 	type MoveRangeStartProps,
 } from './lib/components/track-changes/src/MoveRangeStart.ts';
 export {
-	RowAddition,
-	type RowAdditionChild,
-	type RowAdditionProps,
-} from './lib/components/track-changes/src/RowAddition.ts';
-export {
 	RowDeletion,
 	type RowDeletionChild,
 	type RowDeletionProps,
 } from './lib/components/track-changes/src/RowDeletion.ts';
-export {
-	TextAddition,
-	type TextAdditionChild,
-	type TextAdditionProps,
-} from './lib/components/track-changes/src/TextAddition.ts';
 export {
 	TextDeletion,
 	type TextDeletionChild,

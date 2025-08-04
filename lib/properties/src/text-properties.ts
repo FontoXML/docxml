@@ -1,3 +1,4 @@
+import { Insertion, type InsertionProps } from '../../../mod.ts';
 import {
 	Move,
 	type MoveProps,
@@ -150,13 +151,22 @@ export type TextProperties = {
 	 * https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_rPrChange_topic_ID0E4JSW.html?hl=rprchange
 	 */
 	change?: (ChangeInformation & Omit<TextProperties, 'change'>) | null;
+
+	/**
+	 * A property used to indicate when a text run has been inserted.
+	 *
+	 * If present, the containing text run element will appear as a track-change inserted text run.
+	 *
+	 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_ins_topic_ID0EZY5V.html
+	 */
+	insertion?: null | InsertionProps;
 };
 
 type IntermediateProps = Omit<TextProperties, 'change'> & {
 	change?: {
 		id: number;
-		author: string;
-		date: Date;
+		author?: string;
+		date?: Date;
 		node: Node | undefined;
 	};
 };
@@ -214,6 +224,11 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"author": @${QNS.w}author/string(), 
 				"date": @${QNS.w}date/string(), 
 				"node": ./${QNS.w}rPr
+			},
+			"insertion": ./${QNS.w}ins/map {
+				"id": @${QNS.w}id/number(), 
+				"author": @${QNS.w}author/string(), 
+				"date": @${QNS.w}date/string()
 			}
 		}`,
 				node,
@@ -225,7 +240,8 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 	if (props.change) {
 		props.change = {
 			...props.change,
-			date: new Date(props.change.date),
+			date: props.change.date ? new Date(props.change.date) : undefined,
+			author: props.change.author ? props.change.author : undefined,
 			...textPropertiesFromNode(props.change.node),
 			node: undefined,
 		};
@@ -233,9 +249,22 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		delete props.change;
 	}
 
+	if (props.insertion) {
+		// Convert the date string to a Date object.
+		props.insertion.date = props.insertion.date
+			? new Date(props.insertion.date)
+			: undefined;
+		props.insertion.author = props.insertion.author
+			? props.insertion.author
+			: undefined;
+	}
+
 	if (props.move) {
 		// Convert the date string to a Date object.
-		props.move.date = new Date(props.move.date);
+		props.move.date = props.move.date
+			? new Date(props.move.date)
+			: undefined;
+		props.move.author = props.move.author ? props.move.author : undefined;
 	}
 
 	return props as TextProperties;
@@ -259,7 +288,8 @@ export async function textPropertiesToNode(
 		!data.shading &&
 		!data.font &&
 		!data.move &&
-		!data.change
+		!data.change &&
+		!data.insertion
 	) {
 		return null;
 	}
@@ -313,12 +343,13 @@ export async function textPropertiesToNode(
 				} else ()
 			} else (),
 			if (exists($change)) then element ${QNS.w}rPrChange { 
-				attribute ${QNS.w}date { $change('date') },
 				attribute ${QNS.w}id { $change('id') },
-				attribute ${QNS.w}author { $change('author') }, 
+				if ($change('date')) then attribute ${QNS.w}date { $change('date') } else (),
+				if ($change('author')) then attribute ${QNS.w}author { $change('author') } else (),
 				$change('node')
 			} else (),
-			$move
+			$move,
+			$insertion
 		}`,
 		{
 			style: data.style || null,
@@ -357,17 +388,24 @@ export async function textPropertiesToNode(
 			change: data.change
 				? {
 						id: data.change.id,
-						author: data.change.author,
-						date: new Date(data.change.date).toISOString(),
+						author: data.change.author
+							? data.change.author
+							: undefined,
+						date: data.change.date
+							? new Date(data.change.date).toISOString()
+							: undefined,
 						node: await textPropertiesToNode(data.change),
 				  }
 				: null,
 			/*
-			 * Although the Move component is used here and it can have children,
+			 * Although the Move and Insertion components are used here and it can have children,
 			 * since the move information is sent as properties rather than as an
 			 * object, we can be sure that no more children will ever be created.
 			 */
 			move: data.move ? await new Move(data.move).toNode([]) : null,
+			insertion: data.insertion
+				? await new Insertion(data.insertion).toNode([])
+				: null,
 		}
 	);
 }
