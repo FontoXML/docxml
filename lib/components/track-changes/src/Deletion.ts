@@ -87,7 +87,10 @@ export class Deletion extends Component<DeletionProps, DeletionChild> {
 			`,
 			{
 				...this.props,
-				date: this.props.date.toISOString(),
+				date: this.props.date
+					? this.props.date.toISOString()
+					: undefined,
+				author: this.props.author ? this.props.author : undefined,
 				children: await this.childrenToNode(ancestry),
 			}
 		);

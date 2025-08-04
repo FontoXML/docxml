@@ -264,16 +264,23 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 
 	if (props.insertion) {
 		// Convert the date string to a Date object.
-		props.insertion.date = props.insertion.date
-			? new Date(props.insertion.date)
-			: undefined;
-		props.insertion.author = props.insertion.author
-			? props.insertion.author
-			: undefined;
+		props.insertion = {
+			...props.insertion,
+			date: props.insertion.date
+				? new Date(props.insertion.date)
+				: undefined,
+			author: props.insertion.author ? props.insertion.author : undefined,
+		};
 	}
 
 	if (props.deletion) {
-		props.deletion.date = new Date(props.deletion.date);
+		props.deletion = {
+			...props.deletion,
+			date: props.deletion.date
+				? new Date(props.deletion.date)
+				: undefined,
+			author: props.deletion.author ? props.deletion.author : undefined,
+		};
 	}
 
 	if (props.move) {

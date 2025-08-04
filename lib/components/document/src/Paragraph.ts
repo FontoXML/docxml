@@ -11,7 +11,6 @@ import './BookmarkRangeStart.ts';
 import './Field.ts';
 import './Hyperlink.ts';
 
-import type { Deletion, Hyperlink, Insertion } from '../../../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,
@@ -35,6 +34,7 @@ import type { Comment } from '../../comments/src/Comment.ts';
 import type { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
 import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
 import type { Text } from '../../document/src/Text.ts';
+import type { Deletion } from '../../track-changes/src/Deletion.ts';
 import type { Insertion } from '../../track-changes/src/Insertion.ts';
 import type { Move } from '../../track-changes/src/Move.ts';
 import type { MoveRangeEnd } from '../../track-changes/src/MoveRangeEnd.ts';
