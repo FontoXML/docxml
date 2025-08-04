@@ -88,9 +88,7 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 			`,
 			{
 				...this.props,
-				date: this.props.date
-					? new Date(this.props.date).toISOString()
-					: null,
+				date: this.props.date ? this.props.date.toISOString() : null,
 				author: this.props.author ? this.props.author : null,
 				children: await this.childrenToNode(ancestry),
 			}
