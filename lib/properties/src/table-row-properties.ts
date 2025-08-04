@@ -65,7 +65,6 @@ export function tableRowPropertiesFromNode(
 
 	// Convert the date string to a Date object.
 	if (props.insertion) {
-		// Convert the date string to a Date object.
 		props.insertion.date = props.insertion.date
 			? new Date(props.insertion.date)
 			: undefined;
