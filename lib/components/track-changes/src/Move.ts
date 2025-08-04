@@ -1,16 +1,6 @@
 // Import without assignment ensures Deno does not tree-shake this component. To avoid circular
 // definitions, components register themselves in a side-effect of their module.
-import type {
-	BookmarkRangeEnd,
-	BookmarkRangeStart,
-	CommentRangeEnd,
-	CommentRangeStart,
-	Deletion,
-	Insertion,
-	MoveRangeEnd,
-	MoveRangeStart,
-	Text,
-} from '../../../../mod.ts';
+
 import {
 	Component,
 	type ComponentAncestor,
@@ -24,7 +14,16 @@ import {
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
+import type { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
+import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
+import type { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
+import type { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
 import '../../document/src/Text.ts';
+import type { Text } from '../../document/src/Text.ts';
+import type { Deletion } from './Deletion.ts';
+import type { Insertion } from './Insertion.ts';
+import type { MoveRangeEnd } from './MoveRangeEnd.ts';
+import type { MoveRangeStart } from './MoveRangeStart.ts';
 
 /**
  * A type specifying the children of {@link Move}.

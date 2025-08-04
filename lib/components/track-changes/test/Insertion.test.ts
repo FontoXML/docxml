@@ -1,22 +1,21 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
-import {
-	BookmarkRangeEnd,
-	BookmarkRangeStart,
-	Cell,
-	CommentRangeEnd,
-	CommentRangeStart,
-	Insertion,
-	Move,
-	Paragraph,
-	Row,
-	Table,
-	Text,
-} from '../../../../mod.ts';
+
 import { Archive } from '../../../classes/src/Archive.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create, serialize } from '../../../utilities/src/dom.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
+import { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
+import { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
+import { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
+import { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
+import { Cell } from '../../document/src/Cell.ts';
+import { Paragraph } from '../../document/src/Paragraph.ts';
+import { Row } from '../../document/src/Row.ts';
+import { Table } from '../../document/src/Table.ts';
+import { Text } from '../../document/src/Text.ts';
+import { Insertion } from '../src/Insertion.ts';
+import { Move } from '../src/Move.ts';
 import { MoveRangeEnd } from '../src/MoveRangeEnd.ts';
 import { MoveRangeStart } from '../src/MoveRangeStart.ts';
 

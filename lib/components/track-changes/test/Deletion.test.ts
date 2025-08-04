@@ -1,21 +1,20 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
-import {
-	BookmarkRangeEnd,
-	BookmarkRangeStart,
-	CommentRangeEnd,
-	CommentRangeStart,
-	Deletion,
-	Move,
-	MoveRangeEnd,
-	MoveRangeStart,
-	Paragraph,
-	Text,
-} from '../../../../mod.ts';
+
 import { Archive } from '../../../classes/src/Archive.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create, serialize } from '../../../utilities/src/dom.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
+import { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
+import { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
+import { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
+import { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
+import { Paragraph } from '../../document/src/Paragraph.ts';
+import { Text } from '../../document/src/Text.ts';
+import { Deletion } from '../src/Deletion.ts';
+import { Move } from '../src/Move.ts';
+import { MoveRangeEnd } from '../src/MoveRangeEnd.ts';
+import { MoveRangeStart } from '../src/MoveRangeStart.ts';
 
 describe('Deletion', () => {
 	const date = new Date();

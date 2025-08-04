@@ -1,17 +1,7 @@
-import type {
-	BookmarkRangeEnd,
-	BookmarkRangeStart,
-	CommentRangeEnd,
-	CommentRangeStart,
-	Deletion,
-	Move,
-	Text,
-} from '../../../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,
 	type ComponentContext,
-	type ComponentDefinition,
 } from '../../../classes/src/Component.ts';
 import {
 	type ChangeInformation,
@@ -24,6 +14,13 @@ import {
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
+import type { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
+import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
+import type { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
+import type { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
+import type { Text } from '../../document/src/Text.ts';
+import type { Deletion } from './Deletion.ts';
+import type { Move } from './Move.ts';
 import type { MoveRangeEnd } from './MoveRangeEnd.ts';
 import type { MoveRangeStart } from './MoveRangeStart.ts';
 
@@ -143,4 +140,4 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 	}
 }
 
-registerComponent(Insertion as unknown as ComponentDefinition);
+registerComponent(Insertion);

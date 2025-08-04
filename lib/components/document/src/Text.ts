@@ -10,7 +10,6 @@ import './NonBreakingHyphen.ts';
 import './Symbol.ts';
 import './Tab.ts';
 
-import { Deletion } from '../../../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,
@@ -28,6 +27,7 @@ import {
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
+import { Deletion } from '../../track-changes/src/Deletion.ts';
 import type { Break } from './Break.ts';
 import type { FieldRangeEnd } from './FieldRangeEnd.ts';
 import type { FieldRangeInstruction } from './FieldRangeInstruction.ts';
