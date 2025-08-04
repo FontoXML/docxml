@@ -48,6 +48,7 @@ export type DeletionChild =
 export type DeletionProps = ChangeInformation;
 
 /**
+ * A component that represents a change-tracked for an deleted element.
  *
  * Additional documentation is here:
  * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_del_topic_ID0ESZZV.html
@@ -68,7 +69,6 @@ export class Deletion extends Component<DeletionProps, DeletionChild> {
 		'Insertion',
 		this.name,
 	];
-	// ToDo add MoveRange, Deletion
 
 	public static override readonly mixed: boolean = false;
 
@@ -78,19 +78,18 @@ export class Deletion extends Component<DeletionProps, DeletionChild> {
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		return create(
 			`
-				element ${QNS.w}del {
-					attribute ${QNS.w}id { $id },
-					attribute ${QNS.w}author { $author },
-					attribute ${QNS.w}date { $date },
-					$children
-				}
+				let $attrs := [
+					attribute ${QNS.w}id { $id }, 
+					if ($author) then attribute ${QNS.w}author { $author } else (),
+					if ($date) then attribute ${QNS.w}date { $date } else ()
+				]
+
+				return element ${QNS.w}del { $attrs, $children }
 			`,
 			{
 				...this.props,
-				date: this.props.date
-					? this.props.date.toISOString()
-					: undefined,
-				author: this.props.author ? this.props.author : undefined,
+				date: this.props.date ? this.props.date.toISOString() : null,
+				author: this.props.author ? this.props.author : null,
 				children: await this.childrenToNode(ancestry),
 			}
 		);

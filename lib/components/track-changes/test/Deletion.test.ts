@@ -74,16 +74,16 @@ describe('Deletion', () => {
 								<del xmlns:ns1="${
 									NamespaceUri.w
 								}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}">
-										<r>
-											<delText xml:space="preserve">This is a new paragraph</delText>
-										</r>
+									<r>
+										<delText xml:space="preserve">This is a new paragraph</delText>
+									</r>
 								</del>
 								<del xmlns:ns2="${
 									NamespaceUri.w
 								}" ns2:id="2" ns2:author="Roy" ns2:date="${date.toISOString()}">
-										<r>
-											<delText xml:space="preserve">This is a another new paragraph</delText>
-										</r>
+									<r>
+										<delText xml:space="preserve">This is a another new paragraph</delText>
+									</r>
 								</del>
 								
 							</p>`
@@ -92,6 +92,69 @@ describe('Deletion', () => {
 				);
 			});
 		});
+
+		describe('Text without date and author', () => {
+			const deletedTextNode = create(
+				`<w:p xmlns:w="${NamespaceUri.w}">
+					<w:del w:id="1">
+						<w:r><w:t>This is a new paragraph</w:t></w:r>
+					</w:del>
+					<w:del w:id="2">
+						<w:r><w:t>This is a another new paragraph</w:t></w:r>
+					</w:del>
+				</w:p>
+				`,
+				emptyContext
+			);
+
+			const deletedText1 = new Deletion(
+				{ id: 1 },
+				new Text({}, 'This is a new paragraph')
+			);
+			const deletedText2 = new Deletion(
+				{ id: 2 },
+				new Text({}, 'This is a another new paragraph')
+			);
+			const deletedTextAsObject = new Paragraph(
+				{},
+				deletedText1,
+				deletedText2
+			);
+
+			const deletedTextAsNode = Paragraph.fromNode(
+				deletedTextNode,
+				emptyContext
+			);
+
+			it('Text node has expected deletion objects', () => {
+				// It should present the two deletions
+				expect(deletedTextAsNode.children).toHaveLength(2);
+				expect(deletedTextAsNode.children[0]).toEqual(deletedText1);
+				expect(deletedTextAsNode.children[1]).toEqual(deletedText2);
+			});
+
+			it('serializes and deserialized correctly', async () => {
+				expect(serialize(await deletedTextAsObject.toNode([]))).toEqual(
+					serialize(
+						create(
+							`<p xmlns="${NamespaceUri.w}">
+								<del xmlns:ns1="${NamespaceUri.w}" ns1:id="1">
+									<r>
+										<delText xml:space="preserve">This is a new paragraph</delText>
+									</r>
+								</del>
+								<del xmlns:ns2="${NamespaceUri.w}" ns2:id="2">
+									<r>
+										<delText xml:space="preserve">This is a another new paragraph</delText>
+									</r>
+								</del>
+							</p>`
+						)
+					)
+				);
+			});
+		});
+
 		describe('BookmarkRangeStart and BookmarkRangeEnd ', () => {
 			const deletedBookmarkRangeNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
@@ -241,6 +304,7 @@ describe('Deletion', () => {
 				);
 			});
 		});
+
 		describe('MoveTo and MoveFrom', () => {
 			const deletedMoveToNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
@@ -387,6 +451,7 @@ describe('Deletion', () => {
 				);
 			});
 		});
+
 		describe('MoveRangeStart and MoveRangeEnd', () => {
 			const deletedMoveRangeToNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
@@ -530,9 +595,9 @@ describe('Deletion', () => {
 							<del xmlns:ns2="${
 								NamespaceUri.w
 							}" ns2:id="1" ns2:author="Luis" ns2:date="${date.toISOString()}">
-									<r>
-										<delText xml:space="preserve">This is a deleted paragraph</delText>
-									</r>
+								<r>
+									<delText xml:space="preserve">This is a deleted paragraph</delText>
+								</r>
 							</del>
 						</p>`
 					)

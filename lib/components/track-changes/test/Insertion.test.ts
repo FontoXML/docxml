@@ -79,16 +79,16 @@ describe('Insertion', () => {
 								<ins xmlns:ns1="${
 									NamespaceUri.w
 								}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}">
-										<r>
-											<t xml:space="preserve">This is a new paragraph</t>
-										</r>
+									<r>
+										<t xml:space="preserve">This is a new paragraph</t>
+									</r>
 								</ins>
 								<ins xmlns:ns2="${
 									NamespaceUri.w
 								}" ns2:id="2" ns2:author="Roy" ns2:date="${date.toISOString()}">
-										<r>
-											<t xml:space="preserve">This is a another new paragraph</t>
-										</r>
+									<r>
+										<t xml:space="preserve">This is a another new paragraph</t>
+									</r>
 								</ins>
 								
 							</p>`
@@ -146,14 +146,14 @@ describe('Insertion', () => {
 						create(
 							`<p xmlns="${NamespaceUri.w}">
 								<ins xmlns:ns1="${NamespaceUri.w}" ns1:id="1">
-										<r>
-											<t xml:space="preserve">This is a new paragraph</t>
-										</r>
+									<r>
+										<t xml:space="preserve">This is a new paragraph</t>
+									</r>
 								</ins>
 								<ins xmlns:ns2="${NamespaceUri.w}" ns2:id="2">
-										<r>
-											<t xml:space="preserve">This is a another new paragraph</t>
-										</r>
+									<r>
+										<t xml:space="preserve">This is a another new paragraph</t>
+									</r>
 								</ins>
 								
 							</p>`
@@ -312,6 +312,7 @@ describe('Insertion', () => {
 				);
 			});
 		});
+
 		describe('MoveTo and MoveFrom', () => {
 			const insertedMoveToNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
