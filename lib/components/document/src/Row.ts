@@ -38,8 +38,6 @@ export type RowChild = Cell;
 export type RowProps = TableRowProperties;
 
 /**
- * For drying some logic between {@link Row}, {@link RowAddition}
- *
  * Parses the children (and no props yet) from an existing XML node.
  */
 export function parsePropsAndChildNodes(
@@ -59,8 +57,6 @@ export function parsePropsAndChildNodes(
 }
 
 /**
- * For drying some logic between {@link Row}, {@link RowAddition}
- *
  * Creates an XML node for a given row.
  */
 export async function createNodeFromRow(
