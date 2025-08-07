@@ -78,25 +78,33 @@ describe('Cell-level track-changes (<cellIns>/<cellDel>)', () => {
 		const expected = serialize(
 			create(
 				`<tbl xmlns="${NamespaceUri.w}">
-					<tblPr/>
-					<tr>
-						<tc>
-							<tcPr>
-								<cellDel xmlns:ns1="${
-									NamespaceUri.w
-								}" ns1:id="2" ns1:author="Carlos" ns1:date="${date.toISOString()}"/>
-							</tcPr>
-							<p><r><t xml:space="preserve">Bye!</t></r></p>
-						</tc>
-						<tc>
-							<tcPr>
-								<cellIns xmlns:ns2="${
-									NamespaceUri.w
-								}" ns2:id="2" ns2:author="Carlos" ns2:date="${date.toISOString()}"/>
-							</tcPr>
-							<p><r><t xml:space="preserve">Hello!</t></r></p>
-						</tc>
-					</tr>
+						<tblPr/>
+						<tr>
+								<tc>
+										<tcPr>
+												<cellDel xmlns:ns1="${
+													NamespaceUri.w
+												}" ns1:id="2" ns1:author="Carlos" ns1:date="${date.toISOString()}"/>
+										</tcPr>
+										<p>
+												<r>
+														<t xml:space="preserve">Bye!</t>
+												</r>
+										</p>
+								</tc>
+								<tc>
+										<tcPr>
+												<cellIns xmlns:ns2="${
+													NamespaceUri.w
+												}" ns2:id="2" ns2:author="Carlos" ns2:date="${date.toISOString()}"/>
+										</tcPr>
+										<p>
+												<r>
+														<t xml:space="preserve">Hello!</t>
+												</r>
+										</p>
+								</tc>
+						</tr>
 				</tbl>`
 			)
 		);

@@ -19,11 +19,11 @@ export class CellInsertion extends Component<CellInsertionProps, never> {
 	public override toNode(): Node {
 		return create(
 			`
-      let $attrs := [
-        attribute ${QNS.w}id { $id },
-        if ($author) then attribute ${QNS.w}author { $author } else (),
-        if ($date) then attribute ${QNS.w}date { $date } else ()
-      ]
+      let $attrs := [attribute ${QNS.w}id { $id },
+        if ($author) then attribute ${QNS.w}author { $author } 
+					else (),
+        if ($date) then attribute ${QNS.w}date { $date } 
+					else ()]
       return element ${QNS.w}cellIns { $attrs }
       `,
 			{
