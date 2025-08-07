@@ -111,7 +111,7 @@ export function tableCellPropertiesFromNode(
 						"insideV": docxml:ct-border(${QNS.w}insideV)
 					},
 					"verticalAlignment": ./${QNS.w}vAlign/@${QNS.w}val/string(),
-						"insertion": ./${QNS.w}cellIns/map {
+					"insertion": ./${QNS.w}cellIns/map {
 						"id": @${QNS.w}id/number(), 
 						"author": @${QNS.w}author/string(), 
 						"date": @${QNS.w}date/string()
