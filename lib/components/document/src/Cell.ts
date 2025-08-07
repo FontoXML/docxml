@@ -246,9 +246,7 @@ export class Cell extends Component<CellProps, CellChild> {
 						else 1,
 					"rowSpan": $rowEnd - $rowStart,
 					"children": array{
-						./(${QNS.w}p),
-						./${QNS.w}tcPr/${QNS.w}cellIns,
-						./${QNS.w}tcPr/${QNS.w}cellDel
+						./(${QNS.w}p)
 					},
 					"verticalAlignment": ./${QNS.w}tcPr/${QNS.w}vAlign/@${QNS.w}val/string(),
 					  "insertion": ./${QNS.w}tcPr/${QNS.w}cellIns/map {
