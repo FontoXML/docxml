@@ -69,8 +69,14 @@ export class Cell extends Component<CellProps, CellChild> {
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
-		const table = ancestry.find((a): a is Table => a instanceof Table);
-		if (!table) throw new Error('A cell must be inside a table');
+		const table = ancestry.find(
+			(ancestor): ancestor is Table => ancestor instanceof Table
+		);
+		if (!table) {
+			throw new Error(
+				'A cell cannot be rendered outside the context of a table'
+			);
+		}
 
 		/* 1. Create tcPr-level change nodes ONCE (from props, not children) */
 		const tcPrChangeNodes: Node[] = [];
