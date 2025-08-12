@@ -72,6 +72,9 @@ export function tableRowPropertiesFromNode(
 		props.insertion.date = props.insertion.date
 			? new Date(props.insertion.date)
 			: undefined;
+		props.insertion.author = props.insertion.author
+			? props.insertion.author
+			: undefined;
 	}
 
 	if (props.deletion) {

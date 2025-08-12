@@ -132,11 +132,17 @@ export function tableCellPropertiesFromNode(
 		props.insertion.date = props.insertion.date
 			? new Date(props.insertion.date)
 			: undefined;
+		props.insertion.author = props.insertion.author
+			? props.insertion.author
+			: undefined;
 	}
 
 	if (props.deletion) {
 		props.deletion.date = props.deletion.date
 			? new Date(props.deletion.date)
+			: undefined;
+		props.deletion.author = props.deletion.author
+			? props.deletion.author
 			: undefined;
 	}
 
