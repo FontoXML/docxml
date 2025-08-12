@@ -527,9 +527,9 @@ describe('Insertion', () => {
 									}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}" />
 								</rPr>
 							</pPr>
-								<r>
-									<t xml:space="preserve">This is a new paragraph</t>
-								</r>				
+							<r>
+								<t xml:space="preserve">This is a new paragraph</t>
+							</r>				
 						</p>`
 					)
 				)

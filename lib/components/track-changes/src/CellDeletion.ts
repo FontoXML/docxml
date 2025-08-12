@@ -17,13 +17,13 @@ export class CellDeletion extends Component<CellDeletionProps, never> {
 	public override toNode(): Node {
 		return create(
 			`
-      let $attrs := [attribute ${QNS.w}id { $id },
-        if ($author) then attribute ${QNS.w}author { $author } 
-					else (),
-        if ($date) then attribute ${QNS.w}date { $date } 
-					else ()]
-      return element ${QNS.w}cellDel { $attrs }
-      `,
+				let $attrs := [
+					attribute ${QNS.w}id { $id },
+					if ($author) then attribute ${QNS.w}author { $author } else (),
+					if ($date) then attribute ${QNS.w}date { $date } else ()
+				]
+				return element ${QNS.w}cellDel { $attrs }
+			`,
 			{
 				...this.props,
 				date: this.props.date?.toISOString() ?? null,

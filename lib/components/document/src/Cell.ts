@@ -255,16 +255,16 @@ export class Cell extends Component<CellProps, CellChild> {
 						./(${QNS.w}p)
 					},
 					"verticalAlignment": ./${QNS.w}tcPr/${QNS.w}vAlign/@${QNS.w}val/string(),
-					  "insertion": ./${QNS.w}tcPr/${QNS.w}cellIns/map {
+					"insertion": ./${QNS.w}tcPr/${QNS.w}cellIns/map {
+						"id": @${QNS.w}id/number(),
+						"author": @${QNS.w}author/string(),
+						"date": @${QNS.w}date/string()
+					},
+					"deletion": ./${QNS.w}tcPr/${QNS.w}cellDel/map {
 							"id": @${QNS.w}id/number(),
 							"author": @${QNS.w}author/string(),
 							"date": @${QNS.w}date/string()
-						},
-						"deletion": ./${QNS.w}tcPr/${QNS.w}cellDel/map {
-								"id": @${QNS.w}id/number(),
-								"author": @${QNS.w}author/string(),
-								"date": @${QNS.w}date/string()
-						}
+					}
 				}
 			`,
 			node
