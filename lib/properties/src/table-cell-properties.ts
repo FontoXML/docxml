@@ -1,6 +1,6 @@
+import type { DeletionProps, InsertionProps } from '../../../mod.ts';
 import { CellDeletion } from '../../components/track-changes/src/CellDeletion.ts';
 import { CellInsertion } from '../../components/track-changes/src/CellInsertion.ts';
-import type { InsertionProps } from '../../components/track-changes/src/Insertion.ts';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
 import { NamespaceUri, QNS } from '../../utilities/src/namespaces.ts';
@@ -62,7 +62,7 @@ export type TableCellProperties = {
 	 *
 	 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_cellDel_topic_ID0E5IOV.html
 	 */
-	deletion?: null | InsertionProps;
+	deletion?: null | DeletionProps;
 };
 
 export function tableCellPropertiesFromNode(
