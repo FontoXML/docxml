@@ -196,6 +196,14 @@ describe('Table cell formatting', () => {
 				insertion: { author: 'Luis', date: date, id: 1 },
 			}
 		);
+		test(
+			`<w:tcPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:cellIns w:id="2"/>
+			</w:tcPr>`,
+			{
+				insertion: { id: 2 },
+			}
+		);
 	});
 
 	describe('Table cell deletion', () => {
@@ -206,6 +214,14 @@ describe('Table cell formatting', () => {
 			</w:tcPr>`,
 			{
 				deletion: { author: 'Luis', date: date, id: 1 },
+			}
+		);
+		test(
+			`<w:tcPr ${ALL_NAMESPACE_DECLARATIONS}>
+				<w:cellDel w:id="2" />
+			</w:tcPr>`,
+			{
+				deletion: { id: 2 },
 			}
 		);
 	});
