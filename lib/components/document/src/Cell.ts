@@ -78,55 +78,42 @@ export class Cell extends Component<CellProps, CellChild> {
 			);
 		}
 
-		/* 1. Create tcPr-level change nodes ONCE (from props, not children) */
-		const tcPrChangeNodes: Node[] = [];
-		if (this.props.insertion) {
-			tcPrChangeNodes.push(
-				new CellInsertion(this.props.insertion).toNode() // no ancestry needed
-			);
-		}
-		if (this.props.deletion) {
-			tcPrChangeNodes.push(
-				new CellDeletion(this.props.deletion).toNode()
-			);
+		const children = (await this.childrenToNode(ancestry)) as Node[];
+		if (!(this.children[this.children.length - 1] instanceof Paragraph)) {
+			// Cells must always end with a paragraph, or MS Word will complain about
+			// file corruption.
+			children.push(await new Paragraph({}).toNode([this, ...ancestry]));
 		}
 
-		/* 2. Normal children go into the cell body */
-		const bodyNodes: Node[] = [];
-		for (const child of this.children) {
-			bodyNodes.push(await child.toNode([this, ...ancestry]));
-		}
-
-		/* ensure cell ends with a paragraph */
-		if (!(this.children.at(-1) instanceof Paragraph)) {
-			bodyNodes.push(await new Paragraph({}).toNode([this, ...ancestry]));
-		}
-
-		/* 3. Build <tcPr> WITHOUT insertion/deletion props */
-		const {
-			insertion: _insertion,
-			deletion: _deletion,
-			...pureTcPrProps
-		} = this.props; // strip them
-		const tcPrNode = tableCellPropertiesToNode(
+		// Build <tcPr> first
+		const tcPr = tableCellPropertiesToNode(
 			{
 				colSpan: this.getColSpan(),
 				rowSpan: this.getRowSpan(),
 				width:
 					table.props.columnWidths?.[
 						table.model.getCellInfo(this).column
-					] ?? null,
-				...pureTcPrProps,
+					] || null,
+				...this.props,
 			},
 			false
 		);
-		tcPrChangeNodes.forEach((n) => tcPrNode?.appendChild(n));
 
-		/* 4. Assemble the cell */
-		return create(`element ${QNS.w}tc { $tcPr, $body }`, {
-			tcPr: tcPrNode,
-			body: bodyNodes,
-		});
+		// Append tcPr-level change nodes from props
+		if (this.props.insertion) {
+			tcPr?.appendChild(new CellInsertion(this.props.insertion).toNode());
+		}
+		if (this.props.deletion) {
+			tcPr?.appendChild(new CellDeletion(this.props.deletion).toNode());
+		}
+
+		return create(
+			`element ${QNS.w}tc {
+			$tcPr,
+			$children
+		}`,
+			{ tcPr, children }
+		);
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
