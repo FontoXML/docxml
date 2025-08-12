@@ -18,8 +18,6 @@ import {
 	isValidNumber,
 } from '../../../utilities/src/parameter-checking.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
-import { CellDeletion } from '../../track-changes/src/CellDeletion.ts';
-import { CellInsertion } from '../../track-changes/src/CellInsertion.ts';
 import type { Deletion } from '../../track-changes/src/Deletion.ts';
 import type { Insertion } from '../../track-changes/src/Insertion.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
@@ -85,34 +83,26 @@ export class Cell extends Component<CellProps, CellChild> {
 			children.push(await new Paragraph({}).toNode([this, ...ancestry]));
 		}
 
-		// Build <tcPr> first
-		const tcPr = tableCellPropertiesToNode(
-			{
-				colSpan: this.getColSpan(),
-				rowSpan: this.getRowSpan(),
-				width:
-					table.props.columnWidths?.[
-						table.model.getCellInfo(this).column
-					] || null,
-				...this.props,
-			},
-			false
-		);
-
-		// Append tcPr-level change nodes from props
-		if (this.props.insertion) {
-			tcPr?.appendChild(new CellInsertion(this.props.insertion).toNode());
-		}
-		if (this.props.deletion) {
-			tcPr?.appendChild(new CellDeletion(this.props.deletion).toNode());
-		}
-
 		return create(
 			`element ${QNS.w}tc {
-			$tcPr,
-			$children
-		}`,
-			{ tcPr, children }
+				$tcPr,
+				$children
+			}`,
+			{
+				tcPr: tableCellPropertiesToNode(
+					{
+						colSpan: this.getColSpan(),
+						rowSpan: this.getRowSpan(),
+						width:
+							table.props.columnWidths?.[
+								table.model.getCellInfo(this).column
+							] || null,
+						...this.props,
+					},
+					false
+				),
+				children,
+			}
 		);
 	}
 
