@@ -15,7 +15,6 @@ export class CellInsertion extends Component<CellInsertionProps, never> {
 	public static override readonly children: string[] = [];
 	public static override readonly mixed = false;
 
-	/* SERIALISE */
 	public override toNode(): Node {
 		return create(
 			`
@@ -34,7 +33,6 @@ export class CellInsertion extends Component<CellInsertionProps, never> {
 		);
 	}
 
-	/* PARSE */
 	static override matchesNode(node: Node): boolean {
 		return node.nodeName === 'w:cellIns';
 	}
