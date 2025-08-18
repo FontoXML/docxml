@@ -51,7 +51,7 @@ describe('Cell Deletion', () => {
 
 	const tableFromNode = Table.fromNode(tableNode, emptyContext)!;
 
-	it('parses <cellDel>/<cellIns> into cell props', () => {
+	it('parses <cellDel> into cell props', () => {
 		const [firstRow] = tableFromNode.children;
 		const [delCell1, delCell2] = firstRow.children as Cell[];
 
