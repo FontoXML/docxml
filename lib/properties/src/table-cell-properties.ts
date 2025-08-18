@@ -1,6 +1,7 @@
-import type { DeletionProps, InsertionProps } from '../../../mod.ts';
 import { CellDeletion } from '../../components/track-changes/src/CellDeletion.ts';
 import { CellInsertion } from '../../components/track-changes/src/CellInsertion.ts';
+import type { DeletionProps } from '../../components/track-changes/src/Deletion.ts';
+import type { InsertionProps } from '../../components/track-changes/src/Insertion.ts';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
 import { NamespaceUri, QNS } from '../../utilities/src/namespaces.ts';
@@ -156,6 +157,7 @@ export function tableCellPropertiesToNode(
 	if (!Object.keys(tcpr).length) {
 		return null;
 	}
+
 	return create(
 		`element ${QNS.w}tcPr {
 			if ($width) then element ${QNS.w}tcW {

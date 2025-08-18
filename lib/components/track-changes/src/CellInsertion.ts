@@ -7,10 +7,17 @@ import { registerComponent } from '../../../utilities/src/components.ts';
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 
-/** Props = the standard change-tracking triplet { id, author, date } */
+/**
+ * A type describing the props accepted by {@link CellInsertion}.
+ */
 export type CellInsertionProps = ChangeInformation;
 
-/** <cellIns> – table-cell insertion (no children allowed) */
+/**
+ * A component that represents a change-tracked for an cell inserted element.
+ *
+ * Additional documentation is here:
+ * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_cellIns_topic_ID0EQ1OV.html
+ */
 export class CellInsertion extends Component<CellInsertionProps, never> {
 	public static override readonly children: string[] = [];
 	public static override readonly mixed = false;

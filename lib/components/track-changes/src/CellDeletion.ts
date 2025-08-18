@@ -7,9 +7,17 @@ import { registerComponent } from '../../../utilities/src/components.ts';
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 
+/**
+ * A type describing the props accepted by {@link CellDeletion}.
+ */
 export type CellDeletionProps = ChangeInformation;
 
-/** <cellDel> – table-cell deletion (no children allowed) */
+/**
+ * A component that represents a change-tracked for an cell deleted element.
+ *
+ * Additional documentation is here:
+ * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_cellDel_topic_ID0E5IOV.html
+ */
 export class CellDeletion extends Component<CellDeletionProps, never> {
 	public static override readonly children: string[] = [];
 	public static override readonly mixed = false;

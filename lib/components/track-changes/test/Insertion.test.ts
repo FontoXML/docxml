@@ -244,6 +244,7 @@ describe('Insertion', () => {
 				);
 			});
 		});
+
 		describe('MoveTo and MoveFrom', () => {
 			const insertedMoveToNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
