@@ -11,7 +11,21 @@ const date = new Date();
 
 // Create a new table that includes a row, a row deletion, and a row addition.
 const testTable = new Table(
-	{},
+	{
+		cellPadding: {
+			top: pt(10),
+			bottom: pt(10),
+		},
+		change: {
+			id: 2,
+			author: 'Ines',
+			date: new Date(),
+			cellPadding: {
+				top: pt(24),
+				bottom: pt(24),
+			},
+		},
+	},
 	new Row(
 		{ insertion: { author: 'Luis', date: date, id: 1 } },
 		new Cell({}, new Paragraph({}, new Text({}, ' my old friend.')))
@@ -21,7 +35,14 @@ const testTable = new Table(
 		new Cell({}, new Paragraph({}, new Text({}, ' my new friend.')))
 	),
 	new Row(
-		{},
+		{
+			cellSpacing: pt(12),
+			change: {
+				id: 1,
+				author: 'Luis',
+				cellSpacing: pt(24),
+			},
+		},
 		new Cell(
 			{ deletion: { author: 'Carlos', date: date, id: 2 } },
 			new Paragraph({}, new Text({}, 'Bye!'))
@@ -38,12 +59,12 @@ const testTable = new Table(
 				borders: {
 					top: {
 						color: '0000FF',
-						width: pt(2),
+						width: pt(10),
 					},
 				},
 				shading: {
 					background: 'FF0000',
-					pattern: 'pct75',
+					pattern: 'pct5',
 				},
 				change: {
 					id: 1,
@@ -51,7 +72,14 @@ const testTable = new Table(
 					date: new Date(),
 					shading: {
 						background: '00FF00',
-						pattern: 'pct50',
+						pattern: 'pct5',
+					},
+					borders: {
+						top: {
+							color: '0000FF',
+							type: 'single',
+							width: pt(2),
+						},
 					},
 				},
 			},

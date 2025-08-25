@@ -1,3 +1,4 @@
+import type { ChangeInformation } from '@fontoxml/docxml';
 import { Deletion } from '../../components/track-changes/src/Deletion.ts';
 import {
 	Insertion,
@@ -26,6 +27,11 @@ export type TableRowProperties = {
 	 */
 	cellSpacing?: null | Length;
 	/**
+	 * A property used to indicate when a table property has changed. This will appear as a tracked
+	 * change in Word's track changes feature.
+	 */
+	change?: null | (ChangeInformation & Omit<TableRowProperties, 'change'>);
+	/**
 	 * A property used to indicate when a row has been inserted.
 	 *
 	 * If present, the containing row element will appear as a track-change inserted row.
@@ -52,6 +58,12 @@ export function tableRowPropertiesFromNode(
 					"isHeaderRow": docxml:ct-on-off(./${QNS.w}tblHeader),
 					"isUnsplittable": docxml:ct-on-off(./${QNS.w}cantSplit),
 					"cellSpacing": docxml:length(${QNS.w}tblCellSpacing[not(@${QNS.w}type = 'nil')]/@${QNS.w}w, 'twip'),
+					"change": ./${QNS.w}trPrChange/map {
+						"id": @${QNS.w}id/number(),
+						"author": @${QNS.w}author/string(),
+						"date": @${QNS.w}date/string(),
+						"node": ./${QNS.w}trPr
+					},
 					"insertion": ./${QNS.w}ins/map {
 						"id": @${QNS.w}id/number(), 
 						"author": @${QNS.w}author/string(), 
@@ -66,8 +78,13 @@ export function tableRowPropertiesFromNode(
 				node
 		  )
 		: {};
-
 	// Convert the date string to a Date object.
+	if (props.change) {
+		props.change.date = props.change.date
+			? new Date(props.change.date)
+			: undefined;
+	}
+
 	if (props.insertion) {
 		props.insertion.date = props.insertion.date
 			? new Date(props.insertion.date)
@@ -103,6 +120,12 @@ export async function tableRowPropertiesToNode(
 				attribute ${QNS.w}w { round($cellSpacing('twip')) },
 				attribute ${QNS.w}type { "dxa" }
 			} else (),
+			if (exists($change)) then element ${QNS.w}trPrChange { 
+				attribute ${QNS.w}id { $change('id') }, 
+				if ($change('author')) then attribute ${QNS.w}author { $change('author') } else (), 
+				if ($change('date')) then attribute ${QNS.w}date { $change('date') } else (),
+				$change('node') 
+			} else (), 
 			$insertion,
 			$deletion
 		}`,
@@ -110,6 +133,18 @@ export async function tableRowPropertiesToNode(
 			isHeaderRow: trpr.isHeaderRow || false,
 			isUnsplittable: trpr.isUnsplittable || false,
 			cellSpacing: trpr.cellSpacing || null,
+			change: trpr.change
+				? {
+						id: trpr.change.id,
+						author: trpr.change.author
+							? trpr.change.author
+							: undefined,
+						date: trpr.change.date
+							? new Date(trpr.change.date).toISOString()
+							: undefined,
+						node: await tableRowPropertiesToNode(trpr.change),
+				  }
+				: null,
 			insertion: trpr.insertion
 				? await new Insertion(trpr.insertion).toNode([])
 				: null,

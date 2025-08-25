@@ -1,3 +1,4 @@
+import { ChangeInformation } from '@fontoxml/docxml';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
 import { NamespaceUri, QNS } from '../../utilities/src/namespaces.ts';
@@ -78,6 +79,7 @@ export type TableProperties = {
 		insideH?: null | Border<LineBorderType | ArtBorderType>;
 		insideV?: null | Border<LineBorderType | ArtBorderType>;
 	};
+	change?: null | (ChangeInformation & Omit<TableProperties, 'change'>);
 };
 
 export function tablePropertiesFromNode(node: Node | null): TableProperties {
@@ -115,7 +117,13 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 						"length": ./@${QNS.w}w/string(),
 						"unit": ./@${QNS.w}type/string()
 					},
-					"strictColumnWidths": boolean(./${QNS.w}tblLayout/@${QNS.w}type = "fixed")
+					"strictColumnWidths": boolean(./${QNS.w}tblLayout/@${QNS.w}type = "fixed"), 
+					"change": ./${QNS.w}trPrChange/map { 
+						"id": @${QNS.w}id/number(),
+						"author": @${QNS.w}author/string(),
+						"date": @${QNS.w}date/string(),
+						"node": ./${QNS.w}trPr
+					}
 				}`,
 				node
 		  )
@@ -185,7 +193,13 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 			} else (),
 			if ($strictColumnWidths) then element ${QNS.w}tblLayout {
 				attribute ${QNS.w}type { "fixed" }
-			} else ()
+			} else (),
+			if (exists($change)) then element ${QNS.w}tblPrChange { 
+				attribute ${QNS.w}id { $change('id') },
+				if (exists($change('author'))) then attribute ${QNS.w}author { $change('author') } else (),
+				if (exists($change('date'))) then attribute ${QNS.w}date { $change('date') } else (),
+				$change('node')
+			} else () 
 		}`,
 		{
 			style: tblpr.style || null,
@@ -216,6 +230,14 @@ export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
 			columnBandingSize: tblpr.columnBandingSize || null,
 			rowBandingSize: tblpr.rowBandingSize || null,
 			strictColumnWidths: tblpr.strictColumnWidths || false,
+			change: tblpr.change
+				? {
+						date: tblpr.change.date
+							? new Date(tblpr.change.date).toISOString()
+							: undefined,
+						...tblpr.change,
+				  }
+				: null,
 		}
 	);
 }
