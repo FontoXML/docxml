@@ -1,4 +1,5 @@
 /** @jsx  Docx.jsx */
+import { pt } from '../../lib/utilities/src/length.ts';
 import Docx, { Cell, Paragraph, Row, Section, Table, Text } from '../../mod.ts';
 
 // Create a new .docx file with track changes enabled.
@@ -29,6 +30,34 @@ const testTable = new Table(
 			{ insertion: { author: 'Carlos', date: date, id: 2 } },
 			new Paragraph({}, new Text({}, 'Hello!'))
 		)
+	),
+	new Row(
+		{},
+		new Cell(
+			{
+				borders: {
+					top: {
+						color: '0000FF',
+						width: pt(2),
+					},
+				},
+				shading: {
+					background: 'FF0000',
+					pattern: 'pct75',
+				},
+				change: {
+					id: 1,
+					author: 'Gabe',
+					date: new Date(),
+					shading: {
+						background: '00FF00',
+						pattern: 'pct50',
+					},
+				},
+			},
+			new Paragraph({}, new Text({}, 'Cell Property change'))
+		),
+		new Cell({}, new Paragraph({}, new Text({}, 'And unchanged.')))
 	)
 );
 

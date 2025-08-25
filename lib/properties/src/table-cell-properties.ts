@@ -2,6 +2,7 @@ import { CellDeletion } from '../../components/track-changes/src/CellDeletion.ts
 import { CellInsertion } from '../../components/track-changes/src/CellInsertion.ts';
 import type { DeletionProps } from '../../components/track-changes/src/Deletion.ts';
 import type { InsertionProps } from '../../components/track-changes/src/Insertion.ts';
+import type { ChangeInformation } from '../../utilities/src/changes.ts';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
 import { NamespaceUri, QNS } from '../../utilities/src/namespaces.ts';
@@ -64,6 +65,14 @@ export type TableCellProperties = {
 	 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_cellDel_topic_ID0E5IOV.html
 	 */
 	deletion?: null | DeletionProps;
+	/**
+	 * A property used to indicate when the properties of a table cell should appear as a
+	 * tracked change when the document is opened in Word.
+	 *
+	 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_tcPrChange_topic_ID0EEKVW.html
+	 *
+	 */
+	change?: null | (ChangeInformation & Omit<TableCellProperties, 'change'>);
 };
 
 export function tableCellPropertiesFromNode(
@@ -121,6 +130,12 @@ export function tableCellPropertiesFromNode(
 						"id": @${QNS.w}id/number(), 
 						"author": @${QNS.w}author/string(), 
 						"date": @${QNS.w}date/string()
+					},
+					"change": ./${QNS.w}tcPrChange/map { 
+						"id": @${QNS.w}id/number(),
+						"author": @${QNS.w}author/string(),
+						"date": @${QNS.w}date/string(), 
+						"node": ./${QNS.w}tcPr
 					}
 				}
 				`,
@@ -189,6 +204,12 @@ export function tableCellPropertiesToNode(
 			if (exists($verticalAlignment)) then element ${QNS.w}vAlign {
 				attribute ${QNS.w}val { $verticalAlignment }
 			} else (),
+			if (exists($change)) then element ${QNS.w}tcPrChange { 
+				attribute ${QNS.w}id { $change('id') },
+				if ($change('author')) then attribute ${QNS.w}author { $change('author') } else (),
+				if ($change('date')) then attribute ${QNS.w}date { $change('date')} else (),
+				$change('node')
+			} else (),
 			$insertion,
 			$deletion
 		}`,
@@ -212,6 +233,18 @@ export function tableCellPropertiesToNode(
 				  }
 				: null,
 			verticalAlignment: tcpr.verticalAlignment || null,
+			change: tcpr.change
+				? {
+						id: tcpr.change.id,
+						author: tcpr.change.author
+							? tcpr.change.author
+							: undefined,
+						date: tcpr.change.date
+							? new Date(tcpr.change.date).toISOString()
+							: undefined,
+						node: tableCellPropertiesToNode(tcpr.change, false),
+				  }
+				: null,
 			insertion: tcpr.insertion
 				? new CellInsertion(tcpr.insertion).toNode()
 				: null,
