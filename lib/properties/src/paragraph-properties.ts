@@ -126,6 +126,8 @@ export type ParagraphProperties = {
 			position: Length | null;
 		}>
 	>;
+
+	bidirectional?: boolean;
 };
 
 export function paragraphPropertiesFromNode(
@@ -178,7 +180,8 @@ export function paragraphPropertiesFromNode(
 						"type": @${QNS.w}val/string(),
 						"leader": @${QNS.w}leader/string(),
 						"position": docxml:length(@${QNS.w}pos, 'twip')
-					}}
+					}}, 
+					"bidirectional": docxml:st-on-off(./${QNS.w}bidi/@val)
 				}`,
 				node
 		  ) || {}
@@ -312,6 +315,10 @@ export async function paragraphPropertiesToNode(
 								$tab('position')
 							} else ()
 						}
+				} else (), 
+
+				if (exists($bidirectional)) then element ${QNS.w}bidi { 
+					attribute ${QNS.w}val { $bidirectional }
 				} else ()
 			}
 		`,
@@ -374,6 +381,7 @@ export async function paragraphPropertiesToNode(
 						position: getTwipOrNull(tab.position),
 				  }))
 				: null,
+			bidirectional: data.bidirectional,
 		}
 	);
 }

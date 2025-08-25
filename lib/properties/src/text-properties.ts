@@ -13,10 +13,14 @@ import {
 } from '../../utilities/src/xquery.ts';
 import type { Shading } from './shared-properties.ts';
 
+import type { Arabic, English } from '../../enums.ts';
+
 type SimpleOrComplex<Generic> = {
 	simple?: Generic | null;
 	complex?: Generic | null;
 };
+
+type Lang = English | Arabic;
 
 function explodeSimpleOrComplex<Generic>(
 	value: Generic | SimpleOrComplex<Generic> | null
@@ -105,7 +109,7 @@ export type TextProperties = {
 	/**
 	 * The language of this bit of text, for spell checking.
 	 */
-	language?: string | null;
+	language?: Lang | null;
 	/**
 	 * The size of your font.
 	 */
@@ -133,6 +137,12 @@ export type TextProperties = {
 				ascii?: string;
 				hAnsi?: string;
 		  };
+
+	/***
+	 * Specifies whether or not this text should be presented in a way that is consistent with languages
+	 * that read and write right-to-left.
+	 */
+	rtl?: boolean;
 	/**
 	 * A property used to indicate when an entire paragraph has moved.
 	 *
@@ -221,6 +231,7 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"ascii": @${QNS.w}ascii/string(),
 				"hAnsi": @${QNS.w}hAnsi/string()
 			},
+			"rtl": docxml:ct-on-off(./${QNS.w}rtl),
 			"move": ./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]/map {
 				"id": @${QNS.w}id/number(), 
 				"author": @${QNS.w}author/string(), 
@@ -311,6 +322,7 @@ export async function textPropertiesToNode(
 		!data.isStrike &&
 		!data.shading &&
 		!data.font &&
+		!data.rtl &&
 		!data.move &&
 		!data.change &&
 		!data.insertion &&
@@ -367,6 +379,7 @@ export async function textPropertiesToNode(
 					$font('hAnsi')
 				} else ()
 			} else (),
+			if (exists($rtl)) then element ${QNS.w}rtl { attribute ${QNS.w}val { $rtl } } else (), 
 			if (exists($change)) then element ${QNS.w}rPrChange { 
 				attribute ${QNS.w}id { $change('id') },
 				if ($change('date')) then attribute ${QNS.w}date { $change('date') } else (),
@@ -411,6 +424,7 @@ export async function textPropertiesToNode(
 							hAnsi: data.font.hAnsi || null,
 					  }
 					: null,
+			rtl: data.rtl || null,
 			change: data.change
 				? {
 						id: data.change.id,

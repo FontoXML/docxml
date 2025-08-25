@@ -80,3 +80,43 @@ export enum RelationshipType {
 	downRev = 'http://schemas.microsoft.com/office/2006/relationships/downRev',
 	graphicFrameDoc = 'http://schemas.microsoft.com/office/2006/relationships/graphicFrameDoc',
 }
+
+export enum Arabic {
+	SaudiArabia = 25,
+	Iraq = 2049,
+	Egypt = 3073,
+	Libya = 4097,
+	Algeria = 5121,
+	Morocco = 6145,
+	Tunisia = 7169,
+	Oman = 8193,
+	Yemen = 9217,
+	Syria = 10241,
+	Jordan = 11265,
+	Lebanon = 12289,
+	Kuwait = 13313,
+	UAE = 14337,
+	Bahrain = 15361,
+	Qatar = 16385,
+}
+
+export enum English {
+	Ireland = 6153,
+	SouthAfrica = 7177,
+	Jamaica = 8201,
+	Caribbean = 9225,
+	Belize = 9225,
+	Trinidad = 11273,
+	Zimbabwe = 12297,
+	Philippines = 13321,
+	Indonesia = 14345,
+	HongKongSAR = 15369,
+	India = 16393,
+	Malaysia = 18441,
+	Singapore = 18441,
+	UnitedState = 1033,
+	UnitedKingdom = 2057,
+	Australia = 3081,
+	Canada = 4105,
+	NewZealand = 5129,
+}
