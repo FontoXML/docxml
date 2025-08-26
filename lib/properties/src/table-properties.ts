@@ -1,4 +1,5 @@
-import { ChangeInformation } from '@fontoxml/docxml';
+import type { TableProps } from '../../components/document/src/Table.ts';
+import type { ChangeInformation } from '../../utilities/src/changes.ts';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
 import { NamespaceUri, QNS } from '../../utilities/src/namespaces.ts';
@@ -132,7 +133,7 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 	return properties;
 }
 
-export function tablePropertiesToNode(tblpr: TableProperties = {}): Node {
+export function tablePropertiesToNode(tblpr: TableProps = {}): Node {
 	return create(
 		`element ${QNS.w}tblPr {
 			if ($style) then element ${QNS.w}tblStyle {

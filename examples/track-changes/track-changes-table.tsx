@@ -16,6 +16,8 @@ const testTable = new Table(
 			top: pt(10),
 			bottom: pt(10),
 		},
+		columnWidths: [pt(48), pt(48), pt(48), pt(48)],
+		columnWidthChange: { id: 1, cols: [pt(24), pt(24), pt(24), pt(24)] },
 		change: {
 			id: 2,
 			author: 'Ines',
