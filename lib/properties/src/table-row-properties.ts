@@ -1,4 +1,8 @@
 import type { ChangeInformation } from '@fontoxml/docxml';
+import {
+	hasUncaughtExceptionCaptureCallback,
+	prependOnceListener,
+} from 'node:process';
 import { Deletion } from '../../components/track-changes/src/Deletion.ts';
 import {
 	Insertion,
@@ -8,6 +12,7 @@ import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
 import { QNS } from '../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../utilities/src/xquery.ts';
+import { type TableProperties } from './table-properties.ts';
 
 export type TableRowProperties = {
 	/**
@@ -27,10 +32,28 @@ export type TableRowProperties = {
 	 */
 	cellSpacing?: null | Length;
 	/**
-	 * A property used to indicate when a table property has changed. This will appear as a tracked
+	 * A property used to indicate when a table row property has changed. This will appear as a tracked
 	 * change in Word's track changes feature.
 	 */
 	change?: null | (ChangeInformation & Omit<TableRowProperties, 'change'>);
+	/**
+	 * A property used to indicate that this table row should be excepted from the specified
+	 * table-level properties.
+	 *
+	 * Read more: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_tblPrEx_topic_ID0E1GNR.html#topic_ID0E1GNR
+	 */
+	exception?:
+		| null
+		| (Omit<TableProperties, 'change'> & {
+				/**
+				 * A property used to indicate that there have been changes made to the exceptions.
+				 *
+				 * Read more here: https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_tblPrExChange_topic_ID0EK1UW.html
+				 */
+				change?:
+					| null
+					| (ChangeInformation & Omit<TableProperties, 'change'>);
+		  });
 	/**
 	 * A property used to indicate when a row has been inserted.
 	 *
@@ -49,11 +72,25 @@ export type TableRowProperties = {
 	deletion?: null | InsertionProps;
 };
 
+type IntermediateTableRowProps = Omit<TableRowProperties, 'exception'> & {
+	exception?:
+		| null
+		| (Omit<TableRowProperties, 'change' | 'exception'> & {
+				change?: {
+					id: number;
+					author?: string;
+					date?: Date;
+					node: Node | undefined;
+				};
+				node: Node | undefined;
+		  });
+};
+
 export function tableRowPropertiesFromNode(
 	node?: Node | null
 ): TableRowProperties {
 	const props = node
-		? evaluateXPathToMap<TableRowProperties>(
+		? evaluateXPathToMap<IntermediateTableRowProps>(
 				`map {
 					"isHeaderRow": docxml:ct-on-off(./${QNS.w}tblHeader),
 					"isUnsplittable": docxml:ct-on-off(./${QNS.w}cantSplit),
@@ -63,6 +100,15 @@ export function tableRowPropertiesFromNode(
 						"author": @${QNS.w}author/string(),
 						"date": @${QNS.w}date/string(),
 						"node": ./${QNS.w}trPr
+					},
+					"exception": ./${QNS.w}tblPrEx/map { 
+						"node": ./${QNS.w}*[not(self::${QNS.w}tblPrExChange)],
+						"change": ./${QNS.w}tblPrExChange/map {
+							"id": @${QNS.w}id/number(), 
+							"author": @${QNS.w}author/string(), 
+							"date": @${QNS.w}/date/string(), 
+							"node": ./${QNS.w}tblPrEx
+						}
 					},
 					"insertion": ./${QNS.w}ins/map {
 						"id": @${QNS.w}id/number(), 
@@ -94,6 +140,26 @@ export function tableRowPropertiesFromNode(
 			: undefined;
 	}
 
+	if (props.exception) {
+		props.exception = {
+			...tableRowPropertiesFromNode(props.exception.node),
+			change: props.exception.change
+				? {
+						date: props.exception.change.date
+							? new Date(props.exception.change.date)
+							: undefined,
+						id: props.exception.change.id,
+						author: props.exception.change.author,
+						...tableRowPropertiesFromNode(
+							props.exception.change.node
+						),
+						node: undefined,
+				  }
+				: undefined,
+			node: undefined,
+		};
+	}
+
 	if (props.deletion) {
 		props.deletion.date = props.deletion.date
 			? new Date(props.deletion.date)
@@ -103,7 +169,7 @@ export function tableRowPropertiesFromNode(
 			: undefined;
 	}
 
-	return props;
+	return props as TableRowProperties;
 }
 
 export async function tableRowPropertiesToNode(
@@ -126,6 +192,17 @@ export async function tableRowPropertiesToNode(
 				if ($change('date')) then attribute ${QNS.w}date { $change('date') } else (),
 				$change('node') 
 			} else (), 
+			if (exists($exception)) then element ${QNS.w}tblPrEx { 
+				if (exists($exception('change'))) then element ${QNS.w}tblPrExChange { 
+					attribute ${QNS.w}id { $exception('change')('id')}, 
+					attribute ${QNS.w}author { $exception('change')('author')}, 
+					attribute ${QNS.w}date { $exception('change')('date')}, 
+					element ${QNS.w}tblPrEx { 
+						array:flatten($exception('change')('node'))
+					}
+				} else (),
+				$exception('node')
+			} else (),
 			$insertion,
 			$deletion
 		}`,
@@ -143,6 +220,25 @@ export async function tableRowPropertiesToNode(
 							? new Date(trpr.change.date).toISOString()
 							: undefined,
 						node: await tableRowPropertiesToNode(trpr.change),
+				  }
+				: null,
+			exception: trpr.exception
+				? {
+						node: await tableRowPropertiesToNode(trpr.exception),
+						change: trpr.exception.change
+							? {
+									id: trpr.exception.change.id,
+									author: trpr.exception.change.author
+										? trpr.exception.change.author
+										: undefined,
+									date: trpr.exception.change.date
+										? trpr.exception.change.date.toISOString()
+										: undefined,
+									node: await tableRowPropertiesToNode(
+										trpr.exception.change
+									),
+							  }
+							: null,
 				  }
 				: null,
 			insertion: trpr.insertion
