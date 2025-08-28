@@ -179,8 +179,6 @@ export function tableCellPropertiesFromNode(
 			: undefined;
 	}
 
-	console.log('WIDTH: ', props.width);
-
 	return props as TableCellProperties;
 }
 
