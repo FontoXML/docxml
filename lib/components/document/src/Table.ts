@@ -123,6 +123,7 @@ export class Table extends Component<TableProps, TableChild> {
 			tblpr: Node;
 			children: Node[];
 			columnWidths: number[];
+			columnWidthChange: { id: number; cols: number[] };
 		}>(
 			`
 				map {
@@ -141,10 +142,18 @@ export class Table extends Component<TableProps, TableChild> {
 		);
 		return new Table(
 			{
+				...tablePropertiesFromNode(tblpr),
 				columnWidths: props.columnWidths.map((size: number) =>
 					twip(size)
 				),
-				...tablePropertiesFromNode(tblpr),
+				columnWidthChange: props.columnWidthChange
+					? {
+							id: props.columnWidthChange.id,
+							cols: props.columnWidthChange.cols.map(
+								(size: number) => twip(size)
+							),
+					  }
+					: null,
 			},
 			...createChildComponentsFromNodes<TableChild>(
 				this.children,

@@ -75,11 +75,15 @@ export type TableCellProperties = {
 	change?: null | (ChangeInformation & Omit<TableCellProperties, 'change'>);
 };
 
+type IntermediateProps = Omit<TableCellProperties, 'change'> & {
+	change?: ChangeInformation & { node: Node | undefined };
+};
+
 export function tableCellPropertiesFromNode(
 	node?: Node | null
 ): TableCellProperties {
 	const props = node
-		? evaluateXPathToMap<TableCellProperties>(
+		? evaluateXPathToMap<IntermediateProps>(
 				`
 				let $colStart := docxml:cell-column(.)
 
@@ -103,6 +107,9 @@ export function tableCellPropertiesFromNode(
 					else count(../../../${QNS.w}tr)
 
 				return map {
+					"width": if (${QNS.w}tcW)
+						then docxml:length(${QNS.w}tcW/@${QNS.w}w, 'twip') 
+						else (),
 					"colSpan": if (./${QNS.w}gridSpan)
 						then ./${QNS.w}gridSpan/@${QNS.w}val/number()
 						else 1,
@@ -143,6 +150,16 @@ export function tableCellPropertiesFromNode(
 		  )
 		: {};
 
+	if (props.change) {
+		props.change = {
+			...props.change,
+			id: props.change.id,
+			date: props.change.date ? new Date(props.change.date) : undefined,
+			...tableCellPropertiesFromNode(props.change.node),
+			node: undefined,
+		};
+	}
+
 	// Convert the date string to a Date object.
 	if (props.insertion) {
 		props.insertion.date = props.insertion.date
@@ -162,7 +179,9 @@ export function tableCellPropertiesFromNode(
 			: undefined;
 	}
 
-	return props;
+	console.log('WIDTH: ', props.width);
+
+	return props as TableCellProperties;
 }
 
 export function tableCellPropertiesToNode(
@@ -175,7 +194,7 @@ export function tableCellPropertiesToNode(
 
 	return create(
 		`element ${QNS.w}tcPr {
-			if ($width) then element ${QNS.w}tcW {
+			if (exists($width)) then element ${QNS.w}tcW {
 				attribute ${QNS.w}w { $width },
 				attribute ${QNS.w}type { "dxa" }
 			} else (),
@@ -242,7 +261,7 @@ export function tableCellPropertiesToNode(
 						date: tcpr.change.date
 							? new Date(tcpr.change.date).toISOString()
 							: undefined,
-						node: tableCellPropertiesToNode(tcpr.change, false),
+						node: tableCellPropertiesToNode(tcpr.change, true),
 				  }
 				: null,
 			insertion: tcpr.insertion

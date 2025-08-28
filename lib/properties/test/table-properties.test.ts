@@ -14,6 +14,8 @@ const test = createXmlRoundRobinTest<TableProperties>(
 	tablePropertiesToNode
 );
 
+const date = new Date();
+
 describe('Table formatting', () => {
 	test(
 		`<w:tblPr ${ALL_NAMESPACE_DECLARATIONS}>
@@ -45,6 +47,12 @@ describe('Table formatting', () => {
 			<w:tblCellSpacing w:w="60" w:type="dxa" />
 			<w:tblStyleRowBandSize w:val="2" />
 			<w:tblStyleColBandSize w:val="3" />
+			<w:tblPrChange w:id="0" w:author="Vincent" w:date="${date.toISOString()}">
+				<w:tblPr>
+					<w:tblStyle w:val="LightList"/>
+					<w:tblW w:w="1400" w:type="dxa"/>
+				</w:tblPr>
+			</w:tblPrChange>
 		</w:tblPr>`,
 		{
 			style: 'afkicken-van-de-opkikkers',
@@ -91,17 +99,24 @@ describe('Table formatting', () => {
 				insideV: null,
 			},
 			strictColumnWidths: true,
+			change: {
+				id: 0,
+				author: 'Vincent',
+				date: date,
+				style: 'LightList',
+				width: { length: '1400', unit: 'dxa' },
+			},
 		}
 	);
 
 	describe('Legacy schema for cellPadding', () => {
 		test(
 			`<w:tblPr ${ALL_NAMESPACE_DECLARATIONS}>
-				<w:tblCellMar>
-					<w:left w:w="432" w:type="dxa" />
-					<w:right w:w="144" w:type="dxa" />
-				</w:tblCellMar>
-			</w:tblPr>`,
+					<w:tblCellMar>
+						<w:left w:w="432" w:type="dxa" />
+						<w:right w:w="144" w:type="dxa" />
+					</w:tblCellMar>
+				</w:tblPr>`,
 			{
 				cellPadding: {
 					top: null,
@@ -116,8 +131,8 @@ describe('Table formatting', () => {
 	describe('Setting table width to a "%" string', () => {
 		test(
 			`<w:tblPr ${ALL_NAMESPACE_DECLARATIONS}>
-				<w:tblW w:w="100%" w:type="nil" />
-			</w:tblPr>`,
+					<w:tblW w:w="100%" w:type="nil" />
+				</w:tblPr>`,
 			{
 				width: { length: '100%', unit: 'nil' },
 			}
@@ -127,8 +142,8 @@ describe('Table formatting', () => {
 	describe('Setting table width to an unannotated value', () => {
 		test(
 			`<w:tblPr ${ALL_NAMESPACE_DECLARATIONS}>
-				<w:tblW w:w="420" w:type="nil" />
-			</w:tblPr>`,
+					<w:tblW w:w="420" w:type="nil" />
+				</w:tblPr>`,
 			{
 				width: { length: '420', unit: 'nil' },
 			}
@@ -138,11 +153,11 @@ describe('Table formatting', () => {
 	describe('Legacy "left"/"right"', () => {
 		test(
 			`<w:tblPr ${ALL_NAMESPACE_DECLARATIONS}>
-				<w:tblBorders>
-					<w:left w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
-					<w:right w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
-				</w:tblBorders>
-			</w:tblPr>`,
+					<w:tblBorders>
+						<w:left w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
+						<w:right w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
+					</w:tblBorders>
+				</w:tblPr>`,
 			{
 				borders: {
 					start: {

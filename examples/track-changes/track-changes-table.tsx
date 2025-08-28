@@ -43,16 +43,7 @@ const testTable = new Table(
 				id: 1,
 				author: 'Luis',
 				cellSpacing: pt(24),
-			},
-			exception: {
-				cellPadding: { top: pt(2) },
-				change: {
-					id: 22,
-					author: 'Gabe',
-					date: new Date(),
-					cellPadding: { top: pt(10) },
-				},
-			},
+			}
 		},
 		new Cell(
 			{ deletion: { author: 'Carlos', date: date, id: 2 } },

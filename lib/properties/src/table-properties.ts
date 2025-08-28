@@ -83,9 +83,13 @@ export type TableProperties = {
 	change?: null | (ChangeInformation & Omit<TableProperties, 'change'>);
 };
 
+type IntermediateProps = Omit<TableProperties, 'change'> & {
+	change?: ChangeInformation & { node: Node | null };
+};
+
 export function tablePropertiesFromNode(node: Node | null): TableProperties {
 	const properties = node
-		? evaluateXPathToMap<TableProperties>(
+		? evaluateXPathToMap<IntermediateProps>(
 				`map {
 					"style": ./${QNS.w}tblStyle/@${QNS.w}val/string(),
 					"activeConditions": ./${QNS.w}tblLook/map {
@@ -119,18 +123,29 @@ export function tablePropertiesFromNode(node: Node | null): TableProperties {
 						"unit": ./@${QNS.w}type/string()
 					},
 					"strictColumnWidths": boolean(./${QNS.w}tblLayout/@${QNS.w}type = "fixed"), 
-					"change": ./${QNS.w}trPrChange/map { 
+					"change": ./${QNS.w}tblPrChange/map { 
 						"id": @${QNS.w}id/number(),
 						"author": @${QNS.w}author/string(),
 						"date": @${QNS.w}date/string(),
-						"node": ./${QNS.w}trPr
+						"node": ./${QNS.w}tblPr
 					}
 				}`,
 				node
 		  )
 		: {};
+	if (properties.change) {
+		properties.change = {
+			...properties.change,
+			id: properties.change.id,
+			date: properties.change.date
+				? new Date(properties.change.date)
+				: undefined,
+			...tablePropertiesFromNode(properties.change.node),
+			node: null,
+		};
+	}
 
-	return properties;
+	return properties as TableProperties;
 }
 
 export function tablePropertiesToNode(tblpr: TableProps = {}): Node {
@@ -233,10 +248,14 @@ export function tablePropertiesToNode(tblpr: TableProps = {}): Node {
 			strictColumnWidths: tblpr.strictColumnWidths || false,
 			change: tblpr.change
 				? {
+						id: tblpr.change.id,
+						author: tblpr.change.author
+							? tblpr.change.author
+							: undefined,
 						date: tblpr.change.date
 							? new Date(tblpr.change.date).toISOString()
 							: undefined,
-						...tblpr.change,
+						node: tablePropertiesToNode(tblpr.change),
 				  }
 				: null,
 		}
