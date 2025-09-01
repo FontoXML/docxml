@@ -16,6 +16,7 @@ import {
 	tablePropertiesFromNode,
 	tablePropertiesToNode,
 } from '../../../properties/src/table-properties.ts';
+import type { ChangeInformation } from '../../../utilities/src/changes.ts';
 import {
 	createChildComponentsFromNodes,
 	registerComponent,
@@ -40,7 +41,9 @@ export type TableProps = TableProperties & {
 	/**
 	 * A property to specify that the table grid model has changed. This will be a tracked change in OOXML.
 	 */
-	columnWidthChange?: null | { id: number; cols: Length[] };
+	columnWidthChange?:
+		| null
+		| (Omit<ChangeInformation, 'author' | 'date'> & { cols: Length[] });
 };
 
 /**
