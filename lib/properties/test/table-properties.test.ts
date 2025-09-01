@@ -112,11 +112,11 @@ describe('Table formatting', () => {
 	describe('Legacy schema for cellPadding', () => {
 		test(
 			`<w:tblPr ${ALL_NAMESPACE_DECLARATIONS}>
-					<w:tblCellMar>
-						<w:left w:w="432" w:type="dxa" />
-						<w:right w:w="144" w:type="dxa" />
-					</w:tblCellMar>
-				</w:tblPr>`,
+				<w:tblCellMar>
+					<w:left w:w="432" w:type="dxa" />
+					<w:right w:w="144" w:type="dxa" />
+				</w:tblCellMar>
+			</w:tblPr>`,
 			{
 				cellPadding: {
 					top: null,
@@ -131,8 +131,8 @@ describe('Table formatting', () => {
 	describe('Setting table width to a "%" string', () => {
 		test(
 			`<w:tblPr ${ALL_NAMESPACE_DECLARATIONS}>
-					<w:tblW w:w="100%" w:type="nil" />
-				</w:tblPr>`,
+				<w:tblW w:w="100%" w:type="nil" />
+			</w:tblPr>`,
 			{
 				width: { length: '100%', unit: 'nil' },
 			}
@@ -153,11 +153,11 @@ describe('Table formatting', () => {
 	describe('Legacy "left"/"right"', () => {
 		test(
 			`<w:tblPr ${ALL_NAMESPACE_DECLARATIONS}>
-					<w:tblBorders>
-						<w:left w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
-						<w:right w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
-					</w:tblBorders>
-				</w:tblPr>`,
+				<w:tblBorders>
+					<w:left w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
+					<w:right w:val="double" w:sz="24" w:space="0" w:color="FF0000"/>
+				</w:tblBorders>
+			</w:tblPr>`,
 			{
 				borders: {
 					start: {
