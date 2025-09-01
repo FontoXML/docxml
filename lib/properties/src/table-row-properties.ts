@@ -1,9 +1,9 @@
-import type { ChangeInformation } from '@fontoxml/docxml';
 import { Deletion } from '../../components/track-changes/src/Deletion.ts';
 import {
 	Insertion,
 	type InsertionProps,
 } from '../../components/track-changes/src/Insertion.ts';
+import type { ChangeInformation } from '../../utilities/src/changes.ts';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
 import { QNS } from '../../utilities/src/namespaces.ts';
