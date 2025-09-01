@@ -48,6 +48,10 @@ export type TableCellProperties = {
 	 * The vertical alignment of this cell.
 	 */
 	verticalAlignment?: null | 'bottom' | 'center' | 'top';
+
+	verticalMerge?: null | 'restart' | 'continue';
+
+	horizontalMerge?: null | 'restart' | 'continue';
 	/**
 	 * A property used to indicate when a cell has been inserted.
 	 *
@@ -112,6 +116,8 @@ export function tableCellPropertiesFromNode(
 						"insideV": docxml:ct-border(${QNS.w}insideV)
 					},
 					"verticalAlignment": ./${QNS.w}vAlign/@${QNS.w}val/string(),
+					"verticalMerge": ./${QNS.w}vmerge/@${QNS.w}val/string(),
+					"horizontalMerge": ./${QNS.w}hmerge/@${QNS.w}val/string(),
 					"insertion": ./${QNS.w}cellIns/map {
 						"id": @${QNS.w}id/number(), 
 						"author": @${QNS.w}author/string(), 
@@ -189,6 +195,12 @@ export function tableCellPropertiesToNode(
 			if (exists($verticalAlignment)) then element ${QNS.w}vAlign {
 				attribute ${QNS.w}val { $verticalAlignment }
 			} else (),
+			if (exists($verticalMerge)) then element ${QNS.w}vMerge { 
+				attribute ${QNS.w}val { $verticalMerge }
+			} else (),
+			if (exists($horizontalMerge)) then element${QNS.w}hMerge { 
+				attribute ${QNS.w}val { $horizontalMerge }
+			} else (), 
 			$insertion,
 			$deletion
 		}`,
@@ -212,6 +224,8 @@ export function tableCellPropertiesToNode(
 				  }
 				: null,
 			verticalAlignment: tcpr.verticalAlignment || null,
+			verticalMerge: tcpr.verticalMerge || null,
+			horizontalMerge: tcpr.horizontalMerge || null,
 			insertion: tcpr.insertion
 				? new CellInsertion(tcpr.insertion).toNode()
 				: null,
