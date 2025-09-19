@@ -232,38 +232,57 @@ await Docx.fromJsx(
 		{/* List insertion */}
 		<Paragraph
 			listItem={{ numbering, depth: 0 }}
-			pilcrow={{ insertion: { id: 1, author: author, date: date } }}
+			pilcrow={{ insertion: { id: 11, author: author, date: date } }}
 		>
-			The play is set in a house in Andalusia, shortly before the Spanish
-			Civil War.
+			<Insertion id={17} author={author} date={date}>
+				<Text>
+					The play is set in a house in Andalusia, shortly before the
+					Spanish Civil War.
+				</Text>
+			</Insertion>
 		</Paragraph>
 		<Paragraph
 			listItem={{ numbering, depth: 0 }}
-			pilcrow={{ insertion: { id: 1, author: author, date: date } }}
+			pilcrow={{ insertion: { id: 12, author: author, date: date } }}
 		>
-			Bernarda Alba imposes an eight-year mourning period after her
-			husband’s death.
+			<Insertion id={18} author={author} date={date}>
+				<Text>
+					Bernarda Alba imposes an eight-year mourning period after
+					her husband’s death.
+				</Text>
+			</Insertion>
 		</Paragraph>
 		<Paragraph
 			listItem={{ numbering, depth: 1 }}
-			pilcrow={{ insertion: { id: 1, author: author, date: date } }}
+			pilcrow={{ insertion: { id: 13, author: author, date: date } }}
 		>
-			Uses mourning to control her daughters
+			<Insertion id={19} author={author} date={date}>
+				<Text>Uses mourning to control her daughters</Text>
+			</Insertion>
 		</Paragraph>
 		<Paragraph
 			listItem={{ numbering, depth: 2 }}
-			pilcrow={{ insertion: { id: 1, author: author, date: date } }}
+			pilcrow={{ insertion: { id: 14, author: author, date: date } }}
 		>
-			No courtship or social contact allowed
+			<Insertion id={20} author={author} date={date}>
+				<Text>No courtship or social contact allowed</Text>
+			</Insertion>
 		</Paragraph>
-		<Paragraph>
-			<Text>
-				<Image
-					data={Deno.readFile('test/old_house.jpg')}
-					width={cm(16)}
-					height={cm(16)}
-				/>
-			</Text>
+		{/* Image insertion */}
+		<Paragraph
+			pilcrow={{ insertion: { id: 15, author: author, date: date } }}
+		>
+			<Insertion id={16} author={author} date={date}>
+				<Text>
+					<Image
+						data={Deno.readFile('assets/oldPhoto.jpg')}
+						width={cm(8)}
+						height={cm(8)}
+						title="Title"
+						alt="Description"
+					/>
+				</Text>
+			</Insertion>
 		</Paragraph>
 	</Section>
 ).toFile('track-changes-insertion.docx');
