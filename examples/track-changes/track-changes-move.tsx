@@ -1,203 +1,322 @@
 /** @jsx  Docx.jsx */
 import Docx, {
+	Cell,
+	cm,
+	Image,
 	Move,
 	MoveRangeEnd,
 	MoveRangeStart,
 	Paragraph,
+	Row,
 	Section,
+	Table,
 	Text,
 } from '../../mod.ts';
 
-// Create a new Word document with track changes enabled.
-const docxFile = Docx.fromNothing().withSettings({
-	isTrackChangesEnabled: true,
+const date = new Date();
+const author = 'Lorca';
+
+const api = Docx.fromNothing();
+const numbering = api.document.numbering.add({
+	type: 'hybridMultilevel',
+	levels: [
+		{
+			alignment: 'left',
+			format: 'decimalZero',
+			start: 1,
+			affix: '%1',
+		},
+		{
+			alignment: 'left',
+			format: 'lowerRoman',
+			start: 1,
+			affix: '%1',
+			paragraph: {
+				indentation: {
+					start: cm(1),
+				},
+				shading: {
+					background: 'yellow',
+				},
+			},
+		},
+		{
+			alignment: 'left',
+			format: 'lowerLetter',
+			start: 1,
+			affix: '%1',
+			paragraph: {
+				indentation: {
+					start: cm(2),
+				},
+			},
+		},
+	],
 });
 
-const date = new Date();
-
-// Create an instance of a paragraph where the entire paragraph has been moved. This type of move
-// has no range associated with it. It is assumed the parent paragraph is the extent of the range.
-const moveToParagraph = new Paragraph(
-	{
-		pilcrow: {
-			move: {
-				id: 1,
-				date: date,
-				type: 'to',
-				author: 'Gabe',
-			},
-		},
-	},
-	new MoveRangeStart({
-		type: 'to',
-		name: 'move_0',
-		author: 'Gabe',
-		date: date,
-		id: 3,
-	}),
-	new Move(
-		{
-			type: 'to',
-			id: 4,
-			date: date,
-			author: 'Gabe',
-		},
-		new Text({}, 'This is an example of some moved text.')
-	),
-	new MoveRangeEnd({
-		type: 'to',
-		id: 4,
-	})
-);
-
-const betweenParagraph = new Paragraph(
-	{},
-	new Text(
-		{},
-		'This will go before a completely move paragraph, but will show up as after it. '
-	)
-);
-
-const moveFromParagraph = new Paragraph(
-	{
-		pilcrow: {
-			move: {
-				id: 1,
-				date: date,
-				type: 'from',
-				author: 'Gabe',
-			},
-		},
-	},
-	new MoveRangeStart({
-		type: 'from',
-		name: 'move_0',
-		author: 'Gabe',
-		date: date,
-		id: 3,
-	}),
-	new Move(
-		{
-			type: 'from',
-			id: 4,
-			date: date,
-			author: 'Gabe',
-		},
-		new Text({}, 'This is an example of some moved text.')
-	),
-	new MoveRangeEnd({
-		type: 'from',
-		id: 4,
-	})
-);
-
-// Create an instance where text within a paragraph has been been moved. We will need to create a MoveRangeStart
-// and MoveRangeEnd and Move for each piece of text that is moved.
-const moveTextParagraph = new Paragraph(
-	{},
-	new MoveRangeStart({
-		type: 'to',
-		name: 'move_0',
-		author: 'Gabe',
-		date: date,
-		id: 2,
-	}),
-	new Move(
-		{
-			type: 'to',
-			author: 'Gabe',
-			date: date,
-			id: 2,
-		},
-		new Text({}, 'And this is some text that will move to be first.')
-	),
-	new MoveRangeEnd({
-		type: 'to',
-		id: 2,
-	}),
-	new Text({}, ' It will come from the middle of the text. '),
-	new MoveRangeStart({
-		type: 'from',
-		name: 'move_0',
-		author: 'Gabe',
-		date: date,
-		id: 3,
-	}),
-	new Move(
-		{
-			type: 'from',
-			author: 'Gabe',
-			date: date,
-			id: 3,
-		},
-		new Text({}, 'And this is some text that will move to be first.')
-	),
-	new MoveRangeEnd({
-		type: 'from',
-		id: 3,
-	})
-);
-
-// Add all three of the paragraphs we created to our document.
-const section = new Section(
-	{},
-	moveToParagraph,
-	betweenParagraph,
-	moveFromParagraph,
-	moveTextParagraph
-);
-
-docxFile.document.set(section);
-
-// Write to a file.
-await docxFile.toFile('track-changes-move.docx');
-
-// Alternatively, you can use JSX:
 await Docx.fromJsx(
 	<Section>
-		<Paragraph pilcrow={{ move: { id: 1, type: 'to' } }}>
-			<MoveRangeStart id={2} type="to" name="move_0"></MoveRangeStart>
-			<Move id={3} type="to">
-				<Text>Memories exist outside of time</Text>
+		{/* Paragraph move */}
+		<Paragraph
+			pilcrow={{
+				move: { id: 0, type: 'from', author: author, date: date },
+			}}
+		>
+			<MoveRangeStart
+				id={1}
+				type="from"
+				name="move_0"
+				author={author}
+				date={date}
+			></MoveRangeStart>
+			<Move id={2} type="from" author={author} date={date}>
+				<Text>
+					The House of Bernarda Alba is a tragedy by Federico García
+					Lorca, set in a small, traditional Andalusian village in
+					southern Spain, just before the Spanish Civil War. The play
+					centers on Bernarda Alba, a wealthy, authoritarian widow
+					who, after the death of her second husband, imposes an
+					eight-year mourning period on her five daughters: Angustias
+					(39), Magdalena (30), Amelia (27), Martirio (24), and Adela
+					(20).
+				</Text>
 			</Move>
-			<MoveRangeEnd id={4} type="to"></MoveRangeEnd>
 		</Paragraph>
+		<MoveRangeEnd id={1} type="from"></MoveRangeEnd>
 		<Paragraph>
 			<Text>
-				Silence is a space, a hollow where we take refuge, but where we
-				are never truly safe.
+				Confined within the white, claustrophobic walls of their home,
+				the daughters are stripped of their freedom and individuality,
+				oppressed by both their mother's tyranny and a society that
+				dictates strict roles for women. They become increasingly
+				frustrated and emotionally unstable, especially when it becomes
+				known that Pepe el Romano, the only eligible bachelor in the
+				area, plans to marry Angustias, the eldest and wealthiest
+				daughter. However, it is soon revealed that Pepe is only
+				interested in Angustias for her inheritance, and he is actually
+				having a secret affair with Adela, the youngest daughter.
 			</Text>
 		</Paragraph>
-		<Paragraph pilcrow={{ move: { id: 1, type: 'from' } }}>
-			<MoveRangeStart id={2} type="from" name="move_0"></MoveRangeStart>
-			<Move id={3} type="from">
-				<Text>Memories exist outside of time</Text>
+		<Paragraph
+			pilcrow={{
+				move: { id: 3, type: 'to', author: author, date: date },
+			}}
+		>
+			<MoveRangeStart
+				id={4}
+				type="to"
+				name="move_0"
+				author={author}
+				date={date}
+			></MoveRangeStart>
+			<Move id={5} type="to" author={author} date={date}>
+				<Text>
+					The House of Bernarda Alba is a tragedy by Federico García
+					Lorca, set in a small, traditional Andalusian village in
+					southern Spain, just before the Spanish Civil War. The play
+					centers on Bernarda Alba, a wealthy, authoritarian widow
+					who, after the death of her second husband, imposes an
+					eight-year mourning period on her five daughters: Angustias
+					(39), Magdalena (30), Amelia (27), Martirio (24), and Adela
+					(20).
+				</Text>
 			</Move>
-			<MoveRangeEnd id={4} type="from"></MoveRangeEnd>
+		</Paragraph>
+		<MoveRangeEnd id={4} type="to"></MoveRangeEnd>
+		<Paragraph>
+			<Text>
+				As tension escalates, the household servants Poncia and the Maid
+				observe the emotional conflict and attempt to warn Bernarda, who
+				remains focused on maintaining appearances and family honor. Her
+				elderly mother, María Josefa, expresses a longing for freedom
+				that reflects the daughters' suppressed desires. Eventually,
+				Martirio—also emotionally affected—reveals Adela’s relationship
+				with Pepe. Bernarda tries to intervene, but the situation
+				spirals. Believing Pepe is dead, Adela takes her own life.
+				Bernarda responds by denying the truth and insisting on silence
+				to preserve the family's reputation. The play ends with a
+				powerful reflection on repression, tradition, and the
+				consequences of silencing individuality.
+			</Text>
 		</Paragraph>
 
 		<Paragraph>
-			<MoveRangeStart id={5} type="to" name="move_1"></MoveRangeStart>
-			<Move id={6} type="to">
-				<Text>
-					For none could tame our savage souls yet you the challenge
-					met,
-				</Text>
-			</Move>
-			<MoveRangeEnd id={7} type="to"></MoveRangeEnd>
-			<Text>
-				Under palest watch, you taught, we changed, base instincts were
-				redeemed,
+			<Text isBold isCaps>
+				Summary Table
 			</Text>
-			<MoveRangeStart id={5} type="from" name="move_1"></MoveRangeStart>
-			<Move id={6} author="Inés" type="from">
+		</Paragraph>
+		{/* Table insertion */}
+		<Table>
+			<Row>
+				<Cell>
+					<Paragraph>Author</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>Federico García Lorca</Paragraph>
+				</Cell>
+			</Row>
+			<Row>
+				<Cell>
+					<Paragraph>Genre</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>Tragedy</Paragraph>
+				</Cell>
+			</Row>
+			<Row>
+				<Cell>
+					<Paragraph>Message</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>
+						Critique of social and familial repression, especially
+						against women
+					</Paragraph>
+				</Cell>
+			</Row>
+		</Table>
+		<Paragraph>
+			<Text isBold isCaps>
+				Characters
+			</Text>
+		</Paragraph>
+		<Table>
+			<Row>
+				<Cell>
+					<Paragraph>Character</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>Description</Paragraph>
+				</Cell>
+			</Row>
+			<Row>
+				<Cell>
+					<Paragraph>Bernarda Alba</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>
+						Authoritarian widow obsessed with family honor and
+						control.
+					</Paragraph>
+				</Cell>
+			</Row>
+			<Row>
+				<Cell>
+					<Paragraph>Angustias</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>
+						Eldest daughter (39), engaged to Pepe el Romano.
+					</Paragraph>
+				</Cell>
+			</Row>
+			<Row>
+				<Cell>
+					<Paragraph>Martirio</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>
+						Fourth daughter (24), secretly in love with Pepe el
+						Romano.
+					</Paragraph>
+				</Cell>
+			</Row>
+			<Row>
+				<Cell>
+					<Paragraph>Adela</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>
+						Youngest daughter (20), rebellious and secretly involved
+						with Pepe.
+					</Paragraph>
+				</Cell>
+			</Row>
+
+			<Row>
+				<Cell>
+					<Paragraph>Pepe el Romano</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>
+						Eligible bachelor, courting Angustias but secretly
+						having an affair with Adela.
+					</Paragraph>
+				</Cell>
+			</Row>
+		</Table>
+		<Paragraph
+			pilcrow={{
+				move: { id: 10, type: 'to', author: author, date: date },
+			}}
+		>
+			<MoveRangeStart
+				id={11}
+				type="to"
+				name="move_1"
+				author={author}
+				date={date}
+			></MoveRangeStart>
+			<Move id={12} type="to" author={author} date={date}>
 				<Text>
-					{' '}
-					For none could tame our savage souls yet you the challenge
-					met,
+					<Image
+						data={Deno.readFile('assets/oldPhoto.jpg')}
+						width={cm(6)}
+						height={cm(8)}
+						title="Title"
+						alt="Description"
+					/>
 				</Text>
 			</Move>
-			<MoveRangeEnd id={7} type="from"></MoveRangeEnd>
 		</Paragraph>
+		<MoveRangeEnd id={11} type="to"></MoveRangeEnd>
+
+		<Paragraph>
+			<Text>Key Points List</Text>
+		</Paragraph>
+
+		<Paragraph listItem={{ numbering, depth: 0 }}>
+			<Text>
+				The play is set in a house in Andalusia, shortly before the
+				Spanish Civil War.
+			</Text>
+		</Paragraph>
+		<Paragraph listItem={{ numbering, depth: 0 }}>
+			<Text>
+				Bernarda Alba imposes an eight-year mourning period after her
+				husband’s death.
+			</Text>
+		</Paragraph>
+		<Paragraph listItem={{ numbering, depth: 1 }}>
+			<Text>Uses mourning to control her daughters</Text>
+		</Paragraph>
+		<Paragraph listItem={{ numbering, depth: 2 }}>
+			<Text>No courtship or social contact allowed</Text>
+		</Paragraph>
+		<Paragraph
+			pilcrow={{
+				move: { id: 7, type: 'from', author: author, date: date },
+			}}
+		>
+			<MoveRangeStart
+				id={8}
+				type="from"
+				name="move_1"
+				author={author}
+				date={date}
+			></MoveRangeStart>
+			<Move id={9} type="from" author={author} date={date}>
+				<Text>
+					<Image
+						data={Deno.readFile('assets/oldPhoto.jpg')}
+						width={cm(6)}
+						height={cm(8)}
+						title="Title"
+						alt="Description"
+					/>
+				</Text>
+			</Move>
+		</Paragraph>
+		<MoveRangeEnd id={8} type="from"></MoveRangeEnd>
 	</Section>
-).toFile('track-changes-move-jsx.docx');
+).toFile('track-changes-move.docx');

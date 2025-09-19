@@ -276,7 +276,7 @@ await Docx.fromJsx(
 				<Text>
 					<Image
 						data={Deno.readFile('assets/oldPhoto.jpg')}
-						width={cm(8)}
+						width={cm(6)}
 						height={cm(8)}
 						title="Title"
 						alt="Description"

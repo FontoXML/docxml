@@ -1,125 +1,240 @@
 /** @jsx  Docx.jsx */
-import { pt } from '../../lib/utilities/src/length.ts';
-import Docx, { Cell, Paragraph, Row, Section, Table, Text } from '../../mod.ts';
-
-// Create a new .docx file with track changes enabled.
-const docxFile = Docx.fromNothing().withSettings({
-	isTrackChangesEnabled: true,
-});
+import Docx, {
+	Cell,
+	cm,
+	Image,
+	Paragraph,
+	Row,
+	Section,
+	Table,
+	Text,
+} from '../../mod.ts';
 
 const date = new Date();
+const author = 'Lorca';
 
-// Create a new table that includes a row, a row deletion, and a row addition.
-const testTable = new Table(
-	{
-		cellPadding: {
-			top: pt(10),
-			bottom: pt(10),
-		},
-		columnWidths: [pt(48), pt(48), pt(48), pt(48)],
-		columnWidthChange: { id: 1, cols: [pt(24), pt(24), pt(24), pt(24)] },
-		change: {
-			id: 2,
-			author: 'Ines',
-			date: new Date(),
-			cellPadding: {
-				top: pt(24),
-				bottom: pt(24),
-			},
-		},
-	},
-	new Row(
-		{ insertion: { author: 'Luis', date: date, id: 1 } },
-		new Cell({}, new Paragraph({}, new Text({}, ' my old friend.')))
-	),
-	new Row(
-		{ deletion: { author: 'Ángel', date: date, id: 1 } },
-		new Cell({}, new Paragraph({}, new Text({}, ' my new friend.')))
-	),
-	new Row(
+const api = Docx.fromNothing();
+const numbering = api.document.numbering.add({
+	type: 'hybridMultilevel',
+	levels: [
 		{
-			cellSpacing: pt(12),
-			change: {
-				id: 1,
-				author: 'Luis',
-				cellSpacing: pt(24),
-			}
+			alignment: 'left',
+			format: 'decimalZero',
+			start: 1,
+			affix: '%1',
 		},
-		new Cell(
-			{ deletion: { author: 'Carlos', date: date, id: 2 } },
-			new Paragraph({}, new Text({}, 'Bye!'))
-		),
-		new Cell(
-			{ insertion: { author: 'Carlos', date: date, id: 2 } },
-			new Paragraph({}, new Text({}, 'Hello!'))
-		)
-	),
-	new Row(
-		{},
-		new Cell(
-			{
-				borders: {
-					top: {
-						color: '0000FF',
-						width: pt(10),
-					},
+		{
+			alignment: 'left',
+			format: 'lowerRoman',
+			start: 1,
+			affix: '%1',
+			paragraph: {
+				indentation: {
+					start: cm(1),
 				},
 				shading: {
-					background: 'FF0000',
-					pattern: 'pct5',
-				},
-				change: {
-					id: 1,
-					author: 'Gabe',
-					date: new Date(),
-					shading: {
-						background: '00FF00',
-						pattern: 'pct5',
-					},
-					borders: {
-						top: {
-							color: '0000FF',
-							type: 'single',
-							width: pt(2),
-						},
-					},
+					background: 'yellow',
 				},
 			},
-			new Paragraph({}, new Text({}, 'Cell Property change'))
-		),
-		new Cell({}, new Paragraph({}, new Text({}, 'And unchanged.')))
-	)
-);
+		},
+		{
+			alignment: 'left',
+			format: 'lowerLetter',
+			start: 1,
+			affix: '%1',
+			paragraph: {
+				indentation: {
+					start: cm(2),
+				},
+			},
+		},
+	],
+});
 
-// Create a section as the parent of our new paragraph.
-const testSection = new Section({}, testTable);
-
-// Set that section as the content of our document.
-docxFile.document.set(testSection);
-
-// Save our document.
-await docxFile.toFile('track-changes-table.docx');
-
-// Alternatively, you can use JSX:
 await Docx.fromJsx(
-	<Table>
-		<Row insertion={{ id: 1, author: 'ines', date: new Date() }}>
-			<Cell>
-				<Paragraph> my old friend.</Paragraph>
-			</Cell>
-		</Row>
-		<Row deletion={{ id: 1, author: 'ines', date: new Date() }}>
-			<Cell>
-				<Paragraph> my new friend.</Paragraph>
-			</Cell>
-		</Row>
-		<Row>
-			<Cell deletion={{ id: 2, author: 'carlos', date: new Date() }}>
-				<Paragraph> Bye!</Paragraph>
-			</Cell>
-			<Cell insertion={{ id: 2, author: 'carlos', date: new Date() }}>
-				<Paragraph> Hello!</Paragraph>
-			</Cell>
-		</Row>
-	</Table>
-).toFile('track-changes-table-jsx.docx');
+	<Section>
+		{/* Paragraph insertion */}
+		<Paragraph>
+			<Text>
+				The House of Bernarda Alba is a tragedy by Federico García
+				Lorca, set in a small, traditional Andalusian village in
+				southern Spain, just before the Spanish Civil War. The play
+				centers on Bernarda Alba, a wealthy, authoritarian widow who,
+				after the death of her second husband, imposes an eight-year
+				mourning period on her five daughters: Angustias (39), Magdalena
+				(30), Amelia (27), Martirio (24), and Adela (20).
+			</Text>
+		</Paragraph>
+		<Paragraph>
+			<Text>
+				Confined within the white, claustrophobic walls of their home,
+				the daughters are stripped of their freedom and individuality,
+				oppressed by both their mother's tyranny and a society that
+				dictates strict roles for women. They become increasingly
+				frustrated and emotionally unstable, especially when it becomes
+				known that Pepe el Romano, the only eligible bachelor in the
+				area, plans to marry Angustias, the eldest and wealthiest
+				daughter. However, it is soon revealed that Pepe is only
+				interested in Angustias for her inheritance, and he is actually
+				having a secret affair with Adela, the youngest daughter.
+			</Text>
+		</Paragraph>
+		<Paragraph>
+			<Text>
+				As tension escalates, the household servants Poncia and the Maid
+				observe the emotional conflict and attempt to warn Bernarda, who
+				remains focused on maintaining appearances and family honor. Her
+				elderly mother, María Josefa, expresses a longing for freedom
+				that reflects the daughters' suppressed desires. Eventually,
+				Martirio—also emotionally affected—reveals Adela’s relationship
+				with Pepe. Bernarda tries to intervene, but the situation
+				spirals. Believing Pepe is dead, Adela takes her own life.
+				Bernarda responds by denying the truth and insisting on silence
+				to preserve the family's reputation. The play ends with a
+				powerful reflection on repression, tradition, and the
+				consequences of silencing individuality.
+			</Text>
+		</Paragraph>
+
+		<Paragraph>
+			<Text isBold isCaps>
+				Summary Table
+			</Text>
+		</Paragraph>
+		{/* Table insertion */}
+		<Table>
+			<Row>
+				<Cell>
+					<Paragraph>Author</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>Federico García Lorca</Paragraph>
+				</Cell>
+			</Row>
+			<Row>
+				<Cell>
+					<Paragraph>Genre</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>Tragedy</Paragraph>
+				</Cell>
+			</Row>
+			<Row>
+				<Cell>
+					<Paragraph>Message</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>
+						Critique of social and familial repression, especially
+						against women
+					</Paragraph>
+				</Cell>
+			</Row>
+		</Table>
+		<Paragraph>
+			<Text isBold isCaps>
+				Characters
+			</Text>
+		</Paragraph>
+		<Table>
+			<Row>
+				<Cell>
+					<Paragraph>Character</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>Description</Paragraph>
+				</Cell>
+			</Row>
+			<Row>
+				<Cell>
+					<Paragraph>Bernarda Alba</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>
+						Authoritarian widow obsessed with family honor and
+						control.
+					</Paragraph>
+				</Cell>
+			</Row>
+			<Row>
+				<Cell>
+					<Paragraph>Angustias</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>
+						Eldest daughter (39), engaged to Pepe el Romano.
+					</Paragraph>
+				</Cell>
+			</Row>
+			<Row>
+				<Cell>
+					<Paragraph>Martirio</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>
+						Fourth daughter (24), secretly in love with Pepe el
+						Romano.
+					</Paragraph>
+				</Cell>
+			</Row>
+			<Row>
+				<Cell>
+					<Paragraph>Adela</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>
+						Youngest daughter (20), rebellious and secretly involved
+						with Pepe.
+					</Paragraph>
+				</Cell>
+			</Row>
+
+			<Row>
+				<Cell>
+					<Paragraph>Pepe el Romano</Paragraph>
+				</Cell>
+				<Cell>
+					<Paragraph>
+						Eligible bachelor, courting Angustias but secretly
+						having an affair with Adela.
+					</Paragraph>
+				</Cell>
+			</Row>
+		</Table>
+
+		<Paragraph>
+			<Text>Key Points List</Text>
+		</Paragraph>
+
+		<Paragraph listItem={{ numbering, depth: 0 }}>
+			<Text>
+				The play is set in a house in Andalusia, shortly before the
+				Spanish Civil War.
+			</Text>
+		</Paragraph>
+		<Paragraph listItem={{ numbering, depth: 0 }}>
+			<Text>
+				Bernarda Alba imposes an eight-year mourning period after her
+				husband’s death.
+			</Text>
+		</Paragraph>
+		<Paragraph listItem={{ numbering, depth: 1 }}>
+			<Text>Uses mourning to control her daughters</Text>
+		</Paragraph>
+		<Paragraph listItem={{ numbering, depth: 2 }}>
+			<Text>No courtship or social contact allowed</Text>
+		</Paragraph>
+
+		<Paragraph>
+			<Text>
+				<Image
+					data={Deno.readFile('assets/oldPhoto.jpg')}
+					width={cm(6)}
+					height={cm(8)}
+					title="Title"
+					alt="Description"
+				/>
+			</Text>
+		</Paragraph>
+	</Section>
+).toFile('track-changes-table.docx');
