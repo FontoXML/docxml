@@ -10,10 +10,9 @@ import './NonBreakingHyphen.ts';
 import './Symbol.ts';
 import './Tab.ts';
 
-import {
-	Component,
-	type ComponentAncestor,
-	type ComponentContext,
+import type {
+	ComponentAncestor,
+	ComponentContext,
 } from '../../../classes/src/Component.ts';
 import {
 	type TextProperties,
@@ -38,11 +37,12 @@ import type { Image } from './Image.ts';
 import type { NonBreakingHyphen } from './NonBreakingHyphen.ts';
 import type { Symbol } from './Symbol.ts';
 import type { Tab } from './Tab.ts';
+import { Text } from './Text.ts';
 
 /**
  * A type describing the components accepted as children of {@link Text}.
  */
-export type TextChild =
+export type DeletedTextChild =
 	| string
 	| Break
 	| FieldRangeEnd
@@ -60,13 +60,13 @@ export type TextChild =
 /**
  * A type describing the props accepted by {@link Text}.
  */
-export type TextProps = TextProperties;
+export type DeletedTextProps = TextProperties;
 
 /**
- * A component that represents text. All inline formatting options, such as bold/italic/underline,
- * are in fact different props or styles on the `<Text>` component.
+ * A component that represents deleted text. All inline formatting options, such as
+ * bold/italic/underline, are props or styles on the `<DeletedText>` component.
  */
-export class Text extends Component<TextProps, TextChild> {
+export class DeletedText extends Text {
 	public static override readonly children: string[] = [
 		'Break',
 		'FieldRangeEnd',
@@ -80,13 +80,10 @@ export class Text extends Component<TextProps, TextChild> {
 		'Symbol',
 		'Tab',
 	];
-	public static override readonly mixed: boolean = true;
-
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
-
 		const anc = [this, ...ancestry];
 		return create(
 			`
@@ -101,7 +98,7 @@ export class Text extends Component<TextProps, TextChild> {
 					this.children.map((child) => {
 						if (typeof child === 'string') {
 							return create(
-								`element ${QNS.w}t {
+								`element ${QNS.w}delText {
 									attribute xml:space { "preserve" },
 									$text
 								}`,
@@ -121,7 +118,7 @@ export class Text extends Component<TextProps, TextChild> {
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return node.nodeName === 'w:r';
+		return node.nodeName === 'w:r' && 'w:delText' in node.childNodes.keys;
 	}
 
 	/**
@@ -140,7 +137,7 @@ export class Text extends Component<TextProps, TextChild> {
 							${QNS.w}br,
 							${QNS.w}tab,
 							${QNS.w}drawing,
-							${QNS.w}t/text(),
+							${QNS.w}delText/text(),
 							${QNS.w}fldChar,
 							${QNS.w}instrText
 						)
@@ -151,7 +148,7 @@ export class Text extends Component<TextProps, TextChild> {
 		);
 		return new Text(
 			textPropertiesFromNode(rpr),
-			...createChildComponentsFromNodes<TextChild>(
+			...createChildComponentsFromNodes<DeletedTextChild>(
 				this.children,
 				children,
 				context

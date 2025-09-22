@@ -1,4 +1,5 @@
 /** @jsx  Docx.jsx */
+import { DeletedText } from '../../lib/components/document/src/DeletedText.ts';
 import Docx, {
 	Cell,
 	cm,

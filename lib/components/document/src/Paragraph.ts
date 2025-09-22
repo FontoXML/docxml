@@ -41,6 +41,7 @@ import type { MoveRangeEnd } from '../../track-changes/src/MoveRangeEnd.ts';
 import type { MoveRangeStart } from '../../track-changes/src/MoveRangeStart.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
+import type { DeletedText } from './DeletedText.ts';
 import type { Field } from './Field.ts';
 import type { FootnoteAnchor } from './FootnoteAnchor.ts';
 import type { FootnoteReference } from './FootnoteReference.ts';
@@ -51,6 +52,7 @@ import type { Hyperlink } from './Hyperlink.ts';
  */
 export type ParagraphChild =
 	| Text
+	| DeletedText
 	| CommentRangeStart
 	| CommentRangeEnd
 	| Comment
@@ -89,6 +91,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'CommentRangeStart',
 		'Hyperlink',
 		'Text',
+		'DeletedText',
 		'Field',
 		'FootnoteReference',
 		'FootnoteAnchor',
