@@ -1,18 +1,19 @@
 // Import without assignment ensures Deno does not tree-shake this component. To avoid circular
 // definitions, components register themselves in a side-effect of their module.
-import './Break.ts';
-import './FieldRangeEnd.ts';
-import './FieldRangeInstruction.ts';
-import './FieldRangeSeparator.ts';
-import './FieldRangeStart.ts';
-import './Image.ts';
-import './NonBreakingHyphen.ts';
-import './Symbol.ts';
-import './Tab.ts';
+import '../../document/src/Break.ts';
+import '../../document/src/FieldRangeEnd.ts';
+import '../../document/src/FieldRangeInstruction.ts';
+import '../../document/src/FieldRangeSeparator.ts';
+import '../../document/src/FieldRangeStart.ts';
+import '../../document/src/Image.ts';
+import '../../document/src/NonBreakingHyphen.ts';
+import '../../document/src/Symbol.ts';
+import '../../document/src/Tab.ts';
 
-import type {
-	ComponentAncestor,
-	ComponentContext,
+import {
+	Component,
+	type ComponentAncestor,
+	type ComponentContext,
 } from '../../../classes/src/Component.ts';
 import {
 	type TextProperties,
@@ -26,18 +27,17 @@ import {
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
-import type { Break } from './Break.ts';
-import type { FieldRangeEnd } from './FieldRangeEnd.ts';
-import type { FieldRangeInstruction } from './FieldRangeInstruction.ts';
-import type { FieldRangeSeparator } from './FieldRangeSeparator.ts';
-import type { FieldRangeStart } from './FieldRangeStart.ts';
-import type { FootnoteContinuationSeparator } from './FootnoteContinuationSeparator.ts';
-import type { FootnoteSeparator } from './FootnoteSeparator.ts';
-import type { Image } from './Image.ts';
-import type { NonBreakingHyphen } from './NonBreakingHyphen.ts';
-import type { Symbol } from './Symbol.ts';
-import type { Tab } from './Tab.ts';
-import { Text } from './Text.ts';
+import type { Break } from '../../document/src/Break.ts';
+import type { FieldRangeEnd } from '../../document/src/FieldRangeEnd.ts';
+import type { FieldRangeInstruction } from '../../document/src/FieldRangeInstruction.ts';
+import type { FieldRangeSeparator } from '../../document/src/FieldRangeSeparator.ts';
+import type { FieldRangeStart } from '../../document/src/FieldRangeStart.ts';
+import type { FootnoteContinuationSeparator } from '../../document/src/FootnoteContinuationSeparator.ts';
+import type { FootnoteSeparator } from '../../document/src/FootnoteSeparator.ts';
+import type { Image } from '../../document/src/Image.ts';
+import type { NonBreakingHyphen } from '../../document/src/NonBreakingHyphen.ts';
+import type { Symbol } from '../../document/src/Symbol.ts';
+import type { Tab } from '../../document/src/Tab.ts';
 
 /**
  * A type describing the components accepted as children of {@link Text}.
@@ -58,15 +58,11 @@ export type DeletedTextChild =
 	| Tab;
 
 /**
- * A type describing the props accepted by {@link Text}.
- */
-export type DeletedTextProps = TextProperties;
-
-/**
  * A component that represents deleted text. All inline formatting options, such as
  * bold/italic/underline, are props or styles on the `<DeletedText>` component.
  */
-export class DeletedText extends Text {
+export class DeletedText extends Component<TextProperties, DeletedTextChild> {
+	readonly __brand: string = 'deleted';
 	public static override readonly children: string[] = [
 		'Break',
 		'FieldRangeEnd',
@@ -85,6 +81,7 @@ export class DeletedText extends Text {
 	 */
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		const anc = [this, ...ancestry];
+
 		return create(
 			`
 				element ${QNS.w}r {
@@ -124,7 +121,10 @@ export class DeletedText extends Text {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node, context: ComponentContext): Text {
+	static override fromNode(
+		node: Node,
+		context: ComponentContext
+	): DeletedText {
 		const { children, rpr } = evaluateXPathToMap<{
 			rpr: Node;
 			children: Node[];
@@ -137,7 +137,7 @@ export class DeletedText extends Text {
 							${QNS.w}br,
 							${QNS.w}tab,
 							${QNS.w}drawing,
-							${QNS.w}delText/text(),
+							${QNS.w}delText,
 							${QNS.w}fldChar,
 							${QNS.w}instrText
 						)
@@ -146,7 +146,7 @@ export class DeletedText extends Text {
 			`,
 			node
 		);
-		return new Text(
+		return new DeletedText(
 			textPropertiesFromNode(rpr),
 			...createChildComponentsFromNodes<DeletedTextChild>(
 				this.children,
@@ -157,4 +157,4 @@ export class DeletedText extends Text {
 	}
 }
 
-registerComponent(Text);
+registerComponent(DeletedText);

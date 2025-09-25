@@ -179,7 +179,9 @@ type IntermediateProps = Omit<TextProperties, 'change'> & {
 	};
 };
 
-export function textPropertiesFromNode(node?: Node | null): TextProperties {
+export function textPropertiesFromNode(
+	node?: Node | null,
+): TextProperties {
 	if (!node) {
 		return {};
 	}

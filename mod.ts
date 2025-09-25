@@ -125,6 +125,7 @@ export {
 	type WatermarkTextChild,
 	type WatermarkTextProps,
 } from './lib/components/document/src/WatermarkText.ts';
+export { DeletedText } from './lib/components/track-changes/src/DeletedText.ts';
 export {
 	Deletion,
 	type DeletionChild,

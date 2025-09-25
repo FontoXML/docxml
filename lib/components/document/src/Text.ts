@@ -86,7 +86,6 @@ export class Text extends Component<TextProps, TextChild> {
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
-
 		const anc = [this, ...ancestry];
 		return create(
 			`
@@ -150,7 +149,7 @@ export class Text extends Component<TextProps, TextChild> {
 			node
 		);
 		return new Text(
-			textPropertiesFromNode(rpr),
+			textPropertiesFromNode(rpr) as TextProps,
 			...createChildComponentsFromNodes<TextChild>(
 				this.children,
 				children,

@@ -1,5 +1,5 @@
 /** @jsx  Docx.jsx */
-import { DeletedText } from '../../lib/components/document/src/DeletedText.ts';
+import { DeletedText } from '../../lib/components/track-changes/src/DeletedText.ts';
 import Docx, {
 	Cell,
 	cm,
@@ -60,7 +60,7 @@ await Docx.fromJsx(
 			pilcrow={{ deletion: { id: 1, author: author, date: date } }}
 		>
 			<Deletion id={2} author={author} date={date}>
-				<Text>
+				<DeletedText>
 					The House of Bernarda Alba is a tragedy by Federico García
 					Lorca, set in a small, traditional Andalusian village in
 					southern Spain, just before the Spanish Civil War. The play
@@ -69,11 +69,11 @@ await Docx.fromJsx(
 					eight-year mourning period on her five daughters: Angustias
 					(39), Magdalena (30), Amelia (27), Martirio (24), and Adela
 					(20).
-				</Text>
+				</DeletedText>
 			</Deletion>
 		</Paragraph>
 		<Paragraph>
-			<Text>
+			<DeletedText>
 				Confined within the white, claustrophobic walls of their home,
 				the daughters are stripped of their freedom and individuality,
 				oppressed by both their mother's tyranny and a society that
@@ -84,7 +84,7 @@ await Docx.fromJsx(
 				daughter. However, it is soon revealed that Pepe is only
 				interested in Angustias for her inheritance, and he is actually
 				having a secret affair with Adela,
-			</Text>
+			</DeletedText>
 			{/* Text deletion */}
 			<Deletion id={3} author={author} date={date}>
 				<Text> the youngest daughter.</Text>
