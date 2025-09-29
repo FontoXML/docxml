@@ -47,14 +47,12 @@ import type { Field } from './Field.ts';
 import type { FootnoteAnchor } from './FootnoteAnchor.ts';
 import type { FootnoteReference } from './FootnoteReference.ts';
 import type { Hyperlink } from './Hyperlink.ts';
-import { DeletedText } from "../../track-changes/src/DeletedText.ts";
 
 /**
  * A type describing the components accepted as children of {@link Paragraph}.
  */
 export type ParagraphChild =
 	| Text
-	| DeletedText
 	| CommentRangeStart
 	| CommentRangeEnd
 	| Comment
@@ -95,7 +93,6 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'CommentRangeStart',
 		'Hyperlink',
 		'Text',
-		'DeletedText',
 		'Field',
 		'FootnoteReference',
 		'FootnoteAnchor',

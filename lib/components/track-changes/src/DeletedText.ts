@@ -38,10 +38,10 @@ import type { Image } from '../../document/src/Image.ts';
 import type { NonBreakingHyphen } from '../../document/src/NonBreakingHyphen.ts';
 import type { Symbol } from '../../document/src/Symbol.ts';
 import type { Tab } from '../../document/src/Tab.ts';
-import type { Text } from "../../document/src/Text.ts";
+import type { Text } from '../../document/src/Text.ts';
 
 /**
- * A type describing the components accepted as children of {@link Text}.
+ * A type describing the components accepted as children of {@link DeletedText}.
  */
 export type DeletedTextChild =
 	| string
@@ -59,13 +59,14 @@ export type DeletedTextChild =
 	| Tab;
 
 /**
- * A type describing the props accepted by {@link Text}.
+ * A type describing the props accepted by {@link DeletedText}.
  */
 export type DeletedTextProps = TextProperties;
 
 /**
- * A component that represents text. All inline formatting options, such as bold/italic/underline,
- * are in fact different props or styles on the `<Text>` component.
+ * A component that represents deleted text.
+ * Deleted text is used within Word's track changes to indicate that text content in
+ * the document has been removed. `DeletedText` must have a parent {@link Deletion}.
  */
 export class DeletedText extends Component<DeletedTextProps, DeletedTextChild> {
 	public static override readonly children: string[] = [
