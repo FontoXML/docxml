@@ -67,6 +67,13 @@ export type TextProps = TextProperties;
  * are in fact different props or styles on the `<Text>` component.
  */
 export class Text extends Component<TextProps, TextChild> {
+	// Introduce a __brand property so that we cannot use Text and DeletedText interchangeably.
+	// TypeScript's structural typing would allow us to do so otherwise.
+	// readonly __brand: string;
+	// constructor(props: TextProps, child: TextChild) {
+	// 	super(props, child);
+	// 	this.__brand = 'regular';
+	// }
 	public static override readonly children: string[] = [
 		'Break',
 		'FieldRangeEnd',

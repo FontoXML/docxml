@@ -38,7 +38,6 @@ import type { Image } from '../../document/src/Image.ts';
 import type { NonBreakingHyphen } from '../../document/src/NonBreakingHyphen.ts';
 import type { Symbol } from '../../document/src/Symbol.ts';
 import type { Tab } from '../../document/src/Tab.ts';
-import type { Text } from '../../document/src/Text.ts';
 
 /**
  * A type describing the components accepted as children of {@link DeletedText}.
@@ -127,7 +126,10 @@ export class DeletedText extends Component<DeletedTextProps, DeletedTextChild> {
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node, context: ComponentContext): Text {
+	static override fromNode(
+		node: Node,
+		context: ComponentContext
+	): DeletedText {
 		const { children, rpr } = evaluateXPathToMap<{
 			rpr: Node;
 			children: Node[];
