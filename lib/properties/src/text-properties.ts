@@ -1,8 +1,12 @@
-import { Deletion, Insertion, type InsertionProps } from '../../../mod.ts';
 import {
-	Move,
-	type MoveProps,
-} from '../../components/track-changes/src/Move.ts';
+	Deletion,
+	Insertion,
+	MoveFrom,
+	MoveTo,
+	type InsertionProps,
+} from '../../../mod.ts';
+import type { MoveFromProps } from '../../components/track-changes/src/MoveFrom.ts';
+import type { MoveToProps } from '../../components/track-changes/src/MoveTo.ts';
 import type { ChangeInformation } from '../../utilities/src/changes.ts';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
@@ -140,7 +144,7 @@ export type TextProperties = {
 	 *
 	 * Read more here:  https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EXMJW.html
 	 */
-	move?: MoveProps | null;
+	move?: MoveToProps | MoveFromProps | null;
 
 	/**
 	 * A property used to indicate that the way this text is deiplayed has changed somehow.
@@ -428,7 +432,15 @@ export async function textPropertiesToNode(
 			 * since the move information is sent as properties rather than as an
 			 * object, we can be sure that no more children will ever be created.
 			 */
-			move: data.move ? await new Move(data.move).toNode([]) : null,
+			move: data.move
+				? {
+						id: data.move.id,
+						date: data.move.date
+							? new Date(data.move.date).toISOString()
+							: undefined,
+						author: data.move.author ? data.move.author : undefined,
+				  }
+				: null,
 			insertion: data.insertion
 				? await new Insertion(data.insertion).toNode([])
 				: null,

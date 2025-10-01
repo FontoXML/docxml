@@ -21,11 +21,12 @@ import type { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.t
 import type { FootnoteReference } from '../../document/src/FootnoteReference.ts';
 import type { Text } from '../../document/src/Text.ts';
 import type { Deletion } from './Deletion.ts';
-import type { Move } from './Move.ts';
+import type { MoveFrom } from './MoveFrom.ts';
 import type { MoveFromRangeEnd } from './MoveFromRangeEnd.ts';
 import type { MoveFromRangeStart } from './MoveFromRangeStart.ts';
 import type { MoveToRangeEnd } from './MoveToRangeEnd.ts';
 import type { MoveToRangeStart } from './MoveToRangeStart.ts';
+import type { MoveTo } from './MoveTo.ts';
 
 /**
  * A type specifying the children of {@link Insertion}.
@@ -36,7 +37,8 @@ export type InsertionChild =
 	| CommentRangeStart
 	| CommentRangeEnd
 	| Text
-	| Move
+	| MoveTo
+	| MoveFrom
 	| Insertion
 	| MoveToRangeStart
 	| MoveToRangeEnd
@@ -67,7 +69,8 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 		'CommentRangeStart',
 		'CommentRangeEnd',
 		'Text',
-		'Move',
+		'MoveTo',
+		'MoveFrom',
 		'MoveToRangeStart',
 		'MoveToRangeEnd',
 		'MoveFromRangeStart',

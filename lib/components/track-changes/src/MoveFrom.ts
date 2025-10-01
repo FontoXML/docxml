@@ -22,33 +22,36 @@ import type { FootnoteReference } from '../../document/src/FootnoteReference.ts'
 import type { Text } from '../../document/src/Text.ts';
 import type { Deletion } from './Deletion.ts';
 import type { Insertion } from './Insertion.ts';
-import type { MoveFromRangeEnd } from './MoveFromRangeEnd.ts';
-import type { MoveFromRangeStart } from './MoveFromRangeStart.ts';
-import type { MoveToRangeEnd } from './MoveToRangeEnd.ts';
-import type { MoveToRangeStart } from './MoveToRangeStart.ts';
+import type { MoveRangeEnd } from './MoveRangeEnd.ts';
+import type { MoveRangeStart } from './MoveRangeStart.ts';
+import type { MoveTo } from './MoveTo.ts';
 
 /**
  * A type specifying the children of {@link Move}.
  */
-export type MoveChild =
+export type MoveFromChild =
 	| BookmarkRangeStart
 	| BookmarkRangeEnd
 	| CommentRangeStart
 	| CommentRangeEnd
 	| Text
-	| Move
-	| MoveToRangeStart
-	| MoveToRangeEnd
-	| MoveFromRangeStart
-	| MoveFromRangeEnd
+	| MoveFrom
+	| MoveTo
+	| MoveRangeStart
+	| MoveRangeEnd
 	| Insertion
 	| Deletion
 	| FootnoteReference;
 
 /**
- * A type describing the props accepted by {@link Move}.
+ * Create a unique property so that TypeScript's structural typing does not allow us to use
+ * components with otherwise identical allowable properties and children interchangeably.
  */
-export type MoveProps = ChangeInformation & { type: 'to' | 'from' };
+const __brand: symbol = Symbol();
+/**
+ * A type describing the props accepted by {@link MoveFrom}.
+ */
+export type MoveFromProps = ChangeInformation & { [__brand]: never };
 
 /**
  * A component that represents a change-tracked text or paragraph that was moved.
@@ -59,17 +62,17 @@ export type MoveProps = ChangeInformation & { type: 'to' | 'from' };
  * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EE3IW.html#topic_ID0EE3IW
  * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EXMJW.html
  */
-export class Move extends Component<MoveProps, MoveChild> {
+export class MoveFrom extends Component<MoveFromProps, MoveFromChild> {
 	public static override readonly children: string[] = [
 		'BookmarkRangeEnd',
 		'BookmarkRangeStart',
 		'CommentRangeStart',
 		'CommentRangeEnd',
 		'Text',
-		'MoveToRangeStart',
-		'MoveToRangeEnd',
-		'MoveFromRangeStart',
-		'MoveFromRangeEnd',
+		'MoveTo',
+		'MoveFrom',
+		'MoveRangeStart',
+		'MoveRangeEnd',
 		'Insertion',
 		'Deletion',
 		'FootnoteReference',
@@ -89,12 +92,11 @@ export class Move extends Component<MoveProps, MoveChild> {
 					if ($date) then attribute ${QNS.w}date { $date } else (),
 					if ($author) then attribute ${QNS.w}author { $author } else ()
 				]
-				let $moveType := 
-					switch ($type)
-					case 'to' return element ${QNS.w}moveTo { $attrs, $children } 
-					case 'from' return element ${QNS.w}moveFrom { $attrs, $children } 
-					default return () 
-				return $moveType
+				return (
+					element ${QNS.w}moveFrom { 
+						$attrs
+					}
+				)
 			`,
 			{
 				...this.props,
@@ -109,16 +111,16 @@ export class Move extends Component<MoveProps, MoveChild> {
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return node.nodeName === 'w:moveFrom' || node.nodeName === 'w:moveTo';
+		return node.nodeName === 'w:moveFrom';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node, context: ComponentContext): Move {
+	static override fromNode(node: Node, context: ComponentContext): MoveFrom {
 		const { children, changeProps } = evaluateXPathToMap<{
 			children: Node[];
-			changeProps: MoveProps;
+			changeProps: MoveFromProps;
 		}>(
 			`
 			map { 
@@ -139,7 +141,6 @@ export class Move extends Component<MoveProps, MoveChild> {
 				)}, 
 				"changeProps": map { 
 					"id": @${QNS.w}id/number(),
-					"type": if ($nodeName eq 'moveTo') then 'to' else 'from',
 					"date": if (@${QNS.w}date) then @${QNS.w}date/string() else (),
 					"author": if (@${QNS.w}author) then @${QNS.w}author/string() else ()
 				}
@@ -149,13 +150,13 @@ export class Move extends Component<MoveProps, MoveChild> {
 			null,
 			{ nodeName: (node as Element).localName }
 		);
-		return new Move(
+		return new MoveFrom(
 			{
 				...changeProps,
 				date: changeProps.date ? new Date(changeProps.date) : undefined,
 				author: changeProps.author ? changeProps.author : undefined,
 			},
-			...createChildComponentsFromNodes<MoveChild>(
+			...createChildComponentsFromNodes<MoveFromChild>(
 				this.children,
 				children,
 				context
@@ -164,4 +165,4 @@ export class Move extends Component<MoveProps, MoveChild> {
 	}
 }
 
-registerComponent(Move);
+registerComponent(MoveFrom);
