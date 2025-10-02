@@ -62,9 +62,8 @@ describe('Text formatting', () => {
 				ascii: 'Arial',
 				hAnsi: 'Courier New',
 			},
-			move: {
+			moveTo: {
 				author: 'Gabe',
-				type: 'to',
 				date: date,
 				id: 1,
 			},
@@ -140,9 +139,8 @@ describe('Change Information properties', () => {
 			</w:rPrChange>
 		</w:rPr>`,
 		{
-			move: {
+			moveTo: {
 				author: 'Gabe',
-				type: 'to',
 				date: date,
 				id: 1,
 			},
@@ -169,8 +167,7 @@ describe('Change Information properties', () => {
 				</w:rPrChange>
 			</w:rPr>`,
 		{
-			move: {
-				type: 'to',
+			moveTo: {
 				date: date,
 				id: 1,
 			},
@@ -196,8 +193,7 @@ describe('Change Information properties', () => {
 				</w:rPrChange>
 			</w:rPr>`,
 		{
-			move: {
-				type: 'to',
+			moveTo: {
 				author: 'Gabe',
 				id: 1,
 			},
@@ -223,8 +219,7 @@ describe('Change Information properties', () => {
 				</w:rPrChange>
 				</w:rPr>`,
 		{
-			move: {
-				type: 'to',
+			moveTo: {
 				id: 1,
 			},
 			change: {

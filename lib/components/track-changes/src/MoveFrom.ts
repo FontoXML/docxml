@@ -1,10 +1,9 @@
 // Import without assignment ensures Deno does not tree-shake this component. To avoid circular
 // definitions, components register themselves in a side-effect of their module.
 
-import {
-	Component,
-	type ComponentAncestor,
-	type ComponentContext,
+import type {
+	ComponentAncestor,
+	ComponentContext,
 } from '../../../classes/src/Component.ts';
 import type { ChangeInformation } from '../../../utilities/src/changes.ts';
 import {
@@ -24,7 +23,7 @@ import type { Deletion } from './Deletion.ts';
 import type { Insertion } from './Insertion.ts';
 import type { MoveRangeEnd } from './MoveRangeEnd.ts';
 import type { MoveRangeStart } from './MoveRangeStart.ts';
-import type { MoveTo } from './MoveTo.ts';
+import { MoveTo } from './MoveTo.ts';
 
 /**
  * A type specifying the children of {@link Move}.
@@ -44,14 +43,9 @@ export type MoveFromChild =
 	| FootnoteReference;
 
 /**
- * Create a unique property so that TypeScript's structural typing does not allow us to use
- * components with otherwise identical allowable properties and children interchangeably.
- */
-const __brand: symbol = Symbol();
-/**
  * A type describing the props accepted by {@link MoveFrom}.
  */
-export type MoveFromProps = ChangeInformation & { [__brand]: never };
+export type MoveFromProps = ChangeInformation;
 
 /**
  * A component that represents a change-tracked text or paragraph that was moved.
@@ -62,25 +56,7 @@ export type MoveFromProps = ChangeInformation & { [__brand]: never };
  * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EE3IW.html#topic_ID0EE3IW
  * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EXMJW.html
  */
-export class MoveFrom extends Component<MoveFromProps, MoveFromChild> {
-	public static override readonly children: string[] = [
-		'BookmarkRangeEnd',
-		'BookmarkRangeStart',
-		'CommentRangeStart',
-		'CommentRangeEnd',
-		'Text',
-		'MoveTo',
-		'MoveFrom',
-		'MoveRangeStart',
-		'MoveRangeEnd',
-		'Insertion',
-		'Deletion',
-		'FootnoteReference',
-		this.name,
-	];
-
-	public static override readonly mixed: boolean = false;
-
+export class MoveFrom extends MoveTo {
 	/**
 	 * Creates an XML DOM node for this component instance.
 	 */

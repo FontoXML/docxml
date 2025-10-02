@@ -44,15 +44,9 @@ export type MoveToChild =
 	| FootnoteReference;
 
 /**
- * Create a unique property so that TypeScript's structural typing does not allow us to use
- * components with otherwise identical allowable properties and children interchangeably.
- */
-const __brand: symbol = Symbol();
-
-/**
  * A type describing the props accepted by {@link Move}.
  */
-export type MoveToProps = ChangeInformation & { [__brand]: never };
+export type MoveToProps = ChangeInformation;
 
 /**
  * A component that represents a change-tracked text or paragraph that was moved.

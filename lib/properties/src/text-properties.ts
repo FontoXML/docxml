@@ -1,10 +1,4 @@
-import {
-	Deletion,
-	Insertion,
-	MoveFrom,
-	MoveTo,
-	type InsertionProps,
-} from '../../../mod.ts';
+import { Deletion, Insertion, type InsertionProps } from '../../../mod.ts';
 import type { MoveFromProps } from '../../components/track-changes/src/MoveFrom.ts';
 import type { MoveToProps } from '../../components/track-changes/src/MoveTo.ts';
 import type { ChangeInformation } from '../../utilities/src/changes.ts';
@@ -144,7 +138,8 @@ export type TextProperties = {
 	 *
 	 * Read more here:  https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EXMJW.html
 	 */
-	move?: MoveToProps | MoveFromProps | null;
+	moveTo?: MoveToProps | null;
+	moveFrom?: MoveFromProps | null;
 
 	/**
 	 * A property used to indicate that the way this text is deiplayed has changed somehow.
@@ -225,12 +220,16 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 				"ascii": @${QNS.w}ascii/string(),
 				"hAnsi": @${QNS.w}hAnsi/string()
 			},
-			"move": ./${QNS.w}*[self::${QNS.w}moveTo or self::${QNS.w}moveFrom]/map {
+			"moveTo": ./${QNS.w}moveTo/map {
 				"id": @${QNS.w}id/number(), 
 				"author": @${QNS.w}author/string(), 
 				"date": @${QNS.w}date/string(),
-				"type": if ($nodeName eq 'moveTo') then 'to' else 'from'
 			}, 
+			"moveFrom": ./${QNS.w}moveFrom/map { 
+				"id": @${QNS.w}id/number(), 
+				"author": @${QNS.w}author/string(), 
+				"date": @${QNS.w}date/string(),
+			},
 			"change": ./${QNS.w}rPrChange/map { 
 				"id": @${QNS.w}id/number(), 
 				"author": @${QNS.w}author/string(), 
@@ -287,12 +286,20 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 		};
 	}
 
-	if (props.move) {
-		// Convert the date string to a Date object.
-		props.move.date = props.move.date
-			? new Date(props.move.date)
-			: undefined;
-		props.move.author = props.move.author ? props.move.author : undefined;
+	if (props.moveTo) {
+		props.moveTo = {
+			...props.moveTo,
+			date: props.moveTo.date ? new Date(props.moveTo.date) : undefined,
+		};
+	}
+
+	if (props.moveFrom) {
+		props.moveFrom = {
+			...props.moveFrom,
+			date: props.moveFrom.date
+				? new Date(props.moveFrom.date)
+				: undefined,
+		};
 	}
 
 	return props as TextProperties;
@@ -315,7 +322,8 @@ export async function textPropertiesToNode(
 		!data.isStrike &&
 		!data.shading &&
 		!data.font &&
-		!data.move &&
+		!data.moveTo &&
+		!data.moveFrom &&
 		!data.change &&
 		!data.insertion &&
 		!data.deletion
@@ -432,13 +440,27 @@ export async function textPropertiesToNode(
 			 * since the move information is sent as properties rather than as an
 			 * object, we can be sure that no more children will ever be created.
 			 */
-			move: data.move
+			moveTo: data.moveTo
 				? {
-						id: data.move.id,
-						date: data.move.date
-							? new Date(data.move.date).toISOString()
+						id: data.moveTo.id,
+						date: data.moveTo.date
+							? new Date(data.moveTo.date).toISOString()
 							: undefined,
-						author: data.move.author ? data.move.author : undefined,
+						author: data.moveTo.author
+							? data.moveTo.author
+							: undefined,
+				  }
+				: null,
+
+			moveFrom: data.moveFrom
+				? {
+						id: data.moveFrom.id,
+						date: data.moveFrom.date
+							? new Date(data.moveFrom.date).toISOString()
+							: undefined,
+						author: data.moveFrom.author
+							? data.moveFrom.author
+							: undefined,
 				  }
 				: null,
 			insertion: data.insertion
