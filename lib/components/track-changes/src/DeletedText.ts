@@ -57,7 +57,7 @@ export type DeletedTextChild =
 	| CharSymbol
 	| Tab;
 
-const __brand: symbol = Symbol();
+const __brand: unique symbol = Symbol();
 
 /**
  * A type describing the props accepted by {@link DeletedText}.

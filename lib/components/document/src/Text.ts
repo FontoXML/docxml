@@ -57,7 +57,7 @@ export type TextChild =
 	| CharSymbol
 	| Tab;
 
-const __brand: symbol = Symbol();
+const __brand: unique symbol = Symbol();
 
 /**
  * A type describing the props accepted by {@link Text}.
