@@ -36,7 +36,7 @@ import type { FootnoteContinuationSeparator } from '../../document/src/FootnoteC
 import type { FootnoteSeparator } from '../../document/src/FootnoteSeparator.ts';
 import type { Image } from '../../document/src/Image.ts';
 import type { NonBreakingHyphen } from '../../document/src/NonBreakingHyphen.ts';
-import type { Symbol } from '../../document/src/Symbol.ts';
+import type { Symbol as CharSymbol } from '../../document/src/Symbol.ts';
 import type { Tab } from '../../document/src/Tab.ts';
 
 /**
@@ -54,8 +54,10 @@ export type DeletedTextChild =
 	| Image
 	| NonBreakingHyphen
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	| Symbol
+	| CharSymbol
 	| Tab;
+
+const __brand: symbol = Symbol();
 
 /**
  * A type describing the props accepted by {@link DeletedText}.
@@ -68,6 +70,8 @@ export type DeletedTextProps = TextProperties;
  * the document has been removed. `DeletedText` must have a parent {@link Deletion}.
  */
 export class DeletedText extends Component<DeletedTextProps, DeletedTextChild> {
+	readonly [__brand] = 'deletedText';
+
 	public static override readonly children: string[] = [
 		'Break',
 		'FieldRangeEnd',

@@ -36,7 +36,7 @@ import type { FootnoteContinuationSeparator } from './FootnoteContinuationSepara
 import type { FootnoteSeparator } from './FootnoteSeparator.ts';
 import type { Image } from './Image.ts';
 import type { NonBreakingHyphen } from './NonBreakingHyphen.ts';
-import type { Symbol } from './Symbol.ts';
+import type { Symbol as CharSymbol } from './Symbol.ts';
 import type { Tab } from './Tab.ts';
 
 /**
@@ -54,8 +54,10 @@ export type TextChild =
 	| Image
 	| NonBreakingHyphen
 	// eslint-disable-next-line @typescript-eslint/ban-types
-	| Symbol
+	| CharSymbol
 	| Tab;
+
+const __brand: symbol = Symbol();
 
 /**
  * A type describing the props accepted by {@link Text}.
@@ -69,11 +71,9 @@ export type TextProps = TextProperties;
 export class Text extends Component<TextProps, TextChild> {
 	// Introduce a __brand property so that we cannot use Text and DeletedText interchangeably.
 	// TypeScript's structural typing would allow us to do so otherwise.
-	// readonly __brand: string;
-	// constructor(props: TextProps, child: TextChild) {
-	// 	super(props, child);
-	// 	this.__brand = 'regular';
-	// }
+
+	readonly [__brand] = 'regularText';
+
 	public static override readonly children: string[] = [
 		'Break',
 		'FieldRangeEnd',
