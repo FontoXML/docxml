@@ -1,8 +1,8 @@
 /** @jsx  Docx.jsx */
-import { DeletedText } from '../../lib/components/track-changes/src/DeletedText.ts';
 import Docx, {
 	Cell,
 	cm,
+	DeletedText,
 	Deletion,
 	Image,
 	Paragraph,

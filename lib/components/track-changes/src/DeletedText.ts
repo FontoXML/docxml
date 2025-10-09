@@ -27,35 +27,12 @@ import {
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
-import type { Break } from '../../document/src/Break.ts';
-import type { FieldRangeEnd } from '../../document/src/FieldRangeEnd.ts';
-import type { FieldRangeInstruction } from '../../document/src/FieldRangeInstruction.ts';
-import type { FieldRangeSeparator } from '../../document/src/FieldRangeSeparator.ts';
-import type { FieldRangeStart } from '../../document/src/FieldRangeStart.ts';
-import type { FootnoteContinuationSeparator } from '../../document/src/FootnoteContinuationSeparator.ts';
-import type { FootnoteSeparator } from '../../document/src/FootnoteSeparator.ts';
-import type { Image } from '../../document/src/Image.ts';
-import type { NonBreakingHyphen } from '../../document/src/NonBreakingHyphen.ts';
-import type { Symbol as CharSymbol } from '../../document/src/Symbol.ts';
-import type { Tab } from '../../document/src/Tab.ts';
+import type { TextChild } from '../../document/src/Text.ts';
 
 /**
  * A type describing the components accepted as children of {@link DeletedText}.
  */
-export type DeletedTextChild =
-	| string
-	| Break
-	| FieldRangeEnd
-	| FieldRangeInstruction
-	| FieldRangeSeparator
-	| FieldRangeStart
-	| FootnoteSeparator
-	| FootnoteContinuationSeparator
-	| Image
-	| NonBreakingHyphen
-	// eslint-disable-next-line @typescript-eslint/ban-types
-	| CharSymbol
-	| Tab;
+export type DeletedTextChild = TextChild;
 
 const __brand: unique symbol = Symbol();
 
