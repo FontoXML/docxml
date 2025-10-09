@@ -70,7 +70,8 @@ export class MoveFrom extends MoveTo {
 				]
 				return (
 					element ${QNS.w}moveFrom { 
-						$attrs
+						$attrs,
+						$children
 					}
 				)
 			`,

@@ -96,8 +96,8 @@ export class MoveTo extends Component<MoveToProps, MoveToChild> {
 			`,
 			{
 				...this.props,
+				// author: this.props.author ? this.props.author : null,
 				date: this.props.date ? this.props.date.toISOString() : null,
-				author: this.props.author ? this.props.author : null,
 				children: await this.childrenToNode(ancestry),
 			}
 		);
@@ -150,7 +150,7 @@ export class MoveTo extends Component<MoveToProps, MoveToChild> {
 			{
 				...changeProps,
 				date: changeProps.date ? new Date(changeProps.date) : undefined,
-				author: changeProps.author ? changeProps.author : undefined,
+				// author: changeProps.author ? changeProps.author : undefined,
 			},
 			...createChildComponentsFromNodes<MoveToChild>(
 				this.children,

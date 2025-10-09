@@ -1,6 +1,12 @@
 import { Deletion, Insertion, type InsertionProps } from '../../../mod.ts';
-import type { MoveFromProps } from '../../components/track-changes/src/MoveFrom.ts';
-import type { MoveToProps } from '../../components/track-changes/src/MoveTo.ts';
+import {
+	MoveFrom,
+	type MoveFromProps,
+} from '../../components/track-changes/src/MoveFrom.ts';
+import {
+	MoveTo,
+	type MoveToProps,
+} from '../../components/track-changes/src/MoveTo.ts';
 import type { ChangeInformation } from '../../utilities/src/changes.ts';
 import { create } from '../../utilities/src/dom.ts';
 import type { Length } from '../../utilities/src/length.ts';
@@ -136,8 +142,8 @@ export type TextProperties = {
 	 *
 	 * If present, the containing paragraph element will appear as a track-change moved paragraph.
 	 *
-	 * Read more here:  https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EXMJW.html
-	 */
+	 * Read more here:  https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EE3IW.html
+	 **/
 	moveTo?: MoveToProps | null;
 	moveFrom?: MoveFromProps | null;
 
@@ -223,16 +229,16 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 			"moveTo": ./${QNS.w}moveTo/map {
 				"id": @${QNS.w}id/number(), 
 				"author": @${QNS.w}author/string(), 
-				"date": @${QNS.w}date/string(),
+				"date": @${QNS.w}date/string()
 			}, 
 			"moveFrom": ./${QNS.w}moveFrom/map { 
 				"id": @${QNS.w}id/number(), 
 				"author": @${QNS.w}author/string(), 
-				"date": @${QNS.w}date/string(),
+				"date": @${QNS.w}date/string()
 			},
 			"change": ./${QNS.w}rPrChange/map { 
 				"id": @${QNS.w}id/number(), 
-				"author": @${QNS.w}author/string(), 
+				"author": if (@${QNS.w}author/string()) then @${QNS.w}author/string() else (), 
 				"date": @${QNS.w}date/string(), 
 				"node": ./${QNS.w}rPr
 			},
@@ -385,7 +391,8 @@ export async function textPropertiesToNode(
 				if ($change('author')) then attribute ${QNS.w}author { $change('author') } else (),
 				$change('node')
 			} else (),
-			$move,
+			$moveTo, 
+			$moveFrom,
 			$insertion,
 			$deletion
 		}`,
@@ -441,27 +448,24 @@ export async function textPropertiesToNode(
 			 * object, we can be sure that no more children will ever be created.
 			 */
 			moveTo: data.moveTo
-				? {
-						id: data.moveTo.id,
-						date: data.moveTo.date
-							? new Date(data.moveTo.date).toISOString()
-							: undefined,
+				? await new MoveTo({
+						...data.moveTo,
 						author: data.moveTo.author
 							? data.moveTo.author
 							: undefined,
-				  }
+						date: data.moveTo.date
+							? new Date(data.moveTo.date)
+							: undefined,
+				  }).toNode([])
 				: null,
 
 			moveFrom: data.moveFrom
-				? {
-						id: data.moveFrom.id,
+				? await new MoveFrom({
+						...data.moveFrom,
 						date: data.moveFrom.date
-							? new Date(data.moveFrom.date).toISOString()
+							? new Date(data.moveFrom.date)
 							: undefined,
-						author: data.moveFrom.author
-							? data.moveFrom.author
-							: undefined,
-				  }
+				  }).toNode([])
 				: null,
 			insertion: data.insertion
 				? await new Insertion(data.insertion).toNode([])
