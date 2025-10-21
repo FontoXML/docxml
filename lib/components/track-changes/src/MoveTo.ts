@@ -82,22 +82,18 @@ export class MoveTo extends Component<MoveToProps, MoveToChild> {
 	public override async toNode(ancestry: ComponentAncestor[]): Promise<Node> {
 		return create(
 			`
-				let $attrs := [
+				element ${QNS.w}moveTo { 
 					attribute ${QNS.w}id { $id }, 
-					if ($date) then attribute ${QNS.w}date { $date } else (),
-					if ($author) then attribute ${QNS.w}author { $author } else ()
-				]
-				return ( 
-					element ${QNS.w}moveTo { 
-						$attrs,
-						$children
-					}
-				)
+					if (exists($date)) then attribute ${QNS.w}date { $date } else (),
+					if (exists($author)) then attribute ${QNS.w}author { $author } else (),
+					$children
+				}
+
 			`,
 			{
 				...this.props,
-				// author: this.props.author ? this.props.author : null,
 				date: this.props.date ? this.props.date.toISOString() : null,
+				author: this.props.author ? this.props.author : null,
 				children: await this.childrenToNode(ancestry),
 			}
 		);
@@ -149,8 +145,8 @@ export class MoveTo extends Component<MoveToProps, MoveToChild> {
 		return new MoveTo(
 			{
 				...changeProps,
+				author: changeProps.author ? changeProps.author : undefined,
 				date: changeProps.date ? new Date(changeProps.date) : undefined,
-				// author: changeProps.author ? changeProps.author : undefined,
 			},
 			...createChildComponentsFromNodes<MoveToChild>(
 				this.children,

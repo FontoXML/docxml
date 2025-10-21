@@ -294,14 +294,16 @@ export function textPropertiesFromNode(node?: Node | null): TextProperties {
 
 	if (props.moveTo) {
 		props.moveTo = {
-			...props.moveTo,
+			id: props.moveTo.id,
+			author: props.moveTo.author ? props.moveTo.author : undefined,
 			date: props.moveTo.date ? new Date(props.moveTo.date) : undefined,
 		};
 	}
 
 	if (props.moveFrom) {
 		props.moveFrom = {
-			...props.moveFrom,
+			id: props.moveFrom.id,
+			author: props.moveFrom.author ? props.moveFrom.author : undefined,
 			date: props.moveFrom.date
 				? new Date(props.moveFrom.date)
 				: undefined,
