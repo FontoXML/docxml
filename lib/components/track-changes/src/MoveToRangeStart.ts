@@ -13,7 +13,7 @@ export type MoveToRangeStartProps = ChangeInformation & {
 	name: string;
 };
 
-export type MoveRangeStartChild = never;
+export type MoveToRangeStartChild = never;
 
 /**
  * A type for indicating the start of a range of moved content.
@@ -21,7 +21,7 @@ export type MoveRangeStartChild = never;
  */
 export class MoveToRangeStart extends Component<
 	MoveToRangeStartProps,
-	MoveRangeStartChild
+	MoveToRangeStartChild
 > {
 	/**
 	 * Creates an XML DOM node for this component instance.
