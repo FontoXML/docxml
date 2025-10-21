@@ -8,20 +8,19 @@ import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
 
-export type MoveRangeEndChild = never;
+export type MoveFromRangeEndChild = never;
 
-export type MoveRangeEndProps = {
+export type MoveFromRangeEndProps = {
 	id: number;
-	type: 'from' | 'to';
 };
 
 /**
  * A type for indicating the end of a range of moved content.
  * In OOXML, these are self-closing tags.
  */
-export class MoveRangeEnd extends Component<
-	MoveRangeEndProps,
-	MoveRangeEndChild
+export class MoveFromRangeEnd extends Component<
+	MoveFromRangeEndProps,
+	MoveFromRangeEndChild
 > {
 	public static override readonly children: string[] = [];
 	public static override readonly mixed: boolean = false;
@@ -32,19 +31,11 @@ export class MoveRangeEnd extends Component<
 	public override toNode(): Node {
 		return create(
 			`
-				switch ($type)
-				case 'to' return 
-				element ${QNS.w}moveToRangeEnd {
-					attribute ${QNS.w}id { $id }
-				}
-				case 'from' return 
 				element ${QNS.w}moveFromRangeEnd { 
 					attribute ${QNS.w}id { $id }
 				}
-				default return ()
 			`,
 			{
-				type: this.props.type,
 				id: this.props.id,
 			}
 		);
@@ -54,17 +45,13 @@ export class MoveRangeEnd extends Component<
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return (
-			node.nodeName === 'w:moveFromRangeEnd' ||
-			node.nodeName === 'w:moveToRangeEnd'
-		);
+		return node.nodeName === 'w:moveFromRangeEnd';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node): MoveRangeEnd {
-		const type = node.nodeName === 'w:moveFromRangeEnd' ? 'from' : 'to';
+	static override fromNode(node: Node): MoveFromRangeEnd {
 		const { id } = evaluateXPathToMap<{
 			id: number;
 		}>(
@@ -73,11 +60,10 @@ export class MoveRangeEnd extends Component<
 			}`,
 			node
 		);
-		return new MoveRangeEnd({
-			type: type,
+		return new MoveFromRangeEnd({
 			id: id,
 		});
 	}
 }
 
-registerComponent(MoveRangeEnd);
+registerComponent(MoveFromRangeEnd);

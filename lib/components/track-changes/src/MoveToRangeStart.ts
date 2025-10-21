@@ -9,9 +9,8 @@ import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
 
-export type MoveRangeStartProps = ChangeInformation & {
+export type MoveToRangeStartProps = ChangeInformation & {
 	name: string;
-	type: 'from' | 'to';
 };
 
 export type MoveRangeStartChild = never;
@@ -20,8 +19,8 @@ export type MoveRangeStartChild = never;
  * A type for indicating the start of a range of moved content.
  * In OOXML, these are self-closing tags.
  */
-export class MoveRangeStart extends Component<
-	MoveRangeStartProps,
+export class MoveToRangeStart extends Component<
+	MoveToRangeStartProps,
 	MoveRangeStartChild
 > {
 	/**
@@ -29,24 +28,13 @@ export class MoveRangeStart extends Component<
 	 */
 	public override toNode(): Node {
 		return create(
-			`	let $attrs := [
+			`
+				element ${QNS.w}moveToRangeStart {
 					attribute ${QNS.w}id { $id }, 
 					if ($date) then attribute ${QNS.w}date { $date } else (),
 					if ($author) then attribute ${QNS.w}author { $author } else (),
 					attribute ${QNS.w}name { $name }
-				]
-				return (
-					switch ($type)
-					case 'to' return 
-					element ${QNS.w}moveToRangeStart {
-						$attrs
-					}
-					case 'from' return 
-					element ${QNS.w}moveFromRangeStart {
-						$attrs
-					}
-					default return ()
-				)	
+				}
 			`,
 			{
 				...this.props,
@@ -60,17 +48,13 @@ export class MoveRangeStart extends Component<
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return (
-			node.nodeName === 'w:moveFromRangeStart' ||
-			node.nodeName === 'w:moveToRangeStart'
-		);
+		return node.nodeName === 'w:moveToRangeStart';
 	}
 
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(node: Node): MoveRangeStart {
-		const type = node.nodeName === 'w:moveFromRangeStart' ? 'from' : 'to';
+	static override fromNode(node: Node): MoveToRangeStart {
 		const { id, name, date, author } = evaluateXPathToMap<{
 			id: number;
 			name: string;
@@ -85,8 +69,7 @@ export class MoveRangeStart extends Component<
 			}`,
 			node
 		);
-		return new MoveRangeStart({
-			type: type,
+		return new MoveToRangeStart({
 			id: id,
 			name: name,
 			date: date ? new Date(date) : undefined,
@@ -95,4 +78,4 @@ export class MoveRangeStart extends Component<
 	}
 }
 
-registerComponent(MoveRangeStart);
+registerComponent(MoveToRangeStart);
