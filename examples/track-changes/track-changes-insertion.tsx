@@ -2,7 +2,6 @@
 import Docx, {
 	Cell,
 	cm,
-	Deletion,
 	Image,
 	Insertion,
 	Paragraph,
@@ -86,9 +85,9 @@ await Docx.fromJsx(
 				having a secret affair with Adela,
 			</Text>
 			{/* Text insertion */}
-			<Deletion id={3} author={author} date={date}>
+			<Insertion id={3} author={author} date={date}>
 				<Text> the youngest daughter.</Text>
-			</Deletion>
+			</Insertion>
 		</Paragraph>
 		<Paragraph>
 			{/* Text with inline styles insertion */}
