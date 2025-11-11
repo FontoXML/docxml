@@ -15,7 +15,7 @@ export type MoveFromRangeEndProps = {
 };
 
 /**
- * A type for indicating the end of a range of moved content.
+ * A type for indicating the end of a range of content that was moved from one place to another.
  * In OOXML, these are self-closing tags.
  */
 export class MoveFromRangeEnd extends Component<
@@ -45,7 +45,7 @@ export class MoveFromRangeEnd extends Component<
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return node.nodeName === 'w:moveFromRangeEnd';
+		return node.nodeName === `${QNS.w}moveFromRangeEnd`;
 	}
 
 	/**

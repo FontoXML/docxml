@@ -453,7 +453,7 @@ describe('Deletion', () => {
 			});
 		});
 
-		describe('MoveRangeStart and MoveRangeEnd', () => {
+		describe('MoveToRangeStart, MoveToRangeEnd, MoveFromRangeStart, MoveFromRangeEnd', () => {
 			const deletedMoveRangeToNode = create(
 				`<w:p xmlns:w="${NamespaceUri.w}">
 					<w:del w:id="1" w:author="Luis" w:date="${date.toISOString()}">
