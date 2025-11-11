@@ -13,35 +13,13 @@ import {
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
 import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
-import type { CommentRangeEnd } from '../../comments/src/CommentRangeEnd.ts';
-import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
-import type { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
-import type { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
-import type { FootnoteReference } from '../../document/src/FootnoteReference.ts';
-import type { Text } from '../../document/src/Text.ts';
-import type { Deletion } from './Deletion.ts';
-import type { Insertion } from './Insertion.ts';
-import type { MoveRangeEnd } from './MoveRangeEnd.ts';
-import type { MoveRangeStart } from './MoveRangeStart.ts';
+import type { MoveToChild } from './MoveTo.ts';
 import { MoveTo } from './MoveTo.ts';
 
 /**
- * A type specifying the children of {@link Move}.
+ * A type specifying the children of {@link MoveFrom}.
  */
-export type MoveFromChild =
-	| BookmarkRangeStart
-	| BookmarkRangeEnd
-	| CommentRangeStart
-	| CommentRangeEnd
-	| Text
-	| MoveFrom
-	| MoveTo
-	| MoveRangeStart
-	| MoveRangeEnd
-	| Insertion
-	| Deletion
-	| FootnoteReference;
-
+export type MoveFromChild = MoveToChild;
 /**
  * A type describing the props accepted by {@link MoveFrom}.
  */

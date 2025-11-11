@@ -27,7 +27,7 @@ import type { MoveRangeEnd } from './MoveRangeEnd.ts';
 import type { MoveRangeStart } from './MoveRangeStart.ts';
 
 /**
- * A type specifying the children of {@link Move}.
+ * A type specifying the children of {@link MoveTo}.
  */
 export type MoveToChild =
 	| BookmarkRangeStart
@@ -44,7 +44,7 @@ export type MoveToChild =
 	| FootnoteReference;
 
 /**
- * A type describing the props accepted by {@link Move}.
+ * A type describing the props accepted by {@link MoveTo}.
  */
 export type MoveToProps = ChangeInformation;
 
