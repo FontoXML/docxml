@@ -76,6 +76,40 @@ describe('Text formatting', () => {
 			},
 		}
 	);
+
+	test(
+		`<w:rPr ${ALL_NAMESPACE_DECLARATIONS}>
+			<w:color w:val="red" />
+			<w:b />
+			<w:i />
+			<w:vertAlign w:val="subscript" />
+			<w:moveFrom w:author="Gabe" w:date="${date.toISOString()}" w:id="1" /> 
+			<w:rPrChange w:author="Angel" w:date="${date.toISOString()}" w:id="99" > 
+				<w:rPr>
+					<w:color w:val="blue" /> 
+					<w:b w:val="false" /> 
+				</w:rPr>
+			</w:rPrChange>
+		</w:rPr>`,
+		{
+			color: 'red',
+			isBold: { simple: true, complex: false },
+			isItalic: { simple: true, complex: false },
+			verticalAlign: 'subscript',
+			moveFrom: {
+				author: 'Gabe',
+				date: date,
+				id: 1,
+			},
+			change: {
+				author: 'Angel',
+				date: date,
+				id: 99,
+				color: 'blue',
+				isBold: { simple: false, complex: false },
+			},
+		}
+	);
 });
 
 describe('Complex character formatting', () => {
