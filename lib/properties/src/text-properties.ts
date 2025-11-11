@@ -142,7 +142,9 @@ export type TextProperties = {
 	 *
 	 * If present, the containing paragraph element will appear as a track-change moved paragraph.
 	 *
-	 * Read more here:  https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EE3IW.html
+	 * Read more here:
+	 * https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EE3IW.html and
+	 * https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveFrom_topic_ID0EJ6EW.html
 	 **/
 	moveTo?: MoveToProps | null;
 	moveFrom?: MoveFromProps | null;
@@ -452,9 +454,6 @@ export async function textPropertiesToNode(
 			moveTo: data.moveTo
 				? await new MoveTo({
 						...data.moveTo,
-						author: data.moveTo.author
-							? data.moveTo.author
-							: undefined,
 						date: data.moveTo.date
 							? new Date(data.moveTo.date)
 							: undefined,
