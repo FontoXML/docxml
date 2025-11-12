@@ -23,8 +23,10 @@ import type { Text } from '../../document/src/Text.ts';
 import type { Deletion } from './Deletion.ts';
 import type { Insertion } from './Insertion.ts';
 import type { MoveFrom } from './MoveFrom.ts';
-import type { MoveRangeEnd } from './MoveRangeEnd.ts';
-import type { MoveRangeStart } from './MoveRangeStart.ts';
+import type { MoveFromRangeEnd } from './MoveFromRangeEnd.ts';
+import type { MoveFromRangeStart } from './MoveFromRangeStart.ts';
+import type { MoveToRangeEnd } from './MoveToRangeEnd.ts';
+import type { MoveToRangeStart } from './MoveToRangeStart.ts';
 
 /**
  * A type specifying the children of {@link MoveTo}.
@@ -37,8 +39,10 @@ export type MoveToChild =
 	| Text
 	| MoveTo
 	| MoveFrom
-	| MoveRangeStart
-	| MoveRangeEnd
+	| MoveToRangeStart
+	| MoveToRangeEnd
+	| MoveFromRangeStart
+	| MoveFromRangeEnd
 	| Insertion
 	| Deletion
 	| FootnoteReference;
@@ -64,8 +68,10 @@ export class MoveTo extends Component<MoveToProps, MoveToChild> {
 		'CommentRangeStart',
 		'CommentRangeEnd',
 		'Text',
-		'MoveRangeStart',
-		'MoveRangeEnd',
+		'MoveToRangeStart',
+		'MoveToRangeEnd',
+		'MoveFromRangeStart',
+		'MoveFromRangeEnd',
 		'MoveTo',
 		'MoveFrom',
 		'Insertion',
