@@ -16,7 +16,7 @@ export type MoveFromRangeStartProps = ChangeInformation & {
 export type MoveFromRangeStartChild = never;
 
 /**
- * A type for indicating the start of a range of content that was moved from one place to another. 
+ * A type for indicating the start of a range of content that was moved from one place to another.
  * In OOXML, these are self-closing tags.
  */
 export class MoveFromRangeStart extends Component<
@@ -48,7 +48,10 @@ export class MoveFromRangeStart extends Component<
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return node.nodeName === `${QNS.w}moveFromRangeStart`;
+		return (
+			`Q{${(node as Element).namespaceURI}}` === QNS.w &&
+			(node as Element).localName === `moveFromRangeStart`
+		);
 	}
 
 	/**

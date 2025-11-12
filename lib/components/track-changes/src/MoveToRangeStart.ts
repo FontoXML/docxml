@@ -48,7 +48,10 @@ export class MoveToRangeStart extends Component<
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return node.nodeName === `${QNS.w}moveToRangeStart`;
+		return (
+			`Q{${(node as Element).namespaceURI}}` === QNS.w &&
+			(node as Element).localName === `moveToRangeStart`
+		);
 	}
 
 	/**
