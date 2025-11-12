@@ -447,7 +447,7 @@ export async function textPropertiesToNode(
 				  }
 				: null,
 			/*
-			 * Although the Move and Insertion components are used here and it can have children,
+			 * Although the MoveTo, MoveFrom and Insertion components are used here and it can have children,
 			 * since the move information is sent as properties rather than as an
 			 * object, we can be sure that no more children will ever be created.
 			 */

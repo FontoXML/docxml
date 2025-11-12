@@ -53,9 +53,9 @@ export type MoveToChild =
 export type MoveToProps = ChangeInformation;
 
 /**
- * A component that represents a change-tracked text or paragraph that was moved.
+ * A component that represents a change-tracked text or paragraph that was moved to a new location.
  *
- * If a `Move` is present outside the text-properties, then paragraphs appear as a insertion in Word.
+ * If a `MoveTo` is present outside the text-properties, then paragraphs appear as a insertion in Word.
  *
  * Additional documentation is here:
  * 	- https://c-rex.net/samples/ooxml/e1/Part4/OOXML_P4_DOCX_moveTo_topic_ID0EE3IW.html#topic_ID0EE3IW
