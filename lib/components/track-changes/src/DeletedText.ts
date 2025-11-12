@@ -101,7 +101,10 @@ export class DeletedText extends Component<DeletedTextProps, DeletedTextChild> {
 	 * Asserts whether or not a given XML node correlates with this component.
 	 */
 	static override matchesNode(node: Node): boolean {
-		return node.nodeName === 'w:r';
+		return (
+			`Q{${(node as Element).namespaceURI}}` === QNS.w &&
+			(node as Element).localName === 'r'
+		);
 	}
 
 	/**
