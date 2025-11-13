@@ -1,3 +1,4 @@
+import { FieldDefinition } from '../../../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,
@@ -17,7 +18,7 @@ import {
 /**
  * A type describing the components accepted as children of {@link FieldRangeInstruction}.
  */
-export type FieldRangeInstructionChild = string;
+export type FieldRangeInstructionChild = string | FieldDefinition;
 
 /**
  * A type describing the props accepted by {@link FieldRangeInstruction}.
