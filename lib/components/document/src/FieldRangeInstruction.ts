@@ -1,4 +1,4 @@
-import { FieldDefinition } from '../../../../mod.ts';
+import type { FieldDefinition } from '../../../../mod.ts';
 import {
 	Component,
 	type ComponentAncestor,

@@ -11,14 +11,14 @@ import { create } from '../../../utilities/src/dom.ts';
 export type FieldDefinitionChild = never;
 
 export enum FieldNames {
-	hyperlink = 'HYPERLINK',
-	date = 'DATE',
-	error = 'ERROR',
+	'HYPERLINK' = 'HYPERLINK',
+	'DATE' = 'DATE',
+	'ERROR' = 'ERROR',
 }
 
 export type FieldDefinitionProps =
 	| {
-			name: FieldNames.hyperlink;
+			name: FieldNames.HYPERLINK;
 			value: string;
 			fieldSwitches?: {
 				newWindow?: boolean;
@@ -29,11 +29,11 @@ export type FieldDefinitionProps =
 			};
 	  }
 	| {
-			name: FieldNames.date;
+			name: FieldNames.DATE;
 			value: string;
 	  }
 	| {
-			name: FieldNames.error;
+			name: FieldNames.ERROR;
 			value: string | null;
 	  };
 
@@ -48,7 +48,7 @@ export class FieldDefinition extends Component<
 	public override toNode(): Node {
 		return create(
 			`
-			element node { concat($name, " ", $value), " \\*" }/text()
+			element node { normalize-space(concat($name, " ", $value)), "\\*" }/text()
 			`,
 			{
 				name: this.props.name,
@@ -60,15 +60,17 @@ export class FieldDefinition extends Component<
 	static override fromNode(node: Node): FieldDefinition {
 		const textContent = node.textContent?.split(' ');
 		if (textContent) {
+			console.log(textContent[0]);
+			console.log(Object.entries(FieldNames));
 			return new FieldDefinition({
 				name:
 					textContent[0] in FieldNames
 						? (textContent[0] as FieldNames)
-						: FieldNames.error,
+						: FieldNames.ERROR,
 				value: textContent[1] ?? null,
 			});
 		} else {
-			return new FieldDefinition({ name: FieldNames.error, value: null });
+			return new FieldDefinition({ name: FieldNames.ERROR, value: null });
 		}
 	}
 }
