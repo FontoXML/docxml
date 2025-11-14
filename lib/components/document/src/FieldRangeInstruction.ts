@@ -32,7 +32,7 @@ export class FieldRangeInstruction extends Component<
 	FieldRangeInstructionProps,
 	FieldRangeInstructionChild
 > {
-	public static override readonly children: string[] = [];
+	public static override readonly children: string[] = ['FieldDefinition'];
 
 	public static override readonly mixed: boolean = true;
 

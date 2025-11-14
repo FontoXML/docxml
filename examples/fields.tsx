@@ -26,7 +26,7 @@ docx.document.set([
 				<FieldRangeInstruction>
 					<FieldDefinition
 						name={FieldNames.hyperlink}
-						value="www.google.com"
+						value="http://www.google.com"
 					/>
 				</FieldRangeInstruction>
 				<FieldRangeSeparator />

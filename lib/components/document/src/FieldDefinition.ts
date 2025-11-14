@@ -48,7 +48,7 @@ export class FieldDefinition extends Component<
 	public override toNode(): Node {
 		return create(
 			`
-			"Hello"
+			element node { concat($name, " ", $value), " \\*" }/text()
 			`,
 			{
 				name: this.props.name,
