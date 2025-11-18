@@ -88,7 +88,7 @@ export type SectionProperties = {
 		| 'continuous'
 		| 'evenPage'
 		| 'nextColumn'
-		| 'newPage'
+		| 'nextPage'
 		| 'oddPage'
 		| null;
 	/**
