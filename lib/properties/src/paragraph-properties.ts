@@ -175,7 +175,7 @@ export function paragraphPropertiesFromNode(
 						"date": @${QNS.w}date/string(),
 						"_node": ./${QNS.w}pPr
 					},
-					"pageBreakBefore": docxml:ct-on-off(), 
+					"pageBreakBefore": docxml:ct-on-off(./${QNS.w}pageBreakBefore), 
 					"tabs": ./${QNS.w}tabs/array {${QNS.w}tab/map {
 						"type": @${QNS.w}val/string(),
 						"leader": @${QNS.w}leader/string(),
