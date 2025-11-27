@@ -1,20 +1,37 @@
-// type FieldDefinition = {
-// 	name: string;
-// 	argument: string | null;
-// 	fieldSwitch: FieldSwitch | FieldSwitch[];
-// };
-
 import { Component } from '../../../classes/src/Component.ts';
 import { registerComponent } from '../../../utilities/src/components.ts';
 import { create } from '../../../utilities/src/dom.ts';
 
 export type FieldDefinitionChild = never;
 
+/**
+ * In OOXML, Field Definitions are a fixed set of codes that exist as text inside a field instruction.
+ *
+ * This enum will be used to store their names as they are added. Here we can access them using the .FieldName
+ * notation, and grab the corresponding string for use in our XQUF for generating the node.
+ *
+ */
+
 export enum FieldNames {
 	'HYPERLINK' = 'HYPERLINK',
 	'DATE' = 'DATE',
 	'ERROR' = 'ERROR',
 }
+
+/**
+ * In its text, each Field Definition has its name (e.g. 'HYPERLINK', 'DATE' or 'TOC'), and typically has a value.
+ * In the case of hyperlinks, this value is a strinspecifying the link location ("http://www.google.com").
+ *
+ * Each Field Definition also has a set of "Switches". In OOXML these take the form of: "\b" (or any other letter), and
+ * they specify certain behaviors of the Field. Many field definitions use the same set of letters, but to represent different
+ * switches. "\o" may mean completely differnt things for HYPERLINK and TOC.
+ *
+ * Instead of relying on users to know this, we'll define them with human-readable property names.
+ *
+ * Ulimately, because this is a finite cascade of fixed options, we'll specify this with a large type with a lot of
+ * prescribed paths for each possible field name we implement.
+ *
+ */
 
 export type FieldDefinitionProps =
 	| {
@@ -60,8 +77,6 @@ export class FieldDefinition extends Component<
 	static override fromNode(node: Node): FieldDefinition {
 		const textContent = node.textContent?.split(' ');
 		if (textContent) {
-			console.log(textContent[0]);
-			console.log(Object.entries(FieldNames));
 			return new FieldDefinition({
 				name:
 					textContent[0] in FieldNames

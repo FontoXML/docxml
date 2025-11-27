@@ -12,7 +12,6 @@ describe('FieldDefinition', () => {
 
 	describe('FieldDefinition from node', () => {
 		const newFieldDef = FieldDefinition.fromNode(newFieldDefNode);
-		console.log(newFieldDefNode.textContent);
 		expect(newFieldDef.props.name).toBe('HYPERLINK');
 	});
 
