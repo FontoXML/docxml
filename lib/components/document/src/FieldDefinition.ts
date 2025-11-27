@@ -22,7 +22,7 @@ export enum FieldNames {
 
 /**
  * In its text, each Field Definition has its name (e.g. 'HYPERLINK', 'DATE' or 'TOC'), and typically has a value.
- * In the case of hyperlinks, this value is a strinspecifying the link location ("http://www.google.com").
+ * In the case of hyperlinks, this value is a string specifying the link location ("http://www.google.com").
  *
  * Each Field Definition also has a set of "Switches". In OOXML these take the form of: "\b" (or any other letter), and
  * they specify certain behaviors of the Field. Many field definitions use the same set of letters, but to represent different
