@@ -14,7 +14,9 @@ export type FieldDefinitionChild = never;
 
 export enum FieldNames {
 	'HYPERLINK' = 'HYPERLINK',
-	'DATE' = 'DATE',
+
+	// Error is NOT a Field Code for MS Word, but rather a catch-all for when a user tries to use an invalid
+	// code or set of options.
 	'ERROR' = 'ERROR',
 }
 
@@ -44,10 +46,6 @@ export type FieldDefinitionProps =
 				hyperlinkCoordinates: string;
 				target: string;
 			};
-	  }
-	| {
-			name: FieldNames.DATE;
-			value: string;
 	  }
 	| {
 			name: FieldNames.ERROR;
