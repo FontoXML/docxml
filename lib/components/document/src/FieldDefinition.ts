@@ -30,7 +30,7 @@ export enum FieldNames {
  *
  * Instead of relying on users to know this, we'll define them with human-readable property names.
  *
- * Ulimately, because this is a finite cascade of fixed options, we'll specify this with a large type with a lot of
+ * Ultimately, because this is a finite cascade of fixed options, we'll specify this with a large type with a lot of
  * prescribed paths for each possible field name we implement.
  *
  */
