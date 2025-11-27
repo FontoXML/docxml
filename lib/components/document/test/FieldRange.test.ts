@@ -2,8 +2,8 @@ import { expect } from 'std/expect';
 import { describe } from 'std/testing/bdd';
 
 import {
+	type FieldNames,
 	FieldDefinition,
-	FieldNames,
 	FieldRangeEnd,
 	FieldRangeStart,
 } from '../../../../mod.ts';
