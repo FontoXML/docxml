@@ -32,6 +32,13 @@ export type SettingsI = {
 	defaultTabStop: Length | null;
 
 	footnoteProperties?: FootnoteProps | null;
+
+	documentProtection?: DocumentProtectionProps | null;
+};
+
+export type DocumentProtectionProps = {
+	edit?: 'none' | 'readOnly' | 'comments' | 'trackChanges' | 'forms';
+	enforcement: boolean;
 };
 
 const DEFAULT_SETTINGS: SettingsI = {
@@ -40,6 +47,7 @@ const DEFAULT_SETTINGS: SettingsI = {
 	attachedTemplate: null,
 	defaultTabStop: null,
 	footnoteProperties: null,
+	documentProtection: null,
 };
 
 enum SettingType {
@@ -97,6 +105,11 @@ const settingsMeta: Array<SettingMeta> = [
 		docxmlName: 'footnoteProperties',
 		ooxmlLocalName: 'footnotePr',
 		ooxmlType: SettingType.Formatting,
+	},
+	{
+		docxmlName: 'documentProtection',
+		ooxmlLocalName: 'documentProtection',
+		ooxmlType: SettingType.OnOff,
 	},
 ];
 
@@ -186,6 +199,10 @@ export class SettingsXml extends XmlFileWithContentTypes {
 					if ($attachedTemplate) then element ${QNS.w}attachedTemplate {
 						attribute ${QNS.r}id { $attachedTemplate }
 					} else (),
+					if (exists($documentProtection)) then element ${QNS.w}documentProtection {
+						attribute ${QNS.w}enforcement { $documentProtection('enforcement') },
+						attribute ${QNS.w}edit { $documentProtection('edit') }
+					} else (),
 					if (exists($footnoteProperties)) then (
 						element ${QNS.w}footnotePr {
 							element ${QNS.w}numFmt { 
@@ -261,7 +278,8 @@ export class SettingsXml extends XmlFileWithContentTypes {
 		const settings = evaluateXPathToMap<SettingsI>(
 			`/${QNS.w}settings/map {
 				"isTrackChangesEnabled": docxml:ct-on-off(./${QNS.w}trackChanges),
-				"evenAndOddHeaders": docxml:ct-on-off(./${QNS.w}evenAndOddHeaders)
+				"evenAndOddHeaders": docxml:ct-on-off(./${QNS.w}evenAndOddHeaders),
+				"documentProtection": docxml:ct-on-off(./${QNS.w}documentProtection)
 			}`,
 			xml
 		);
