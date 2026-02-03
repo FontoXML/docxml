@@ -205,9 +205,9 @@ export class SettingsXml extends XmlFileWithContentTypes {
 					if ($attachedTemplate) then element ${QNS.w}attachedTemplate {
 						attribute ${QNS.r}id { $attachedTemplate }
 					} else (),
-					if ($documentProtection) then element ${QNS.w}documentProtection {
-						attribute ${QNS.w}edit { map:get($documentProtection, 'edit') },
-						attribute ${QNS.w}enforcement { map:get($documentProtection, 'enforcement') }
+					if (exists($documentProtection)) then element ${QNS.w}documentProtection {
+						attribute ${QNS.w}edit { $documentProtection('edit')},
+						attribute ${QNS.w}enforcement { $documentProtection('enforcement') }
 					} else (),
 					if (exists($footnoteProperties)) then (
 						element ${QNS.w}footnotePr {
@@ -228,8 +228,8 @@ export class SettingsXml extends XmlFileWithContentTypes {
 							}
 						}
 					) else (),
-					 if (exists($defaultTabStop)) then element ${QNS.w}defaultTabStop {
-						attribute ${QNS.w}val { map:get($defaultTabStop, 'twip') }
+					if (exists($defaultTabStop)) then element ${QNS.w}defaultTabStop {
+						attribute ${QNS.w}val { $defaultTabStop('twip') }
 					} else ()
 				}
 			</w:settings>`,
@@ -280,7 +280,12 @@ export class SettingsXml extends XmlFileWithContentTypes {
 			`/${QNS.w}settings/map {
 				"isTrackChangesEnabled": docxml:ct-on-off(./${QNS.w}trackChanges),
 				"evenAndOddHeaders": docxml:ct-on-off(./${QNS.w}evenAndOddHeaders),
-				"documentProtection": docxml:ct-on-off(./${QNS.w}documentProtection)
+				"documentProtection": if (./${QNS.w}documentProtection) then (
+					map {
+						"edit": string(./${QNS.w}documentProtection/@${QNS.w}edit),
+						"enforcement": docxml:st-on-off(./${QNS.w}documentProtection/@${QNS.w}enforcement)
+					}
+				) else ()
 			}`,
 			xml
 		);
