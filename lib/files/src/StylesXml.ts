@@ -174,13 +174,13 @@ export class StylesXml extends XmlFile {
 						async ({ paragraph, text, table, ...style }) => ({
 							...style,
 							ppr: await paragraphPropertiesToNode(
-								paragraph as ParagraphStyle['paragraph']
+								paragraph as ParagraphStyle['paragraph'],
 							),
 							rpr: await textPropertiesToNode(
-								text as ParagraphStyle['text']
+								text as ParagraphStyle['text'],
 							),
 							tblpr: tablePropertiesToNode(
-								table as TableStyle['table']
+								table as TableStyle['table'],
 							),
 							conditions: table?.conditions
 								? await Promise.all(
@@ -190,17 +190,17 @@ export class StylesXml extends XmlFile {
 													{
 														...properties,
 														type: type as TableConditionalTypes,
-													}
-												)
-										)
-								  )
+													},
+												),
+										),
+									)
 								: null,
-						})
-					)
+						}),
+					),
 				),
 				latentStyles: this.#latentStyles,
 			},
-			true
+			true,
 		);
 	}
 
@@ -210,7 +210,7 @@ export class StylesXml extends XmlFile {
 	 * method throws when the identifier is not unique.
 	 */
 	public add(
-		properties: Omit<AnyStyleDefinition, 'id'> & { id?: string }
+		properties: Omit<AnyStyleDefinition, 'id'> & { id?: string },
 	): string {
 		const id =
 			properties.id ||
@@ -279,21 +279,21 @@ export class StylesXml extends XmlFile {
 	public static fromDom(
 		dom: Document,
 		location: string,
-		theme?: ThemeXml
+		theme?: ThemeXml,
 	): StylesXml {
 		const instance = new StylesXml(location);
 
 		const defaultRunProperties = textPropertiesFromNode(
 			evaluateXPathToFirstNode(
 				`/*/${QNS.w}docDefaults/${QNS.w}rPrDefault/${QNS.w}rPr`,
-				dom
-			)
+				dom,
+			),
 		);
 		const defaultParagraphProperties = paragraphPropertiesFromNode(
 			evaluateXPathToFirstNode(
 				`/*/${QNS.w}docDefaults/${QNS.w}pPrDefault/${QNS.w}pPr`,
-				dom
-			)
+				dom,
+			),
 		);
 
 		instance.addDefaults({
@@ -337,7 +337,7 @@ export class StylesXml extends XmlFile {
 					"ppr": ./${QNS.w}pPr,
 					"rpr": ./${QNS.w}rPr
 				}}`,
-				dom
+				dom,
 			).map(({ ppr, rpr, tblpr, tblStylePr, ...json }) => {
 				const runProperties = textPropertiesFromNode(rpr);
 				const instanceFont =
@@ -381,20 +381,20 @@ export class StylesXml extends XmlFile {
 							? {
 									conditions: (
 										tblStylePr.map(
-											tableConditionalPropertiesFromNode
+											tableConditionalPropertiesFromNode,
 										) as TableConditionalProperties[]
 									).reduce(
 										(m, { type, ...style }) =>
 											Object.assign(m, {
 												[type]: style,
 											}),
-										{}
+										{},
 									),
-							  }
+								}
 							: {}),
 					},
 				};
-			})
+			}),
 		);
 
 		// Warning! Untyped objects
@@ -407,7 +407,7 @@ export class StylesXml extends XmlFile {
 				"locked": docxml:st-on-off(@${QNS.w}locked),
 				"semiHidden": docxml:st-on-off(@${QNS.w}semiHidden)
 			}}`,
-			dom
+			dom,
 		).forEach((json) => instance.addLatent(json));
 
 		return instance;
@@ -418,10 +418,16 @@ export class StylesXml extends XmlFile {
 	 */
 	public static override async fromArchive(
 		archive: Archive,
-		location: string
+		location: string,
 	): Promise<StylesXml> {
 		if (archive.hasFile(location)) {
-			const theme = await ThemeXml.fromArchive(archive);
+			let theme: ThemeXml | undefined;
+			try {
+				theme = await ThemeXml.fromArchive(archive);
+			} catch (_) {
+				// no-op
+				// something happened, the theme document couldn't be read.
+			}
 			const dom = await archive.readXml(location);
 			return this.fromDom(dom, location, theme);
 		}
