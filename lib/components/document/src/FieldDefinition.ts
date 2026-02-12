@@ -14,11 +14,18 @@ export type FieldDefinitionChild = never;
 
 export enum FieldNames {
 	'HYPERLINK' = 'HYPERLINK',
+	'TOC' = 'TOC',
 
 	// Error is NOT a Field Code for MS Word, but rather a catch-all for when a user tries to use an invalid
 	// code or set of options.
 	'ERROR' = 'ERROR',
 }
+
+export type FieldDefintion = {
+	name: string;
+	code: string;
+	fieldSwitches: {};
+};
 
 /**
  * In its text, each Field Definition has its name (e.g. 'HYPERLINK', 'DATE' or 'TOC'), and typically has a value.
@@ -45,6 +52,26 @@ export type FieldDefinitionProps =
 				screenTip?: string;
 				hyperlinkCoordinates: string;
 				target: string;
+			};
+	  }
+	| {
+			name: FieldNames.TOC;
+			fieldSwitches?: {
+				includePageNumbers?: {
+					enabled: boolean;
+					switch: '\n';
+				};
+				useBuiltInHeadingStyles?: {
+					enabled: boolean;
+					minimum: number;
+					maximum: number;
+					switch: 'o';
+				};
+				useCustomHeadingStyles?: {
+					enabled: boolean;
+					names: string[];
+					switch: '\t';
+				};
 			};
 	  }
 	| {
