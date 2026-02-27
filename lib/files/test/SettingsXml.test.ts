@@ -24,11 +24,11 @@ describe('SettingsXml', () => {
 		settings.set('attachedTemplate', 'foobar');
 		expect(settings.get('attachedTemplate')).toBe('foobar');
 		const meta = settings.relationships.meta.find(
-			(meta) => meta.type === RelationshipType.attachedTemplate,
+			(meta) => meta.type === RelationshipType.attachedTemplate
 		);
 		expect(meta).toBeTruthy();
 		expect(settings.relationships.getTarget(meta?.id as string)).toBe(
-			'foobar',
+			'foobar'
 		);
 	});
 	it('defaultTabStop', () => {
