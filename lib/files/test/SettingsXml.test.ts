@@ -70,14 +70,14 @@ describe('SettingsXml', () => {
 		});
 
 		expect(serialize(await settings.$$$toNode())).toEqual(
-			'<w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:documentProtection w:edit="readOnly" w:enforcement="true"/></w:settings>'
+			`<w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:documentProtection w:edit="readOnly" w:enforcement="true"/></w:settings>`
 		);
 
 		const docx = Docx.fromNothing();
-		const customSettings = {
+		const customSettings: DocumentProtectionProps = {
 			edit: 'trackedChanges',
 			enforcement: false,
-		} as DocumentProtectionProps;
+		};
 		docx.document.settings.set('documentProtection', customSettings);
 		const docxFromArchive = await Docx.fromArchive(await docx.toArchive());
 		expect(
