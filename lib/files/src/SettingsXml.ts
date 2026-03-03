@@ -205,9 +205,9 @@ export class SettingsXml extends XmlFileWithContentTypes {
 					if ($attachedTemplate) then element ${QNS.w}attachedTemplate {
 						attribute ${QNS.r}id { $attachedTemplate }
 					} else (),
-					if (exists($documentProtection)) then element ${QNS.w}documentProtection {
-						attribute ${QNS.w}edit { $documentProtection('edit')},
-						attribute ${QNS.w}enforcement { $documentProtection('enforcement') }
+					if ($documentProtection) then element ${QNS.w}documentProtection {
+						attribute ${QNS.w}edit { map:get($documentProtection, 'edit') },
+						attribute ${QNS.w}enforcement { map:get($documentProtection, 'enforcement') }
 					} else (),
 					if (exists($footnoteProperties)) then (
 						element ${QNS.w}footnotePr {
