@@ -42,7 +42,8 @@ export type DocumentProtectionProps = {
 		| 'none' // No restrictions: the content can be edited freely
 		| 'readOnly' // Read-only: the content cannot be modified
 		| 'comments' // Comments only: content cannot be edited, only comments can be added
-		| 'trackedChanges'; // Tracked changes only: edits are allowed but must be tracked (change tracking enabled)
+		| 'trackedChanges' // Tracked changes only: edits are allowed but must be tracked (change tracking enabled)
+		| 'forms'; // Only forms fields can be edited
 	enforcement: boolean;
 };
 
