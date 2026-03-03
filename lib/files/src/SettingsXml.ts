@@ -206,7 +206,7 @@ export class SettingsXml extends XmlFileWithContentTypes {
 						attribute ${QNS.r}id { $attachedTemplate }
 					} else (),
 					if (exists($documentProtection)) then element ${QNS.w}documentProtection {
-						attribute ${QNS.w}edit { $documentProtection('edit')},
+						if ($documentProtection('edit')) then attribute ${QNS.w}edit { $documentProtection('edit')} else (),
 						attribute ${QNS.w}enforcement { $documentProtection('enforcement') }
 					} else (),
 					if (exists($footnoteProperties)) then (
@@ -281,9 +281,14 @@ export class SettingsXml extends XmlFileWithContentTypes {
 				"isTrackChangesEnabled": docxml:ct-on-off(./${QNS.w}trackChanges),
 				"evenAndOddHeaders": docxml:ct-on-off(./${QNS.w}evenAndOddHeaders),
 				"documentProtection": if (./${QNS.w}documentProtection) then (
-					map {
-						"edit": string(./${QNS.w}documentProtection/@${QNS.w}edit),
-						"enforcement": docxml:st-on-off(./${QNS.w}documentProtection/@${QNS.w}enforcement)
+					let $edit := string(./${QNS.w}documentProtection/@${QNS.w}edit)
+					let $enforcement := docxml:st-on-off(./${QNS.w}documentProtection/@${QNS.w}enforcement)
+					return if ($edit)
+					then map {
+						"edit": $edit,
+						"enforcement": $enforcement
+					} else map {
+						"enforcement": $enforcement
 					}
 				) else ()
 			}`,
