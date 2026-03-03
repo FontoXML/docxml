@@ -205,6 +205,10 @@ export class SettingsXml extends XmlFileWithContentTypes {
 					if ($attachedTemplate) then element ${QNS.w}attachedTemplate {
 						attribute ${QNS.r}id { $attachedTemplate }
 					} else (),
+					if ($documentProtection) then element ${QNS.w}documentProtection {
+						attribute ${QNS.w}edit { map:get($documentProtection, 'edit') },
+						attribute ${QNS.w}enforcement { map:get($documentProtection, 'enforcement') }
+					} else (),
 					if (exists($footnoteProperties)) then (
 						element ${QNS.w}footnotePr {
 							element ${QNS.w}numFmt { 
@@ -223,24 +227,10 @@ export class SettingsXml extends XmlFileWithContentTypes {
 								attribute ${QNS.w}id { 0 }
 							}
 						}
-					) else (), 
-					${
-						this.#props.defaultTabStop
-							? `
-						element ${QNS.w}defaultTabStop {
-							attribute ${QNS.w}val { map:get($defaultTabStop, 'twip') }
-						}`
-							: '()'
-					},
-					${
-						this.#props.documentProtection
-							? `
-						element ${QNS.w}documentProtection {
-							attribute ${QNS.w}edit { map:get($documentProtection, 'edit') },
-							attribute ${QNS.w}enforcement { map:get($documentProtection, 'enforcement') }
-						}`
-							: '()'
-					}
+					) else (),
+					 if (exists($defaultTabStop)) then element ${QNS.w}defaultTabStop {
+						attribute ${QNS.w}val { map:get($defaultTabStop, 'twip') }
+					} else ()
 				}
 			</w:settings>`,
 			this.#props,
