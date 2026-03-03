@@ -1,9 +1,15 @@
 import { expect } from 'std/expect';
 import { describe, it } from 'std/testing/bdd';
 
+import Docx from '@fontoxml/docxml';
+
 import { RelationshipType } from '../../enums.ts';
+import { serialize } from '../../utilities/src/dom.ts';
 import { pt } from '../../utilities/src/length.ts';
-import { SettingsXml } from '../src/SettingsXml.ts';
+import {
+	type DocumentProtectionProps,
+	SettingsXml,
+} from '../src/SettingsXml.ts';
 
 describe('SettingsXml', () => {
 	it('evenAndOddHeaders', () => {
@@ -51,7 +57,7 @@ describe('SettingsXml', () => {
 			position: 'beneathText',
 		});
 	});
-	it('DocumentProtectionProps', () => {
+	it('documentProtection', async () => {
 		const settings = new SettingsXml('test');
 		expect(settings.get('documentProtection')).toBe(null);
 		settings.set('documentProtection', {
@@ -62,5 +68,20 @@ describe('SettingsXml', () => {
 			edit: 'readOnly',
 			enforcement: true,
 		});
+
+		expect(serialize(await settings.$$$toNode())).toEqual(
+			'<w:settings xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:documentProtection w:edit="readOnly" w:enforcement="true"/></w:settings>'
+		);
+
+		const docx = Docx.fromNothing();
+		const customSettings = {
+			edit: 'trackedChanges',
+			enforcement: false,
+		} as DocumentProtectionProps;
+		docx.document.settings.set('documentProtection', customSettings);
+		const docxFromArchive = await Docx.fromArchive(await docx.toArchive());
+		expect(
+			docxFromArchive.document.settings.get('documentProtection')
+		).toEqual(customSettings);
 	});
 });
