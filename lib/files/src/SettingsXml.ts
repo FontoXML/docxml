@@ -34,6 +34,8 @@ export type SettingsI = {
 	footnoteProperties?: FootnoteProps | null;
 
 	documentProtection?: DocumentProtectionProps | null;
+
+	updateFieldsOnOpen: boolean;
 };
 
 export type DocumentProtectionProps = {
@@ -54,6 +56,7 @@ const DEFAULT_SETTINGS: SettingsI = {
 	defaultTabStop: null,
 	footnoteProperties: null,
 	documentProtection: null,
+	updateFieldsOnOpen: true,
 };
 
 enum SettingType {
@@ -117,6 +120,11 @@ const settingsMeta: Array<SettingMeta> = [
 		ooxmlLocalName: 'documentProtection',
 		ooxmlType: SettingType.OnOff,
 	},
+	{
+		docxmlName: 'updateFieldsOnOpen',
+		ooxmlLocalName: 'updateFields',
+		ooxmlType: SettingType.OnOff,
+	},
 ];
 
 export class SettingsXml extends XmlFileWithContentTypes {
@@ -154,7 +162,7 @@ export class SettingsXml extends XmlFileWithContentTypes {
 				? (this.relationships.add(
 						meta.ooxmlRelationshipType,
 						value as string
-					) as SettingsI[Key])
+				  ) as SettingsI[Key])
 				: value;
 		} else {
 			this.#props[key] = value;
@@ -173,7 +181,7 @@ export class SettingsXml extends XmlFileWithContentTypes {
 			return this.#props[key]
 				? (this.relationships.getTarget(
 						this.#props[key] as string
-					) as SettingsI[Key])
+				  ) as SettingsI[Key])
 				: (this.#props[key] as SettingsI[Key]);
 		} else {
 			return this.#props[key];
@@ -230,6 +238,9 @@ export class SettingsXml extends XmlFileWithContentTypes {
 					) else (),
 					if (exists($defaultTabStop)) then element ${QNS.w}defaultTabStop {
 						attribute ${QNS.w}val { $defaultTabStop('twip') }
+					} else (), 
+					if ($updateFieldsOnOpen) then element ${QNS.w}updateFields {
+						attribute ${QNS.w}val { $updateFieldsOnOpen }
 					} else ()
 				}
 			</w:settings>`,
@@ -290,7 +301,8 @@ export class SettingsXml extends XmlFileWithContentTypes {
 					} else map {
 						"enforcement": $enforcement
 					}
-				) else ()
+				) else (), 
+				"updateFieldsOnOpen": docxml:st-on-off(./${QNS.w}updateFields),
 			}`,
 			xml
 		);

@@ -101,7 +101,7 @@ export class FieldDefinition extends Component<
 						([_key, value]) => {
 							switch (_key) {
 								case 'levels':
-									pattern = `\\o \\t "BookTitle,1,ChapterTitle,2" \\h \\z `;
+									pattern = `\\o \\t "BookTitle,1,ChapterTitle,2" \\h \\z`;
 									break;
 							}
 						}
