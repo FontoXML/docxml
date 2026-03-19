@@ -21,12 +21,6 @@ export enum FieldNames {
 	'ERROR' = 'ERROR',
 }
 
-export type FieldDefintion = {
-	name: string;
-	code: string;
-	fieldSwitches: {};
-};
-
 /**
  * In its text, each Field Definition has its name (e.g. 'HYPERLINK', 'DATE' or 'TOC'), and typically has a value.
  * In the case of hyperlinks, this value is a string specifying the link location ("http://www.google.com").
@@ -57,9 +51,14 @@ export type FieldDefinitionProps =
 	| {
 			name: FieldNames.TOC;
 			fieldSwitches?: {
+				levels?: {
+					minimum: number;
+					maximum: number;
+					switch: 'o';
+				};
 				includePageNumbers?: {
 					enabled: boolean;
-					switch: '\n';
+					switch: '\\n';
 				};
 				useBuiltInHeadingStyles?: {
 					enabled: boolean;
@@ -70,7 +69,7 @@ export type FieldDefinitionProps =
 				useCustomHeadingStyles?: {
 					enabled: boolean;
 					names: string[];
-					switch: '\t';
+					switch: '\\t';
 				};
 			};
 	  }
@@ -88,13 +87,42 @@ export class FieldDefinition extends Component<
 	public static override readonly mixed: boolean = false;
 
 	public override toNode(): Node {
+		let propValues;
+		let fieldSwitches = '';
+		let pattern = '';
+		switch (this.props.name) {
+			case FieldNames.HYPERLINK:
+				propValues = this.props.value;
+				break;
+			case FieldNames.TOC:
+				propValues = null;
+				if (this.props.fieldSwitches) {
+					Object.entries(this.props.fieldSwitches).forEach(
+						([_key, value]) => {
+							switch (_key) {
+								case 'levels':
+									pattern = `\\o \\t "BookTitle,1,ChapterTitle,2" \\h \\z `;
+									break;
+							}
+						}
+					);
+				}
+				break;
+			case FieldNames.ERROR:
+				propValues = this.props.value ?? '';
+				break;
+		}
+		console.log(fieldSwitches);
 		return create(
 			`
-			element node { normalize-space(concat($name, " ", $value)), "\\*" }/text()
+			element node { 
+				normalize-space(concat(" ", $name, " ", $value, " ", $pattern, " "))
+			}/text()
 			`,
 			{
 				name: this.props.name,
-				value: this.props.value,
+				value: propValues,
+				pattern: pattern,
 			}
 		);
 	}
