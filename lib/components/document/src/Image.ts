@@ -179,11 +179,14 @@ export class Image extends Component<ImageProps, ImageChild> {
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public override toNode(_ancestry: ComponentAncestor[]): Node {
-		if (!this.#meta.relationshipId) {
-			throw new Error(
-				'Cannot serialize an image outside the context of an Document'
-			);
-		}
+		/**
+		 * @Todo This breaks word input if there are images.... why??
+		 */
+		// if (!this.#meta.relationshipId) {
+		// 	throw new Error(
+		// 		'Cannot serialize an image outside the context of an Document'
+		// 	);
+		// }
 
 		let extensionList: Node | null = null;
 		const { svg } = this.meta.extensions;
