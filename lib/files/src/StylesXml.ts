@@ -276,6 +276,59 @@ export class StylesXml extends XmlFile {
 		return this.#styles.find((style) => style.id === id);
 	}
 
+	private addDefaultPropertiesToTextProperties(
+		runProperties: TextProperties
+	): void {
+		// FONT
+		const defaultFont = this.#docDefaultStyles?.defaultRunProperties?.font;
+		if (runProperties.font === undefined || runProperties.font === null) {
+			runProperties.font = defaultFont;
+		}
+		if (runProperties.font && typeof runProperties.font !== 'string') {
+			for (const key in runProperties.font) {
+				if (
+					runProperties.font[key as keyof TextProperties['font']] ===
+						null &&
+					defaultFont &&
+					typeof defaultFont !== 'string'
+				) {
+					runProperties.font[key as keyof TextProperties['font']] =
+						defaultFont[key as keyof TextProperties['font']];
+				}
+			}
+		}
+
+		// FONT SIZE
+		/**
+		 * @improve like font
+		 */
+		const defaultFontSize =
+			this.#docDefaultStyles?.defaultRunProperties?.fontSize;
+		if (
+			runProperties.fontSize === undefined ||
+			runProperties.fontSize === null
+		) {
+			runProperties.fontSize = defaultFontSize;
+		}
+	}
+
+	private addDefaultPropertiesToParagraphProperties(
+		paragraphProperties: ParagraphProperties
+	): void {
+		// SPACING
+		/**
+		 * @improve like font
+		 */
+		const defaultSpacing =
+			this.#docDefaultStyles?.defaultParagraphProperties?.spacing;
+		if (
+			paragraphProperties.spacing === undefined ||
+			paragraphProperties.spacing === null
+		) {
+			paragraphProperties.spacing = defaultSpacing;
+		}
+	}
+
 	public static fromDom(
 		dom: Document,
 		location: string,
@@ -301,7 +354,7 @@ export class StylesXml extends XmlFile {
 			defaultParagraphProperties: defaultParagraphProperties,
 		} as DocumentDefaults);
 
-		//We should not get here unless there's *NOTHING* telling us what to do.
+		// We should not get here unless there's *NOTHING* telling us what to do.
 		let instanceFontProperties: TextProperties['font'] =
 			instance.#docDefaultStyles?.defaultRunProperties?.font;
 		if (
@@ -340,59 +393,44 @@ export class StylesXml extends XmlFile {
 				dom
 			).map(({ ppr, rpr, tblpr, tblStylePr, ...json }) => {
 				const runProperties = textPropertiesFromNode(rpr);
-				const instanceFont =
-					instance.#docDefaultStyles?.defaultRunProperties?.font;
-				if (json.isDefault) {
-					if (
-						runProperties.font === undefined ||
-						runProperties.font === null
-					) {
-						runProperties.font = instanceFont;
-					}
-					if (
-						runProperties.font &&
-						typeof runProperties.font !== 'string'
-					) {
-						for (const key in runProperties.font) {
-							if (
-								runProperties.font[
-									key as keyof TextProperties['font']
-								] === null &&
-								instanceFont &&
-								typeof instanceFont !== 'string'
-							) {
-								runProperties.font[
-									key as keyof TextProperties['font']
-								] =
-									instanceFont[
-										key as keyof TextProperties['font']
-									];
+				const paragraphProperties = paragraphPropertiesFromNode(ppr);
+				const tableProperties = {
+					...tablePropertiesFromNode(tblpr),
+					...(tblStylePr.length
+						? {
+								conditions: (
+									tblStylePr.map(
+										tableConditionalPropertiesFromNode
+									) as TableConditionalProperties[]
+								).reduce(
+									(m, { type, ...style }) =>
+										Object.assign(m, {
+											[type]: style,
+										}),
+									{}
+								),
 							}
-						}
+						: {}),
+				};
+
+				if (json.isDefault) {
+					if (json.type === 'paragraph') {
+						// Should paragraph type add default text properties as well?
+						instance.addDefaultPropertiesToParagraphProperties(
+							paragraphProperties
+						);
+					} else if (json.type === 'character') {
+						instance.addDefaultPropertiesToTextProperties(
+							runProperties
+						);
 					}
 				}
+
 				return {
 					...json,
-					paragraph: paragraphPropertiesFromNode(ppr),
+					paragraph: paragraphProperties,
 					text: runProperties,
-					table: {
-						...tablePropertiesFromNode(tblpr),
-						...(tblStylePr.length
-							? {
-									conditions: (
-										tblStylePr.map(
-											tableConditionalPropertiesFromNode
-										) as TableConditionalProperties[]
-									).reduce(
-										(m, { type, ...style }) =>
-											Object.assign(m, {
-												[type]: style,
-											}),
-										{}
-									),
-								}
-							: {}),
-					},
+					table: tableProperties,
 				};
 			})
 		);
