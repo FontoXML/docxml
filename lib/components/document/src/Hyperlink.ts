@@ -34,21 +34,26 @@ export type HyperlinkProps =
 			bookmark?: never;
 			url?: never;
 			tooltip?: string;
-			id?: string;
+			/**
+			 * RelationshipId when the hyperlink is imported from an existing DOCX file.
+			 * This is used to preserve the relationship when re-serializing the file,
+			 * and should not be set manually when creating new hyperlinks.
+			 */
+			relationshipId?: string;
 	  }
 	| {
 			anchor?: never;
 			bookmark: Bookmark;
 			url?: never;
 			tooltip?: string;
-			id?: string;
+			relationshipId?: string;
 	  }
 	| {
 			anchor?: never;
 			bookmark?: never;
 			url: string;
 			tooltip?: string;
-			id?: string;
+			relationshipId?: string;
 	  };
 
 /**
@@ -114,7 +119,7 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 			HyperlinkProps & { children: Node[] }
 		>(
 			`map {
-				"id": ./@${QNS.r}id/string(),
+				"relationshipId": ./@${QNS.r}id/string(),
 				"anchor": ./@${QNS.w}anchor/string(),
 				"tooltip": ./@${QNS.w}tooltip/string(),
 				"children": array{ ./(
@@ -127,9 +132,9 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 			node
 		);
 
-		if (props.id) {
+		if (props.relationshipId) {
 			// if it is an external, the url (target) is stored in the relationships file.
-			props.url = context.relationships?.getTarget(props.id);
+			props.url = context.relationships?.getTarget(props.relationshipId);
 		}
 
 		return new Hyperlink(

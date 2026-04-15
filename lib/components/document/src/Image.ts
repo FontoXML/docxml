@@ -44,6 +44,12 @@ export type ImageProps = {
 	alt?: null | string;
 	width: Length;
 	height: Length;
+	/**
+	 * RelationshipId when the image is imported from an existing DOCX file.
+	 * This is used to preserve the relationship when re-serializing the file,
+	 * and should not be set manually when creating new images.
+	 */
+	relationshipId?: string;
 };
 
 /**
@@ -129,7 +135,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 		this.#meta = {
 			location: `word/media/${createRandomId('img')}`,
 			mime: props.mime ? Promise.resolve(props.mime) : null,
-			relationshipId: null,
+			relationshipId: props.relationshipId || null,
 			extensions: {},
 		};
 
@@ -179,14 +185,11 @@ export class Image extends Component<ImageProps, ImageChild> {
 	 * Creates an XML DOM node for this component instance.
 	 */
 	public override toNode(_ancestry: ComponentAncestor[]): Node {
-		/**
-		 * @Todo This breaks word input if there are images.... why??
-		 */
-		// if (!this.#meta.relationshipId) {
-		// 	throw new Error(
-		// 		'Cannot serialize an image outside the context of an Document'
-		// 	);
-		// }
+		if (!this.#meta.relationshipId) {
+			throw new Error(
+				'Cannot serialize an image outside the context of an Document'
+			);
+		}
 
 		let extensionList: Node | null = null;
 		const { svg } = this.meta.extensions;
@@ -358,6 +361,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 			title,
 			width,
 			height,
+			relationshipId: main.relationshipId,
 		});
 		image.#meta.location = main.location;
 		if (svg) {
@@ -377,6 +381,7 @@ type ExtractedBlipNodeData = {
 	main: {
 		data: Promise<Uint8Array>;
 		location: string;
+		relationshipId?: string;
 	};
 	svg?: {
 		data: Promise<string>;
@@ -400,6 +405,7 @@ function extractDataFromBlipNode(
 		main: {
 			data,
 			location,
+			relationshipId: blipEmbedRel,
 		},
 	};
 
