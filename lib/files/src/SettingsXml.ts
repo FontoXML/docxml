@@ -56,7 +56,7 @@ const DEFAULT_SETTINGS: SettingsI = {
 	defaultTabStop: null,
 	footnoteProperties: null,
 	documentProtection: null,
-	updateFieldsOnOpen: true,
+	updateFieldsOnOpen: false,
 };
 
 enum SettingType {
@@ -289,7 +289,7 @@ export class SettingsXml extends XmlFileWithContentTypes {
 
 		const settings = evaluateXPathToMap<SettingsI>(
 			`/${QNS.w}settings/map {
-				"isTrackChangesEnabled": docxml:ct-on-off(./${QNS.w}trackChanges),
+				"isTrackChangesEnabled": docxml:ct-on-off(./${QNS.w}trackRevisions),
 				"evenAndOddHeaders": docxml:ct-on-off(./${QNS.w}evenAndOddHeaders),
 				"documentProtection": if (./${QNS.w}documentProtection) then (
 					let $edit := string(./${QNS.w}documentProtection/@${QNS.w}edit)
@@ -302,7 +302,7 @@ export class SettingsXml extends XmlFileWithContentTypes {
 						"enforcement": $enforcement
 					}
 				) else (), 
-				"updateFieldsOnOpen": docxml:st-on-off(./${QNS.w}updateFields),
+				"updateFieldsOnOpen": docxml:st-on-off(./${QNS.w}updateFields)
 			}`,
 			xml
 		);

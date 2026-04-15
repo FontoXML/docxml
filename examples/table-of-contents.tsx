@@ -1,7 +1,6 @@
-// deno-lint-ignore-file jsx-key
 /** @jsx Docx.jsx */
 
-import { FieldDefinitionProps } from '../lib/components/document/src/FieldDefinition.ts';
+import type { FieldDefinitionProps } from '../lib/components/document/src/FieldDefinition.ts';
 import { FieldRangeEnd } from '../lib/components/document/src/FieldRangeEnd.ts';
 import Docx, {
 	FieldDefinition,
@@ -53,7 +52,7 @@ const tocProps: FieldDefinitionProps = {
  */
 docx.document.set(
 	<Section>
-		<Section pageBreakType={'continuous'}>
+		<Section pageBreakType='continuous'>
 			<Paragraph>
 				<Text>
 					<FieldRangeStart />

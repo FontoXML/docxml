@@ -2,8 +2,8 @@ import { expect } from 'std/expect';
 import { describe } from 'std/testing/bdd';
 
 import {
-	type FieldNames,
 	FieldDefinition,
+	FieldNames,
 	FieldRangeEnd,
 	FieldRangeStart,
 } from '../../../../mod.ts';
@@ -18,18 +18,42 @@ describe('FieldDefinition', () => {
 
 	describe('FieldDefinition from node', () => {
 		const newFieldDef = FieldDefinition.fromNode(newFieldDefNode);
-		expect(newFieldDef.props.name).toBe('HYPERLINK');
+		expect(newFieldDef.props.name).toBe(FieldNames.HYPERLINK);
+		expect(
+			'switches' in newFieldDef.props ? newFieldDef.props.switches : []
+		).toEqual(['\\*']);
 	});
 
 	describe('FieldDefinition to node', () => {
 		const newFieldDef = new FieldDefinition({
-			name: 'HYPERLINK' as FieldNames,
+			name: FieldNames.HYPERLINK,
 			value: 'http://wwww.google.com?',
+			switches: ['\\*'],
 		}).toNode();
 
 		expect(serialize(newFieldDef)).toBe(
 			'HYPERLINK http://wwww.google.com? \\*'
 		);
+	});
+
+	describe('FieldDefinition with generic enum field', () => {
+		const newFieldDef = new FieldDefinition({
+			name: FieldNames.PAGE,
+			switches: ['\\*', 'MERGEFORMAT'],
+		}).toNode();
+
+		expect(serialize(newFieldDef)).toBe('PAGE \\* MERGEFORMAT');
+	});
+
+	describe('FieldDefinition unknown field from node', () => {
+		const unknownFieldNode = create(
+			`<w:instrText xmlns:w="${NamespaceUri.w}">NOTAFIELD 123</w:instrText>`
+		);
+
+		const parsed = FieldDefinition.fromNode(unknownFieldNode);
+		expect(parsed.props.name).toBe(FieldNames.ERROR);
+		expect('value' in parsed.props ? parsed.props.value : null).toBe('123');
+		expect(serialize(parsed.toNode())).toBe('NOTAFIELD 123');
 	});
 });
 
