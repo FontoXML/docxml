@@ -34,18 +34,21 @@ export type HyperlinkProps =
 			bookmark?: never;
 			url?: never;
 			tooltip?: string;
+			id?: string;
 	  }
 	| {
 			anchor?: never;
 			bookmark: Bookmark;
 			url?: never;
 			tooltip?: string;
+			id?: string;
 	  }
 	| {
 			anchor?: never;
 			bookmark?: never;
 			url: string;
 			tooltip?: string;
+			id?: string;
 	  };
 
 /**
@@ -111,6 +114,7 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 			HyperlinkProps & { children: Node[] }
 		>(
 			`map {
+				"id": ./@${QNS.r}id/string(),
 				"anchor": ./@${QNS.w}anchor/string(),
 				"tooltip": ./@${QNS.w}tooltip/string(),
 				"children": array{ ./(
@@ -122,6 +126,12 @@ export class Hyperlink extends Component<HyperlinkProps, HyperlinkChild> {
 			}`,
 			node
 		);
+
+		if (props.id) {
+			// if it is an external, the url (target) is stored in the relationships file.
+			props.url = context.relationships?.getTarget(props.id);
+		}
+
 		return new Hyperlink(
 			props,
 			...createChildComponentsFromNodes<HyperlinkChild>(

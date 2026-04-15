@@ -414,6 +414,7 @@ export class StylesXml extends XmlFile {
 				};
 
 				if (json.isDefault) {
+					// Should these properties be added to any style that does not have values defined for them?
 					if (json.type === 'paragraph') {
 						// Should paragraph type add default text properties as well?
 						instance.addDefaultPropertiesToParagraphProperties(
