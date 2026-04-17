@@ -80,9 +80,10 @@ export enum RelationshipType {
 	// Legacy template (.dot)
 	downRev = 'http://schemas.microsoft.com/office/2006/relationships/downRev',
 	graphicFrameDoc = 'http://schemas.microsoft.com/office/2006/relationships/graphicFrameDoc',
-	/**
-	 * @todo Decide how to implement these two new relationships.
-	 * Info (?) about thumbnail: https://c-rex.net/samples/ooxml/e1/Part1/OOXML_P1_Fundamentals_Thumbnail_topic_ID0EWLEO.html?hl=thumbnail
+	/*
+	 * thumbnail and stylesWithEffects are relationships that are not yet known.
+	 * For the time being, they will be treated as such in lib > files > index.ts.
+	 * Info about thumbnail: https://c-rex.net/samples/ooxml/e1/Part1/OOXML_P1_Fundamentals_Thumbnail_topic_ID0EWLEO.html?hl=thumbnail
 	 * I guess that something like "CorePropertiesXml.ts" has to be created.
 	 */
 	thumbnail = 'http://schemas.openxmlformats.org/package/2006/relationships/metadata/thumbnail',
