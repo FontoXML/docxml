@@ -140,6 +140,30 @@ export class DocumentXml extends XmlFileWithContentTypes {
 	}
 
 	/**
+	 * document.xml content as it was imported using .fromArchive().
+	 * Use this with caution, as this XML may differ from the
+	 * content of DocumentXml as soon as it is used.
+	 */
+	#initialRawXml: Document | null = null;
+
+	/**
+	 * The API representing the raw XML content of "document.xml"
+	 * as it was imported using .fromArchive().
+	 * Use this with caution, as this XML may differ from the content
+	 * of DocumentXml as soon as it is used.
+	 */
+	public get initialRawXml(): Document | null {
+		return this.#initialRawXml;
+	}
+
+	/**
+	 * Set the raw XML content of "document.xml".
+	 */
+	public set initialRawXml(document: Document) {
+		this.#initialRawXml = document;
+	}
+
+	/**
 	 * The components normalized from #root, which is potentially arrayed, promised, array promised etc.
 	 */
 	public get children(): Promise<DocumentChild[]> {
@@ -162,10 +186,9 @@ export class DocumentXml extends XmlFileWithContentTypes {
 									flatten,
 									Promise.resolve([])
 								)),
-						  ]
+							]
 						: [...flat, child];
-				},
-				Promise.resolve([]))
+				}, Promise.resolve([]))
 			);
 	}
 
@@ -264,6 +287,7 @@ export class DocumentXml extends XmlFileWithContentTypes {
 		);
 		const doc = new DocumentXml(location, relationships);
 		const dom = await archive.readXml(location);
+		doc.initialRawXml = dom;
 		const sections = evaluateXPathToNodes(
 			`/*/${QNS.w}body/(${QNS.w}p/${QNS.w}pPr/${QNS.w}sectPr | ${QNS.w}sectPr)`,
 			dom
@@ -279,7 +303,7 @@ export class DocumentXml extends XmlFileWithContentTypes {
 						sectionChildComponentNames,
 						evaluateXPathToNodes(`/*/${QNS.w}body/*`, dom),
 						context
-				  )
+					)
 		);
 		return doc;
 	}
