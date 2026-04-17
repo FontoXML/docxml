@@ -253,6 +253,13 @@ export class StylesXml extends XmlFile {
 	}
 
 	/**
+	 * Makes accessible the default styles for this document outside of this library.
+	 */
+	public getDefaultStyles(): DocumentDefaults {
+		return this.#docDefaultStyles;
+	}
+
+	/**
 	 * Adds a latent style, which means that the Word processor should determine its actual properties
 	 */
 	public addLatent(properties: LatentStyle): void {
@@ -412,20 +419,6 @@ export class StylesXml extends XmlFile {
 							}
 						: {}),
 				};
-
-				if (json.isDefault) {
-					// Should these properties be added to any style that does not have values defined for them?
-					if (json.type === 'paragraph') {
-						// Should paragraph type add default text properties as well?
-						instance.addDefaultPropertiesToParagraphProperties(
-							paragraphProperties
-						);
-					} else if (json.type === 'character') {
-						instance.addDefaultPropertiesToTextProperties(
-							runProperties
-						);
-					}
-				}
 
 				return {
 					...json,
