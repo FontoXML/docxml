@@ -283,59 +283,6 @@ export class StylesXml extends XmlFile {
 		return this.#styles.find((style) => style.id === id);
 	}
 
-	private addDefaultPropertiesToTextProperties(
-		runProperties: TextProperties
-	): void {
-		// FONT
-		const defaultFont = this.#docDefaultStyles?.defaultRunProperties?.font;
-		if (runProperties.font === undefined || runProperties.font === null) {
-			runProperties.font = defaultFont;
-		}
-		if (runProperties.font && typeof runProperties.font !== 'string') {
-			for (const key in runProperties.font) {
-				if (
-					runProperties.font[key as keyof TextProperties['font']] ===
-						null &&
-					defaultFont &&
-					typeof defaultFont !== 'string'
-				) {
-					runProperties.font[key as keyof TextProperties['font']] =
-						defaultFont[key as keyof TextProperties['font']];
-				}
-			}
-		}
-
-		// FONT SIZE
-		/**
-		 * @improve like font
-		 */
-		const defaultFontSize =
-			this.#docDefaultStyles?.defaultRunProperties?.fontSize;
-		if (
-			runProperties.fontSize === undefined ||
-			runProperties.fontSize === null
-		) {
-			runProperties.fontSize = defaultFontSize;
-		}
-	}
-
-	private addDefaultPropertiesToParagraphProperties(
-		paragraphProperties: ParagraphProperties
-	): void {
-		// SPACING
-		/**
-		 * @improve like font
-		 */
-		const defaultSpacing =
-			this.#docDefaultStyles?.defaultParagraphProperties?.spacing;
-		if (
-			paragraphProperties.spacing === undefined ||
-			paragraphProperties.spacing === null
-		) {
-			paragraphProperties.spacing = defaultSpacing;
-		}
-	}
-
 	public static fromDom(
 		dom: Document,
 		location: string,
