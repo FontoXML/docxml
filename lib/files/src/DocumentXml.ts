@@ -144,7 +144,7 @@ export class DocumentXml extends XmlFileWithContentTypes {
 	 * Use this with caution, as this XML may differ from the
 	 * content of DocumentXml as soon as it is used.
 	 */
-	#initialRawXml: Document | null = null;
+	#xml: Document | null = null;
 
 	/**
 	 * The API representing the raw XML content of "document.xml"
@@ -152,15 +152,15 @@ export class DocumentXml extends XmlFileWithContentTypes {
 	 * Use this with caution, as this XML may differ from the content
 	 * of DocumentXml as soon as it is used.
 	 */
-	public get initialRawXml(): Document | null {
-		return this.#initialRawXml;
+	public get xml(): Document | null {
+		return this.#xml;
 	}
 
 	/**
 	 * Set the raw XML content of "document.xml".
 	 */
-	public set initialRawXml(document: Document) {
-		this.#initialRawXml = document;
+	protected set xml(document: Document) {
+		this.#xml = document;
 	}
 
 	/**
@@ -287,7 +287,7 @@ export class DocumentXml extends XmlFileWithContentTypes {
 		);
 		const doc = new DocumentXml(location, relationships);
 		const dom = await archive.readXml(location);
-		doc.initialRawXml = dom;
+		doc.xml = dom; // Store the initial xml
 		const sections = evaluateXPathToNodes(
 			`/*/${QNS.w}body/(${QNS.w}p/${QNS.w}pPr/${QNS.w}sectPr | ${QNS.w}sectPr)`,
 			dom

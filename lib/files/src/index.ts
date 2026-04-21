@@ -69,7 +69,7 @@ export function castRelationshipToClass(
 		case RelationshipType.graphicFrameDoc:
 		case RelationshipType.glossary:
 		/**
-		 * @todo Implement these relationships. Check enum.ts
+		 * @todo Implement these relationships. Check enums.ts
 		 */
 		case RelationshipType.thumbnail:
 		case RelationshipType.stylesWithEffects:

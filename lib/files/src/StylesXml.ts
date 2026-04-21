@@ -243,6 +243,13 @@ export class StylesXml extends XmlFile {
 	}
 
 	/**
+	 * Makes accessible the default styles for this document outside of this library.
+	 */
+	public get docDefaultStyles(): DocumentDefaults {
+		return this.#docDefaultStyles;
+	}
+
+	/**
 	 * Adds default styles.
 	 */
 	public addDefaults(properties: DocumentDefaults): void {
@@ -250,13 +257,6 @@ export class StylesXml extends XmlFile {
 			properties.defaultRunProperties;
 		this.#docDefaultStyles.defaultParagraphProperties =
 			properties.defaultParagraphProperties;
-	}
-
-	/**
-	 * Makes accessible the default styles for this document outside of this library.
-	 */
-	public getDefaultStyles(): DocumentDefaults {
-		return this.#docDefaultStyles;
 	}
 
 	/**
