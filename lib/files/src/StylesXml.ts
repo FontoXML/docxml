@@ -95,9 +95,14 @@ export class StylesXml extends XmlFile {
 		defaultRunProperties: null,
 		defaultParagraphProperties: null,
 	};
+	#theme: ThemeXml | null = null;
 
 	public constructor(location: string) {
 		super(location);
+	}
+
+	public get theme(): ThemeXml | null {
+		return this.#theme;
 	}
 
 	/**
@@ -289,6 +294,9 @@ export class StylesXml extends XmlFile {
 		theme?: ThemeXml
 	): StylesXml {
 		const instance = new StylesXml(location);
+		if (theme) {
+			instance.#theme = theme;
+		}
 
 		const defaultRunProperties = textPropertiesFromNode(
 			evaluateXPathToFirstNode(
