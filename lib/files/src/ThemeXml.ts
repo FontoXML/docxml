@@ -2,7 +2,7 @@ import type { Archive } from '../../classes/src/Archive.ts';
 import { XmlFile } from '../../classes/src/XmlFile.ts';
 import { FileMime } from '../../enums.ts';
 import { create } from '../../utilities/src/dom.ts';
-import { QNS } from '../../utilities/src/namespaces.ts';
+import { NamespaceUri, QNS } from '../../utilities/src/namespaces.ts';
 import {
 	evaluateXPathToFirstNode,
 	evaluateXPathToMap,
@@ -303,7 +303,7 @@ export class ThemeXml extends XmlFile {
 			: [];
 
 		const doc = create(
-			`<a:theme xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">{
+			`<a:theme xmlns:a="${NamespaceUri.a}">{
 				if ($themeName != '') then attribute name { $themeName } else (),
 				element a:themeElements {
 					if ($hasColorScheme) then
@@ -311,7 +311,7 @@ export class ThemeXml extends XmlFile {
 							attribute name { $clrSchemeName },
 							for $c in array:flatten($colors)
 							return element {
-								fn:QName('http://schemas.openxmlformats.org/drawingml/2006/main', concat('a:', $c('slot')))
+								fn:QName('${NamespaceUri.a}', concat('a:', $c('slot')))
 							} {
 								if ($c('type') = 'sysClr') then
 									element a:sysClr {
