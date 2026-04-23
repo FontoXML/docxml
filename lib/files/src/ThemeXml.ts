@@ -1,6 +1,10 @@
 import type { Archive } from '../../classes/src/Archive.ts';
 import { XmlFile } from '../../classes/src/XmlFile.ts';
 import { FileMime } from '../../enums.ts';
+import type {
+	ThemeColor,
+	ThemeFont,
+} from '../../properties/src/shared-properties.ts';
 import { create } from '../../utilities/src/dom.ts';
 import { NamespaceUri, QNS } from '../../utilities/src/namespaces.ts';
 import {
@@ -10,12 +14,23 @@ import {
 } from '../../utilities/src/xquery.ts';
 
 /**
+ * Maps OOXML theme color slot aliases to their canonical ColorScheme
+ * property names per the OOXML spec.
+ */
+const THEME_COLOR_ALIAS_MAP: Record<string, ThemeColor> = {
+	background1: 'light1',
+	text1: 'dark1',
+	background2: 'light2',
+	text2: 'dark2',
+};
+
+/**
  * A single color definition within a theme's color scheme.
  *
  * In OOXML, theme colors can be defined either as a system color reference
  * or as an explicit sRGB hex value.
  */
-export type ThemeColor = {
+export type ThemeColorScheme = {
 	/**
 	 * Whether this color is a system reference or a literal sRGB hex value.
 	 */
@@ -45,51 +60,51 @@ export type ColorScheme = {
 	/**
 	 * Primary dark color.
 	 */
-	dark1: ThemeColor;
+	dark1: ThemeColorScheme;
 	/**
 	 * Primary light color.
 	 */
-	light1: ThemeColor;
+	light1: ThemeColorScheme;
 	/**
 	 * Secondary dark color.
 	 */
-	dark2: ThemeColor;
+	dark2: ThemeColorScheme;
 	/**
 	 * Secondary light color.
 	 */
-	light2: ThemeColor;
+	light2: ThemeColorScheme;
 	/**
 	 * Accent color 1.
 	 */
-	accent1: ThemeColor;
+	accent1: ThemeColorScheme;
 	/**
 	 * Accent color 2.
 	 */
-	accent2: ThemeColor;
+	accent2: ThemeColorScheme;
 	/**
 	 * Accent color 3.
 	 */
-	accent3: ThemeColor;
+	accent3: ThemeColorScheme;
 	/**
 	 * Accent color 4.
 	 */
-	accent4: ThemeColor;
+	accent4: ThemeColorScheme;
 	/**
 	 * Accent color 5.
 	 */
-	accent5: ThemeColor;
+	accent5: ThemeColorScheme;
 	/**
 	 * Accent color 6.
 	 */
-	accent6: ThemeColor;
+	accent6: ThemeColorScheme;
 	/**
 	 * Hyperlink color.
 	 */
-	hyperlink: ThemeColor;
+	hyperlink: ThemeColorScheme;
 	/**
 	 * Followed (visited) hyperlink color.
 	 */
-	followedHyperlink: ThemeColor;
+	followedHyperlink: ThemeColorScheme;
 };
 
 /**
@@ -290,6 +305,80 @@ export class ThemeXml extends XmlFile {
 		otherFonts: Font[];
 	}) {
 		this.#fontScheme.minorFont = minorFont;
+	}
+
+	/**
+	 * Resolves a theme color slot name (e.g. "accent1", "background1") to a
+	 * concrete hex color string using the theme's color scheme.
+	 *
+	 * Returns the color as a `#`-prefixed hex string, or `undefined` when the
+	 * slot cannot be resolved.
+	 */
+	public resolveColor(slot: ThemeColor): string | undefined {
+		const colorScheme = this.#colorScheme;
+		if (!colorScheme || slot === 'none') {
+			return undefined;
+		}
+
+		// Resolve aliases (background1 → light1, text1 → dark1, etc.).
+		const canonicalSlot = THEME_COLOR_ALIAS_MAP[slot] || slot;
+
+		const themeColor =
+			colorScheme[canonicalSlot as keyof typeof colorScheme];
+		if (!themeColor || typeof themeColor === 'string') {
+			// The 'name' property is a string, skip it.
+			return undefined;
+		}
+
+		// For system colors, use the last resolved concrete RGB value.
+		// For sRGB colors, use the value directly.
+		const hex =
+			themeColor.type === 'sysClr'
+				? themeColor.lastClr || themeColor.value
+				: themeColor.value;
+
+		return hex ? `#${hex}` : undefined;
+	}
+
+	/**
+	 * Resolves a theme font reference (e.g. "minorHAnsi", "majorBidi") to a
+	 * concrete font family name using the theme's font scheme.
+	 */
+	public resolveFont(font: ThemeFont): string | undefined {
+		const isMajor = font.startsWith('major');
+		const fontGroup = isMajor
+			? this.#fontScheme?.majorFont
+			: this.#fontScheme?.minorFont;
+
+		if (!fontGroup) {
+			return undefined;
+		}
+
+		// The "major"/"minor" distinction (major = headings, minor = body text)
+		// is already resolved above, so here we strip that
+		// prefix to isolate the script portion of the reference
+		// (e.g. "majorHAnsi" > "HAnsi", "minorBidi" > "Bidi").
+		const script = font.replace(/^(major|minor)/, '');
+
+		switch (script) {
+			case 'HAnsi':
+			case 'Ascii':
+				return fontGroup.latinFont?.typeface;
+			case 'EastAsia':
+				return fontGroup.otherFonts?.find(
+					(font) =>
+						font.script === 'Jpan' ||
+						font.script === 'Hans' ||
+						font.script === 'Hant' ||
+						font.script === 'Hang'
+				)?.typeface;
+			case 'Bidi':
+				return fontGroup.otherFonts?.find(
+					(font) => font.script === 'Arab' || font.script === 'Hebr'
+				)?.typeface;
+			default:
+				return fontGroup.latinFont?.typeface;
+		}
 	}
 
 	public override toNode(): Document {

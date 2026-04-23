@@ -417,4 +417,204 @@ describe('ThemeXml', () => {
 			);
 		});
 	});
+
+	describe('resolveFont', () => {
+		function createThemeWithFonts(
+			overrides: Partial<{
+				majorLatinTypeface: string;
+				minorLatinTypeface: string;
+				majorOtherFonts: { script: string; typeface: string }[];
+				minorOtherFonts: { script: string; typeface: string }[];
+			}> = {}
+		): ThemeXml {
+			const theme = new ThemeXml('loc');
+			theme.fontScheme = {
+				name: '',
+				majorFont: {
+					latinFont: {
+						typeface:
+							overrides.majorLatinTypeface ?? 'Calibri Light',
+						panose: '020F0302020204030204',
+					},
+					otherFonts: overrides.majorOtherFonts ?? [],
+				},
+				minorFont: {
+					latinFont: {
+						typeface: overrides.minorLatinTypeface ?? 'Calibri',
+						panose: '020F0502020204030204',
+					},
+					otherFonts: overrides.minorOtherFonts ?? [],
+				},
+			};
+			return theme;
+		}
+
+		it('resolves "minorHAnsi" to the minor latin font', () => {
+			const theme = createThemeWithFonts({
+				minorLatinTypeface: 'Calibri',
+			});
+			expect(theme.resolveFont('minorHAnsi')).toBe('Calibri');
+		});
+
+		it('resolves "majorHAnsi" to the major latin font', () => {
+			const theme = createThemeWithFonts({
+				majorLatinTypeface: 'Calibri Light',
+			});
+			expect(theme.resolveFont('majorHAnsi')).toBe('Calibri Light');
+		});
+
+		it('resolves "minorAscii" to the minor latin font', () => {
+			const theme = createThemeWithFonts({ minorLatinTypeface: 'Arial' });
+			expect(theme.resolveFont('minorAscii')).toBe('Arial');
+		});
+
+		it('resolves "majorAscii" to the major latin font', () => {
+			const theme = createThemeWithFonts({
+				majorLatinTypeface: 'Times New Roman',
+			});
+			expect(theme.resolveFont('majorAscii')).toBe('Times New Roman');
+		});
+
+		it('resolves "minorEastAsia" to the matching script font', () => {
+			const theme = createThemeWithFonts({
+				minorOtherFonts: [
+					{ script: 'Jpan', typeface: 'MS Mincho' },
+					{ script: 'Arab', typeface: 'Arabic Font' },
+				],
+			});
+			expect(theme.resolveFont('minorEastAsia')).toBe('MS Mincho');
+		});
+
+		it('resolves "majorEastAsia" to the matching script font', () => {
+			const theme = createThemeWithFonts({
+				majorOtherFonts: [{ script: 'Hans', typeface: 'SimSun' }],
+			});
+			expect(theme.resolveFont('majorEastAsia')).toBe('SimSun');
+		});
+
+		it('resolves "minorBidi" to the matching bidi script font', () => {
+			const theme = createThemeWithFonts({
+				minorOtherFonts: [{ script: 'Arab', typeface: 'Arial Arabic' }],
+			});
+			expect(theme.resolveFont('minorBidi')).toBe('Arial Arabic');
+		});
+
+		it('resolves "majorBidi" to the matching bidi script font', () => {
+			const theme = createThemeWithFonts({
+				majorOtherFonts: [{ script: 'Hebr', typeface: 'David' }],
+			});
+			expect(theme.resolveFont('majorBidi')).toBe('David');
+		});
+
+		it('returns undefined for "minorEastAsia" when no matching script exists', () => {
+			const theme = createThemeWithFonts({ minorOtherFonts: [] });
+			expect(theme.resolveFont('minorEastAsia')).toBeUndefined();
+		});
+
+		it('returns undefined for "minorBidi" when no matching script exists', () => {
+			const theme = createThemeWithFonts({ minorOtherFonts: [] });
+			expect(theme.resolveFont('minorBidi')).toBeUndefined();
+		});
+
+		it('falls back to latin font for unknown script suffix', () => {
+			const theme = createThemeWithFonts({
+				minorLatinTypeface: 'FallbackFont',
+			});
+			expect(theme.resolveFont('minorSomethingElse' as never)).toBe(
+				'FallbackFont'
+			);
+		});
+	});
+
+	describe('resolveColor', () => {
+		function createThemeWithColors(
+			colorScheme?: Record<string, unknown>
+		): ThemeXml {
+			const theme = new ThemeXml('loc');
+			if (colorScheme) {
+				theme.colorScheme = colorScheme as unknown as ColorScheme;
+			}
+			return theme;
+		}
+
+		const srgbColor = (hex: string) => ({
+			type: 'srgbClr' as const,
+			value: hex,
+		});
+
+		const sysColor = (value: string, lastClr: string) => ({
+			type: 'sysClr' as const,
+			value,
+			lastClr,
+		});
+
+		it('resolves "accent1" to the sRGB hex color', () => {
+			const theme = createThemeWithColors({
+				name: 'Office',
+				accent1: srgbColor('4472C4'),
+			});
+			expect(theme.resolveColor('accent1')).toBe('#4472C4');
+		});
+
+		it('resolves "background1" alias to "light1"', () => {
+			const theme = createThemeWithColors({
+				name: 'Office',
+				light1: srgbColor('FFFFFF'),
+			});
+			expect(theme.resolveColor('background1')).toBe('#FFFFFF');
+		});
+
+		it('resolves "text1" alias to "dark1"', () => {
+			const theme = createThemeWithColors({
+				name: 'Office',
+				dark1: srgbColor('000000'),
+			});
+			expect(theme.resolveColor('text1')).toBe('#000000');
+		});
+
+		it('resolves "background2" alias to "light2"', () => {
+			const theme = createThemeWithColors({
+				name: 'Office',
+				light2: srgbColor('E7E6E6'),
+			});
+			expect(theme.resolveColor('background2')).toBe('#E7E6E6');
+		});
+
+		it('resolves "text2" alias to "dark2"', () => {
+			const theme = createThemeWithColors({
+				name: 'Office',
+				dark2: srgbColor('44546A'),
+			});
+			expect(theme.resolveColor('text2')).toBe('#44546A');
+		});
+
+		it('resolves system colors using lastClr', () => {
+			const theme = createThemeWithColors({
+				name: 'Office',
+				dark1: sysColor('windowText', '000000'),
+			});
+			expect(theme.resolveColor('dark1')).toBe('#000000');
+		});
+
+		it('returns undefined for "none" slot', () => {
+			const theme = createThemeWithColors({ name: 'Office' });
+			expect(theme.resolveColor('none')).toBeUndefined();
+		});
+
+		it('returns undefined when colorScheme is missing', () => {
+			const theme = new ThemeXml('loc');
+			expect(theme.resolveColor('accent1')).toBeUndefined();
+		});
+
+		it('returns undefined for an unknown slot name', () => {
+			const theme = createThemeWithColors({ name: 'Office' });
+			expect(theme.resolveColor('nonexistent' as never)).toBeUndefined();
+		});
+
+		it('returns undefined when the slot value is the "name" string property', () => {
+			const theme = createThemeWithColors({ name: 'Office' });
+			// "name" is a string, not a color object, so it should be skipped.
+			expect(theme.resolveColor('name' as never)).toBeUndefined();
+		});
+	});
 });
