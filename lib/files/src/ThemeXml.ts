@@ -1,6 +1,6 @@
 import type { Archive } from '../../classes/src/Archive.ts';
 import { XmlFile } from '../../classes/src/XmlFile.ts';
-import { FileMime } from '../../enums.ts';
+import { FileLocation, FileMime } from '../../enums.ts';
 import type {
 	ThemeColor,
 	ThemeFont,
@@ -131,10 +131,6 @@ export type Font = {
  * applications can use for font substitution when the exact typeface is unavailable.
  */
 export interface LatinFont extends Font {
-	/**
-	 * The font family name (e.g. "Calibri", "Times New Roman").
-	 */
-	typeface: string;
 	/**
 	 * The Panose system is used by ooxml and other word processors as a reference
 	 * system to classify fonts based on their attributes. e.g. Family, Serif, Weight, etc.
@@ -530,7 +526,7 @@ export class ThemeXml extends XmlFile {
 		location?: string
 	): Promise<ThemeXml> {
 		// If a location is supplied, use that, otherwise use the default location for theme files.
-		location = location ?? 'word/theme/theme1.xml';
+		location = location ?? FileLocation.theme;
 		const themeDocument = await archive.readXml(location);
 		return this.fromDom(themeDocument!, location);
 	}

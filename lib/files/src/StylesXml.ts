@@ -32,7 +32,6 @@ import {
 	evaluateXPathToArray,
 	evaluateXPathToFirstNode,
 } from '../../utilities/src/xquery.ts';
-import { ThemeXml } from './ThemeXml.ts';
 
 type ParagraphStyle = {
 	type: 'paragraph';
@@ -95,14 +94,9 @@ export class StylesXml extends XmlFile {
 		defaultRunProperties: null,
 		defaultParagraphProperties: null,
 	};
-	#theme: ThemeXml | null = null;
 
 	public constructor(location: string) {
 		super(location);
-	}
-
-	public get theme(): ThemeXml | null {
-		return this.#theme;
 	}
 
 	/**
@@ -288,15 +282,8 @@ export class StylesXml extends XmlFile {
 		return this.#styles.find((style) => style.id === id);
 	}
 
-	public static fromDom(
-		dom: Document,
-		location: string,
-		theme?: ThemeXml
-	): StylesXml {
+	public static fromDom(dom: Document, location: string): StylesXml {
 		const instance = new StylesXml(location);
-		if (theme) {
-			instance.#theme = theme;
-		}
 
 		const defaultRunProperties = textPropertiesFromNode(
 			evaluateXPathToFirstNode(
@@ -315,28 +302,6 @@ export class StylesXml extends XmlFile {
 			defaultRunProperties: defaultRunProperties,
 			defaultParagraphProperties: defaultParagraphProperties,
 		} as DocumentDefaults);
-
-		// We should not get here unless there's *NOTHING* telling us what to do.
-		let instanceFontProperties: TextProperties['font'] =
-			instance.#docDefaultStyles?.defaultRunProperties?.font;
-		if (
-			instanceFontProperties &&
-			typeof instanceFontProperties !== 'string' &&
-			theme
-		) {
-			for (const key in instanceFontProperties) {
-				if (
-					instanceFontProperties[
-						key as keyof TextProperties['font']
-					] === null
-				) {
-					// instanceFontProperties[key as keyof TextProperties['font']] = theme.getMinorFonts().latinFont.typeface;
-					instanceFontProperties = {
-						[key]: theme.fontScheme.minorFont.latinFont.typeface,
-					};
-				}
-			}
-		}
 
 		// Warning! Untyped objects
 		instance.addStyles(
@@ -408,15 +373,8 @@ export class StylesXml extends XmlFile {
 		location: string
 	): Promise<StylesXml> {
 		if (archive.hasFile(location)) {
-			let theme: ThemeXml | undefined;
-			try {
-				theme = await ThemeXml.fromArchive(archive);
-			} catch (_) {
-				// no-op
-				// something happened, the theme document couldn't be read.
-			}
 			const dom = await archive.readXml(location);
-			return this.fromDom(dom, location, theme);
+			return this.fromDom(dom, location);
 		}
 		return Promise.resolve(new StylesXml(location));
 	}
