@@ -114,41 +114,25 @@ describe('Paragraph formatting', () => {
 		);
 	});
 
-	describe('lineRule "exact"', () => {
-		test(
-			`<w:pPr ${ALL_NAMESPACE_DECLARATIONS}>
-				<w:spacing w:line="240" w:lineRule="exact" />
-			</w:pPr>`,
-			{
-				spacing: {
-					before: null,
-					after: null,
-					line: twip(240),
-					lineRule: 'exact',
-					afterAutoSpacing: false,
-					beforeAutoSpacing: false,
-				},
-			}
-		);
-	});
-
-	describe('lineRule "atLeast"', () => {
-		test(
-			`<w:pPr ${ALL_NAMESPACE_DECLARATIONS}>
-				<w:spacing w:line="240" w:lineRule="atLeast" />
-			</w:pPr>`,
-			{
-				spacing: {
-					before: null,
-					after: null,
-					line: twip(240),
-					lineRule: 'atLeast',
-					afterAutoSpacing: false,
-					beforeAutoSpacing: false,
-				},
-			}
-		);
-	});
+	for (const lineRule of [null, 'exact', 'atLeast', 'auto'] as const) {
+		describe(`lineRule "${lineRule}"`, () => {
+			test(
+				`<w:pPr ${ALL_NAMESPACE_DECLARATIONS}>
+					<w:spacing w:line="240"${lineRule ? ` w:lineRule="${lineRule}"` : ''} />
+				</w:pPr>`,
+				{
+					spacing: {
+						before: null,
+						after: null,
+						line: twip(240),
+						lineRule,
+						afterAutoSpacing: false,
+						beforeAutoSpacing: false,
+					},
+				}
+			);
+		});
+	}
 
 	describe('Legacy "left"/"right"', () => {
 		test(
