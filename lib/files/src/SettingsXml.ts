@@ -39,7 +39,7 @@ export type SettingsI = {
 	 * Word compatibility mode version. Common values: 11 (2003), 12 (2007), 14 (2010), 15 (2013+).
 	 * Set to `null` to omit the compatibility block entirely.
 	 */
-	compatibilityMode: 11 | 12 | 14 | 15 | null;
+	compatibilityMode?: 11 | 12 | 14 | 15 | null;
 };
 
 export type DocumentProtectionProps = {
