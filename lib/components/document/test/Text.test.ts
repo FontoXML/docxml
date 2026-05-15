@@ -52,4 +52,45 @@ describe('Text', () => {
 			`.replace(/\n|\t/g, '')
 		);
 	});
+
+	it('parses move tracking children correctly', () => {
+		const textWithMoves = Text.fromNode(
+			create(`
+				<w:r xmlns:w="${NamespaceUri.w}">
+					<w:moveFrom w:id="0" w:author="Author" w:date="2026-01-01T00:00:00.000Z" />
+					<w:moveTo w:id="1" w:author="Author" w:date="2026-01-01T00:00:00.000Z" />
+				</w:r>
+			`),
+			emptyContext
+		);
+
+		expect(
+			textWithMoves.children.map((child) => child.constructor.name)
+		).toEqual(['MoveFrom', 'MoveTo']);
+	});
+
+	it('parses inline symbol and footnote separators correctly', () => {
+		const textWithSpecialInlineNodes = Text.fromNode(
+			create(`
+				<w:r xmlns:w="${NamespaceUri.w}">
+					<w:noBreakHyphen />
+					<w:separator />
+					<w:continuationSeparator />
+					<w:sym w:font="Wingdings" w:char="F02A" />
+				</w:r>
+			`),
+			emptyContext
+		);
+
+		expect(
+			textWithSpecialInlineNodes.children.map(
+				(child) => child.constructor.name
+			)
+		).toEqual([
+			'NonBreakingHyphen',
+			'FootnoteSeparator',
+			'FootnoteContinuationSeparator',
+			'Symbol',
+		]);
+	});
 });

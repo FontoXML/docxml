@@ -86,6 +86,8 @@ export class Text extends Component<TextProps, TextChild> {
 		'NonBreakingHyphen',
 		'Symbol',
 		'Tab',
+		'MoveFrom',
+		'MoveTo',
 	];
 	public static override readonly mixed: boolean = true;
 
@@ -149,7 +151,11 @@ export class Text extends Component<TextProps, TextChild> {
 							${QNS.w}fldChar,
 							${QNS.w}instrText,
 							${QNS.w}moveTo, 
-							${QNS.w}moveFrom
+							${QNS.w}moveFrom,
+							${QNS.w}noBreakHyphen,
+							${QNS.w}separator,
+							${QNS.w}continuationSeparator,
+							${QNS.w}sym
 						)
 					}
 				}
