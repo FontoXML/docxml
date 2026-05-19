@@ -2,15 +2,25 @@ import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import ts from 'typescript';
-// @ts-ignore Vite resolves worker query imports during bundling.
-import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
-// @ts-ignore Vite resolves worker query imports during bundling.
-import TypeScriptWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
-import { playgroundExamples } from './examples.ts';
 
 const DOCXML_PACKAGE_NAME = '@fontoxml/docxml';
 const DOCXML_META_URL = 'https://jsr.io/@fontoxml/docxml/meta.json';
 const DOCXML_RUNTIME_URL = 'https://esm.sh/jsr/@fontoxml/docxml?bundle';
+const PLAYGROUND_FILE = 'file:///playground/main.ts';
+
+const INITIAL_SOURCE = `import Docx, { Paragraph, Text } from 'docxml';
+
+export default function build() {
+	const docx = Docx.fromNothing();
+
+	docx.document.set(
+		new Paragraph({}, new Text({}, 'Hello from the docxml playground.'))
+	);
+
+	return docx;
+}
+`;
+
 const docxmlSourceCache = new Map<string, string>();
 
 const monacoEnvironmentTarget = globalThis as typeof globalThis & {
@@ -22,14 +32,24 @@ const monacoEnvironmentTarget = globalThis as typeof globalThis & {
 monacoEnvironmentTarget.MonacoEnvironment = {
 	getWorker(_workerId: string, label: string) {
 		if (label === 'typescript' || label === 'javascript') {
-			return new TypeScriptWorker();
+			return new Worker(
+				new URL('./workers/ts.worker.ts', import.meta.url),
+				{
+					type: 'module',
+				}
+			);
 		}
 
-		return new EditorWorker();
+		return new Worker(
+			new URL('./workers/editor.worker.ts', import.meta.url),
+			{
+				type: 'module',
+			}
+		);
 	},
 };
 
-function ensureBrowserDenoCompat() {
+function ensureBrowserPolyfills() {
 	const denoTarget = globalThis as typeof globalThis & {
 		Deno?: {
 			cwd?: () => string;
@@ -40,10 +60,7 @@ function ensureBrowserDenoCompat() {
 		denoTarget.Deno = {
 			cwd: () => '/',
 		};
-		return;
-	}
-
-	if (typeof denoTarget.Deno.cwd !== 'function') {
+	} else if (typeof denoTarget.Deno.cwd !== 'function') {
 		denoTarget.Deno.cwd = () => '/';
 	}
 }
@@ -59,26 +76,12 @@ async function fetchJsrSourceText(version: string, filePath: string) {
 	);
 
 	if (!response.ok) {
-		throw new Error(`Failed to load JSR source file: ${filePath}`);
+		throw new Error(`No se pudo cargar el archivo JSR: ${filePath}`);
 	}
 
 	const text = await response.text();
-	const contentType = response.headers.get('content-type') ?? '';
-
-	if (contentType.includes('text/html')) {
-		const document = new DOMParser().parseFromString(text, 'text/html');
-		const codeElement = document.querySelector('pre');
-		if (codeElement?.textContent) {
-			const extracted = codeElement.textContent;
-			docxmlSourceCache.set(cacheKey, extracted);
-			return extracted;
-		}
-	}
-
 	if (!text.trim()) {
-		throw new Error(
-			`Could not extract source from JSR file page: ${filePath}`
-		);
+		throw new Error(`Archivo vacio en JSR: ${filePath}`);
 	}
 
 	docxmlSourceCache.set(cacheKey, text);
@@ -92,50 +95,55 @@ function toMonacoFilePath(version: string, filePath: string) {
 async function installMonacoTypes() {
 	const metaResponse = await fetch(DOCXML_META_URL);
 	if (!metaResponse.ok) {
-		throw new Error('Could not load JSR metadata for docxml.');
+		throw new Error('No se pudo cargar metadata de docxml en JSR.');
 	}
 
 	const meta = (await metaResponse.json()) as {
 		latest?: string;
-		versions?: Record<string, { manifest?: Record<string, unknown> }>;
 	};
-	const version = meta.latest;
 
-	if (!version) {
-		throw new Error('Could not resolve the latest JSR package version.');
+	if (!meta.latest) {
+		throw new Error('No se pudo resolver la ultima version de docxml.');
 	}
 
+	const version = meta.latest;
 	const versionMetaResponse = await fetch(
 		`https://jsr.io/${DOCXML_PACKAGE_NAME}/${version}_meta.json`
 	);
 
 	if (!versionMetaResponse.ok) {
-		throw new Error('Could not load the latest JSR package manifest.');
+		throw new Error(
+			'No se pudo cargar el manifiesto de la ultima version.'
+		);
 	}
 
 	const versionMeta = (await versionMetaResponse.json()) as {
 		manifest?: Record<string, unknown>;
 	};
 
-	const manifest = versionMeta.manifest ?? meta.versions?.[version]?.manifest;
-
-	if (!manifest) {
-		throw new Error('Could not resolve the latest JSR package manifest.');
+	if (!versionMeta.manifest) {
+		throw new Error('No se pudo resolver el manifiesto de la version.');
 	}
 
 	monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+		target: monaco.languages.typescript.ScriptTarget.ES2020,
+		module: monaco.languages.typescript.ModuleKind.ESNext,
+		moduleResolution:
+			monaco.languages.typescript.ModuleResolutionKind.NodeJs,
 		allowSyntheticDefaultImports: true,
 		esModuleInterop: true,
 		allowImportingTsExtensions: true,
 		strict: true,
 	});
+
 	monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
 		noSemanticValidation: false,
 		noSyntaxValidation: false,
 	});
+
 	monaco.languages.typescript.typescriptDefaults.setEagerModelSync(true);
 
-	const sourceFiles = Object.keys(manifest).filter(
+	const sourceFiles = Object.keys(versionMeta.manifest).filter(
 		(filePath) => filePath.endsWith('.ts') || filePath.endsWith('.tsx')
 	);
 
@@ -161,53 +169,8 @@ async function installMonacoTypes() {
 			'}',
 			'',
 		].join('\n'),
-		'file:///docxml-playground/docxml-module.d.ts'
+		'file:///playground/docxml.d.ts'
 	);
-}
-
-function fallbackUuid() {
-	const bytes = new Uint8Array(16);
-
-	if (globalThis.crypto?.getRandomValues) {
-		globalThis.crypto.getRandomValues(bytes);
-	} else {
-		for (let index = 0; index < bytes.length; index++) {
-			bytes[index] = Math.floor(Math.random() * 256);
-		}
-	}
-
-	bytes[6] = (bytes[6] & 0x0f) | 0x40;
-	bytes[8] = (bytes[8] & 0x3f) | 0x80;
-
-	const hex = Array.from(bytes, (value) =>
-		value.toString(16).padStart(2, '0')
-	);
-	return `${hex.slice(0, 4).join('')}-${hex.slice(4, 6).join('')}-${hex
-		.slice(6, 8)
-		.join('')}-${hex.slice(8, 10).join('')}-${hex.slice(10, 16).join('')}`;
-}
-
-function ensureRandomUuid() {
-	const cryptoTarget = globalThis.crypto as Crypto & {
-		randomUUID?: () => string;
-	};
-
-	if (typeof cryptoTarget?.randomUUID === 'function') {
-		return;
-	}
-
-	if (!globalThis.crypto) {
-		(globalThis as typeof globalThis & { crypto: Crypto }).crypto = {
-			randomUUID: fallbackUuid,
-		} as unknown as Crypto;
-		return;
-	}
-
-	Object.defineProperty(globalThis.crypto, 'randomUUID', {
-		value: fallbackUuid,
-		configurable: true,
-		writable: true,
-	});
 }
 
 async function normalizeResult(result: unknown) {
@@ -251,20 +214,16 @@ async function normalizeResult(result: unknown) {
 		return archive.asUint8Array();
 	}
 
-	throw new Error('Result type is not supported for DOCX download');
+	throw new Error(
+		'El resultado debe ser Docx, Archive, Uint8Array, Blob o ArrayBuffer.'
+	);
 }
 
 function downloadFile(data: Uint8Array, fileName: string) {
-	const view = new Uint8Array(data);
-	const stableBuffer = view.buffer.slice(
-		view.byteOffset,
-		view.byteOffset + view.byteLength
-	);
-
-	const blob = new Blob([stableBuffer], {
+	const safeBytes = Uint8Array.from(data);
+	const blob = new Blob([safeBytes], {
 		type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 	});
-
 	const url = URL.createObjectURL(blob);
 	const anchor = document.createElement('a');
 	anchor.href = url;
@@ -280,226 +239,105 @@ function transpileTypeScript(source: string) {
 			module: ts.ModuleKind.ES2022,
 			strict: true,
 		},
-		fileName: 'playground.ts',
+		fileName: 'main.ts',
 		reportDiagnostics: false,
 	}).outputText;
-}
-
-function buildRunnableModuleSource(source: string) {
-	const hasDefaultExport = /\bexport\s+default\b/m.test(source);
-	const hasTopLevelModuleSyntax =
-		/^\s*import\s/m.test(source) || /^\s*export\s/m.test(source);
-
-	if (hasDefaultExport) {
-		return source;
-	}
-
-	if (hasTopLevelModuleSyntax) {
-		throw new Error(
-			'This code has module syntax. Export a default function to run it.'
-		);
-	}
-
-	const symbolNames = [
-		'Docx',
-		'Paragraph',
-		'Text',
-		'Section',
-		'Table',
-		'Row',
-		'Cell',
-		'Comment',
-		'CommentRangeStart',
-		'CommentRangeEnd',
-		'cm',
-		'pt',
-		'inch',
-	];
-
-	return `
-import DocxDefault, * as __docxml from '${DOCXML_RUNTIME_URL}';
-const Docx = __docxml.Docx ?? DocxDefault;
-const { ${symbolNames.filter((name) => name !== 'Docx').join(', ')} } = __docxml;
-
-export default async function __playgroundRun() {
-${source}
-}
-
-function registerFallbackCompletions() {
-	const sharedSymbols = [
-		'Docx',
-		'Paragraph',
-		'Text',
-		'Section',
-		'Table',
-		'Row',
-		'Cell',
-		'Comment',
-		'CommentRangeStart',
-		'CommentRangeEnd',
-		'cm',
-		'pt',
-		'inch',
-	];
-
-	return monaco.languages.registerCompletionItemProvider('typescript', {
-		triggerCharacters: ['.', "'", '"'],
-		provideCompletionItems(model, position) {
-			const currentLine = model.getLineContent(position.lineNumber);
-			const range = new monaco.Range(
-				position.lineNumber,
-				position.column,
-				position.lineNumber,
-				position.column
-			);
-
-			const suggestions: monaco.languages.CompletionItem[] = [
-				{
-					label: "import docxml",
-					kind: monaco.languages.CompletionItemKind.Snippet,
-					insertText:
-						"import Docx, { Paragraph, Text } from 'docxml';\n\nexport default function buildDocx() {\n\tconst docx = Docx.fromNothing();\n\n\t$0\n\n\treturn docx;\n}\n",
-					insertTextRules:
-						monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-					range,
-				},
-			];
-
-			for (const symbol of sharedSymbols) {
-				suggestions.push({
-					label: symbol,
-					kind: monaco.languages.CompletionItemKind.Class,
-					insertText: symbol,
-					range,
-				});
-			}
-
-			if (/from\s+['\"]?$/.test(currentLine)) {
-				suggestions.push({
-					label: 'docxml',
-					kind: monaco.languages.CompletionItemKind.Module,
-					insertText: 'docxml',
-					range,
-				});
-			}
-
-			return { suggestions };
-		},
-	});
-}
-`;
 }
 
 export function App() {
 	const editorElementRef = useRef<HTMLDivElement | null>(null);
 	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
-	const modelRef = useRef<monaco.editor.ITextModel | null>(null);
-	const completionProviderRef = useRef<monaco.IDisposable | null>(null);
-	const [status, setStatus] = useState('Ready.');
+	const [status, setStatus] = useState('Inicializando...');
 	const [hasError, setHasError] = useState(false);
-	const [selectedExampleId, setSelectedExampleId] = useState('');
 	const [isGenerating, setIsGenerating] = useState(false);
 
 	useEffect(() => {
-		ensureBrowserDenoCompat();
+		ensureBrowserPolyfills();
 
 		if (!editorElementRef.current) {
-			setStatus('Editor container not found.');
+			setStatus('No se encontro el contenedor del editor.');
 			setHasError(true);
 			return;
 		}
 
-		modelRef.current = monaco.editor.createModel(
-			playgroundExamples[0]?.source ?? '',
+		const model = monaco.editor.createModel(
+			INITIAL_SOURCE,
 			'typescript',
-			monaco.Uri.parse('file:///playground/main.ts')
+			monaco.Uri.parse(PLAYGROUND_FILE)
 		);
 
 		editorRef.current = monaco.editor.create(editorElementRef.current, {
-			model: modelRef.current,
+			model,
 			theme: 'vs',
 			automaticLayout: true,
 			minimap: { enabled: false },
 			fontSize: 13,
-			suggestOnTriggerCharacters: true,
-			quickSuggestions: {
-				other: true,
-				comments: false,
-				strings: true,
-			},
 		});
 
-		completionProviderRef.current = registerFallbackCompletions();
-
-		setStatus('Loading docxml types...');
+		setStatus('Cargando tipos desde JSR...');
 		setHasError(false);
 
 		void installMonacoTypes()
 			.then(() => {
-				setStatus('Ready.');
+				setStatus('Listo.');
 				setHasError(false);
 			})
 			.catch((error) => {
 				const message =
 					error instanceof Error ? error.message : String(error);
-				setStatus(`Types unavailable: ${message}`);
+				setStatus(`Tipos no disponibles: ${message}`);
 				setHasError(true);
 			});
 
 		return () => {
-			completionProviderRef.current?.dispose();
+			model.dispose();
 			editorRef.current?.dispose();
-			modelRef.current?.dispose();
-			completionProviderRef.current = null;
 			editorRef.current = null;
-			modelRef.current = null;
 		};
 	}, []);
 
-	async function runCurrentEditor() {
+	async function generateDocx() {
 		const editor = editorRef.current;
 		if (!editor) {
-			setStatus('Editor is not ready yet.');
+			setStatus('El editor aun no esta listo.');
 			setHasError(true);
 			return;
 		}
 
-		const source = editor.getValue();
-
-		setStatus('Compiling...');
-		setHasError(false);
 		setIsGenerating(true);
-		ensureRandomUuid();
+		setHasError(false);
+		setStatus('Compilando...');
 
 		try {
-			const runnableSource = buildRunnableModuleSource(source);
-			const jsSource = transpileTypeScript(runnableSource);
-			const runtimeSource = jsSource
+			const source = editor.getValue();
+			const jsSource = transpileTypeScript(source)
 				.replaceAll(`from 'docxml'`, `from '${DOCXML_RUNTIME_URL}'`)
-				.replaceAll(`from "docxml"`, `from "${DOCXML_RUNTIME_URL}"`);
+				.replaceAll(
+					`from \"docxml\"`,
+					`from \"${DOCXML_RUNTIME_URL}\"`
+				);
 
-			const moduleBlob = new Blob([runtimeSource], {
+			const moduleBlob = new Blob([jsSource], {
 				type: 'text/javascript',
 			});
 			const moduleUrl = URL.createObjectURL(moduleBlob);
 
 			try {
-				const run = (await import(moduleUrl)) as {
-					default?: () => unknown;
+				const mod = (await import(moduleUrl)) as {
+					default?: () => unknown | Promise<unknown>;
 				};
-				setStatus('Generating DOCX...');
 
-				if (typeof run.default !== 'function') {
+				if (typeof mod.default !== 'function') {
 					throw new Error(
-						'The module must export a default function.'
+						'El modulo debe exportar una funcion default.'
 					);
 				}
 
-				const result = await run.default();
+				setStatus('Generando DOCX...');
+				const result = await mod.default();
 				const data = await normalizeResult(result);
-
 				downloadFile(data, 'playground-output.docx');
-				setStatus(`Document generated (${data.byteLength} bytes).`);
+				setStatus(`Documento generado (${data.byteLength} bytes).`);
 				setHasError(false);
 			} finally {
 				URL.revokeObjectURL(moduleUrl);
@@ -514,90 +352,30 @@ export function App() {
 		}
 	}
 
-	function loadSelectedExample() {
-		if (!selectedExampleId) {
-			setStatus('Select an example to load.');
-			setHasError(false);
-			return;
-		}
-
-		const editor = editorRef.current;
-		if (!editor) {
-			setStatus('Editor is not ready yet.');
-			setHasError(true);
-			return;
-		}
-
-		const example = playgroundExamples.find(
-			(entry) => entry.id === selectedExampleId
-		);
-
-		if (!example) {
-			setStatus('Selected example was not found.');
-			setHasError(true);
-			return;
-		}
-
-		editor.getModel()?.setValue(example.source);
-		setStatus(`Loaded example: ${example.label}`);
-		setHasError(false);
-	}
-
 	return (
 		<div class='layout'>
 			<header class='header'>
-				<div>
-					<h1 class='title'>Docxml Playground</h1>
-					<p class='subtitle'>
-						Write TypeScript and generate your DOCX in the browser.
-					</p>
-				</div>
-				<div class='controls'>
-					<label class='control' for='example-select'>
-						Example
-						<select
-							id='example-select'
-							value={selectedExampleId}
-							onChange={(event) =>
-								setSelectedExampleId(event.currentTarget.value)
-							}
-						>
-							<option value=''>Select an example…</option>
-							{playgroundExamples.map((example) => (
-								<option key={example.id} value={example.id}>
-									{example.label}
-									{example.sourcePath
-										? ` (${example.sourcePath})`
-										: ''}
-								</option>
-							))}
-						</select>
-					</label>
-					<button type='button' onClick={loadSelectedExample}>
-						Load
-					</button>
-					<button
-						type='button'
-						class='primary'
-						disabled={isGenerating}
-						onClick={() => void runCurrentEditor()}
-					>
-						{isGenerating ? 'Generating...' : 'Generate DOCX'}
-					</button>
-				</div>
+				<h1>Docxml Playground</h1>
+				<p>
+					Playground minimo: escribe TypeScript, importa{' '}
+					<code>docxml</code> y genera un .docx.
+				</p>
 			</header>
 
-			<section class='editor-shell'>
-				<div ref={editorElementRef} class='editor' />
-				<div class={`status${hasError ? ' error' : ''}`}>{status}</div>
-			</section>
+			<div ref={editorElementRef} class='editor' />
 
-			<p class='hint'>
-				Use plain TypeScript. Available symbols include Docx, Paragraph,
-				Text, Section, Table, Row, Cell, Comment, CommentRangeStart,
-				CommentRangeEnd, cm, pt, and inch. Return Docx, Archive,
-				Uint8Array, ArrayBuffer, or Blob.
-			</p>
+			<div class='actions'>
+				<button
+					type='button'
+					class='primary'
+					disabled={isGenerating}
+					onClick={() => void generateDocx()}
+				>
+					{isGenerating ? 'Generando...' : 'Generar DOCX'}
+				</button>
+			</div>
+
+			<p class={`status${hasError ? ' error' : ''}`}>{status}</p>
 		</div>
 	);
 }

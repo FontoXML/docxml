@@ -1,9 +1,11 @@
 # Docxml Playground
 
-Vite + Preact playground to try `docxml` in the browser.
+Minimal browser playground for `docxml`.
 
-The app bundles Monaco statically at build time (including workers), and still loads the latest published `docxml` release from JSR at runtime.
-Type information for Monaco is loaded from the latest JSR source files in-memory and is not written to disk.
+- Monaco editor with TypeScript.
+- Runtime import uses the latest release from JSR via `https://esm.sh/jsr/@fontoxml/docxml?bundle`.
+- Type information is loaded dynamically from `jsr.io` (latest package metadata + source files).
+- One action: compile and generate a `.docx` file.
 
 ## Run locally with Deno
 
@@ -13,9 +15,9 @@ From the repository root:
 deno task playground:dev
 ```
 
-Then open `http://localhost:5173`.
+Open `http://localhost:5173`.
 
-## Build static output
+## Build static output with Deno
 
 From the repository root:
 
@@ -23,8 +25,8 @@ From the repository root:
 deno task playground:build
 ```
 
-The generated static site is written to `playground/dist`.
+The static output is generated in `playground/dist`.
 
-## Deploy
+## Deploy to GitHub Pages
 
-The `.github/workflows/playground-pages.yml` workflow builds the playground and publishes `playground/dist` to GitHub Pages whenever a new release is published.
+`/.github/workflows/playground-pages.yml` publishes `playground/dist` to GitHub Pages when a new release is published.
