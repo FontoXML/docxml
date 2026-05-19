@@ -33,9 +33,26 @@ body,
 	gap: 0.75rem;
 }
 
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
 .header h1 {
 	margin: 0;
 	font-size: 1.8rem;
+}
+
+.exampleSelect {
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	padding: 0.4rem 0.6rem;
+	font: inherit;
+	font-size: 0.9rem;
+	background: var(--surface);
+	color: var(--text);
 }
 
 .header p {
@@ -49,9 +66,10 @@ body,
 	background: var(--surface);
 }
 
-.actions {
+.statusRow {
 	display: flex;
-	justify-content: flex-end;
+	align-items: center;
+	gap: 0.65rem;
 }
 
 button {
@@ -72,6 +90,7 @@ button:disabled {
 
 .status {
 	margin: 0;
+	flex: 1;
 	padding: 0.65rem 0.75rem;
 	border: 1px solid var(--line);
 	border-radius: 8px;
@@ -83,4 +102,11 @@ button:disabled {
 
 .status.error {
 	color: var(--danger);
+}
+
+@media (max-width: 700px) {
+	.statusRow {
+		flex-direction: column;
+		align-items: stretch;
+	}
 }
