@@ -1,7 +1,8 @@
 {
 	"tasks": {
-		"dev": "deno run -A --node-modules-dir=auto npm:vite",
-		"build": "deno run -A --node-modules-dir=auto npm:vite build",
+		"types": "deno run -A scripts/generate-docxml-dts.ts",
+		"dev": "deno task types && deno run -A --node-modules-dir=auto npm:vite",
+		"build": "deno task types && deno run -A --node-modules-dir=auto npm:vite build",
 		"preview": "deno run -A --node-modules-dir=auto npm:vite preview --host --port 4173"
 	},
 	"nodeModulesDir": "auto",

@@ -1,12 +1,13 @@
 {
   "version": "5",
   "specifiers": {
-    "npm:@preact/preset-vite@^2.10.1": "2.10.5_@babel+core@7.29.0_vite@5.4.21_preact@10.29.2",
-    "npm:monaco-editor@0.53": "0.53.0",
-    "npm:preact@^10.26.9": "10.29.2",
-    "npm:typescript@^5.8.3": "5.9.3",
+    "npm:@preact/preset-vite@2.10.5": "2.10.5_@babel+core@7.29.0_vite@5.4.21_preact@10.29.2",
+    "npm:monaco-editor@0.53.0": "0.53.0",
+    "npm:preact@10.29.2": "10.29.2",
+    "npm:typescript@*": "5.9.3",
+    "npm:typescript@5.9.3": "5.9.3",
     "npm:vite@*": "5.4.21",
-    "npm:vite@^5.4.10": "5.4.21"
+    "npm:vite@5.4.21": "5.4.21"
   },
   "npm": {
     "@babel/code-frame@7.29.0": {
@@ -796,11 +797,11 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
-        "npm:@preact/preset-vite@^2.10.1",
-        "npm:monaco-editor@0.53",
-        "npm:preact@^10.26.9",
-        "npm:typescript@^5.8.3",
-        "npm:vite@^5.4.10"
+        "npm:@preact/preset-vite@2.10.5",
+        "npm:monaco-editor@0.53.0",
+        "npm:preact@10.29.2",
+        "npm:typescript@5.9.3",
+        "npm:vite@5.4.21"
       ]
     }
   }

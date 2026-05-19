@@ -1,7 +1,6 @@
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-// @ts-ignore Vite resolves this at build time
 import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution';
 import 'monaco-editor/esm/vs/editor/editor.all';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import ts from 'typescript';
@@ -9,18 +8,7 @@ import { examples } from './examples.ts';
 
 const DOCXML_RUNTIME_URL = 'https://esm.sh/jsr/@fontoxml/docxml?bundle';
 
-const INITIAL_SOURCE = `import Docx, { Paragraph, Text } from 'docxml';
-
-export default function build() {
-	const docx = Docx.fromNothing();
-
-	docx.document.set(
-		new Paragraph({}, new Text({}, 'Hello from the docxml playground.'))
-	);
-
-	return docx;
-}
-`;
+const INITIAL_SOURCE = examples[0]?.source ?? ''; // The "Hello world" example.
 
 // Workers for Monaco
 (self as unknown as { MonacoEnvironment: unknown }).MonacoEnvironment = {
@@ -44,34 +32,14 @@ if (!(globalThis as unknown as { Deno?: unknown }).Deno) {
 }
 
 /**
- * Fetches the latest docxml version from JSR, downloads all .ts/.tsx source
- * files, and feeds them to Monaco's TypeScript language service so that
- * autocomplete, hover, and diagnostics work out of the box.
+ * Loads the precompiled docxml declaration bundle generated at build time
+ * and feeds it to Monaco's TypeScript language service.
  */
 async function loadDocxmlTypes() {
-	const meta = (await fetch('https://jsr.io/@fontoxml/docxml/meta.json').then(
-		(r) => r.json()
-	)) as { latest: string };
-
-	const version = meta.latest;
-
-	const versionMeta = (await fetch(
-		`https://jsr.io/@fontoxml/docxml/${version}_meta.json`
-	).then((r) => r.json())) as { manifest: Record<string, unknown> };
-
-	const tsFiles = Object.keys(versionMeta.manifest).filter(
-		(f) => f.endsWith('.ts') || f.endsWith('.tsx')
-	);
-
-	// Fetch all source files in parallel
-	const sources = await Promise.all(
-		tsFiles.map(async (path) => {
-			const text = await fetch(
-				`https://jsr.io/@fontoxml/docxml/${version}${path}`
-			).then((r) => r.text());
-			return { path, text };
-		})
-	);
+	const [version, bundledDts] = await Promise.all([
+		fetch('/docxml/version.json').then((r) => r.text()),
+		fetch('/docxml/docxml.d.ts').then((r) => r.text()),
+	]);
 
 	// Configure TS compiler options in Monaco
 	const tsDefaults = monaco.languages.typescript.typescriptDefaults;
@@ -86,9 +54,6 @@ async function loadDocxmlTypes() {
 		allowImportingTsExtensions: true,
 		strict: true,
 		baseUrl: 'file:///',
-		paths: {
-			docxml: [`file:///docxml/${version}/mod.ts`],
-		},
 	});
 
 	tsDefaults.setDiagnosticsOptions({
@@ -98,20 +63,9 @@ async function loadDocxmlTypes() {
 
 	tsDefaults.setEagerModelSync(true);
 
-	// Add all source files as extra libs
-	for (const { path, text } of sources) {
-		tsDefaults.addExtraLib(text, `file:///docxml/${version}${path}`);
-	}
-
-	// Declare the bare 'docxml' module so `import ... from 'docxml'` resolves
 	tsDefaults.addExtraLib(
-		[
-			`declare module 'docxml' {`,
-			`  export * from 'file:///docxml/${version}/mod.ts';`,
-			`  export { default } from 'file:///docxml/${version}/mod.ts';`,
-			`}`,
-		].join('\n'),
-		`file:///docxml/${version}/__module.d.ts`
+		bundledDts,
+		`file:///docxml/${version.trim()}/docxml-bundle.d.ts`
 	);
 }
 
