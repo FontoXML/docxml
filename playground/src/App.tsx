@@ -7,6 +7,7 @@ import ts from 'typescript';
 import { examples } from './examples.ts';
 
 const DOCXML_RUNTIME_URL = 'https://esm.sh/jsr/@fontoxml/docxml?bundle';
+const DOCXML_TYPES_URL = new URL('../docxml/docxml.d.ts', import.meta.url);
 
 const INITIAL_SOURCE = examples[0]?.source ?? ''; // The "Hello world" example.
 
@@ -36,10 +37,7 @@ if (!(globalThis as unknown as { Deno?: unknown }).Deno) {
  * and feeds it to Monaco's TypeScript language service.
  */
 async function loadDocxmlTypes() {
-	const [version, bundledDts] = await Promise.all([
-		fetch('/docxml/version.json').then((r) => r.text()),
-		fetch('/docxml/docxml.d.ts').then((r) => r.text()),
-	]);
+	const bundledDts = await fetch(DOCXML_TYPES_URL).then((r) => r.text());
 
 	// Configure TS compiler options in Monaco
 	const tsDefaults = monaco.languages.typescript.typescriptDefaults;
@@ -63,10 +61,7 @@ async function loadDocxmlTypes() {
 
 	tsDefaults.setEagerModelSync(true);
 
-	tsDefaults.addExtraLib(
-		bundledDts,
-		`file:///docxml/${version.trim()}/docxml-bundle.d.ts`
-	);
+	tsDefaults.addExtraLib(bundledDts, 'file:///docxml/docxml-bundle.d.ts');
 }
 
 async function normalizeResult(result: unknown): Promise<Uint8Array> {
@@ -93,16 +88,22 @@ async function normalizeResult(result: unknown): Promise<Uint8Array> {
 	);
 }
 
-function downloadFile(data: Uint8Array, fileName: string) {
-	const blob = new Blob([Uint8Array.from(data)], {
-		type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-	});
+function downloadBlob(blob: Blob, fileName: string) {
 	const url = URL.createObjectURL(blob);
 	const a = document.createElement('a');
 	a.href = url;
 	a.download = fileName;
 	a.click();
 	URL.revokeObjectURL(url);
+}
+
+function downloadDocx(data: Uint8Array, fileName: string) {
+	downloadBlob(
+		new Blob([Uint8Array.from(data)], {
+			type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		}),
+		fileName
+	);
 }
 
 export function App() {
@@ -184,7 +185,7 @@ export function App() {
 				setStatus('Generating DOCX...');
 				const result = await mod.default();
 				const data = await normalizeResult(result);
-				downloadFile(data, 'playground-output.docx');
+				downloadDocx(data, 'playground-output.docx');
 				setStatus(`Done (${data.byteLength} bytes).`);
 				setHasError(false);
 			} finally {
@@ -232,13 +233,10 @@ export function App() {
 					onClick={() => {
 						const source = instanceRef.current?.getValue();
 						if (!source) return;
-						const blob = new Blob([source], { type: 'text/plain' });
-						const url = URL.createObjectURL(blob);
-						const a = document.createElement('a');
-						a.href = url;
-						a.download = 'playground.ts';
-						a.click();
-						URL.revokeObjectURL(url);
+						downloadBlob(
+							new Blob([source], { type: 'text/plain' }),
+							'playground.ts'
+						);
 					}}
 				>
 					Download .ts

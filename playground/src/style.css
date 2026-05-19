@@ -60,11 +60,6 @@ body,
 	color: var(--text);
 }
 
-.header p {
-	margin: 0.4rem 0 0;
-	color: var(--muted);
-}
-
 .editor {
 	min-height: 300px;
 	border: 1px solid var(--line);

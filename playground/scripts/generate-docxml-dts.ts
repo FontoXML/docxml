@@ -3,7 +3,6 @@ import ts from 'typescript';
 
 const outDir = new URL('../public/docxml/', import.meta.url);
 const outDtsPath = new URL('docxml.d.ts', outDir);
-const outVersionPath = new URL('version.json', outDir);
 const entryFilePath = new URL('../../mod.ts', import.meta.url).pathname;
 
 function emitSingleDts(): string {
@@ -56,7 +55,6 @@ async function main() {
 	const dts = emitSingleDts();
 
 	await Deno.writeTextFile(outDtsPath, dts);
-	await Deno.writeTextFile(outVersionPath, 'local');
 
 	console.log(`Generated ${outDtsPath.pathname} (${dts.length} chars)`);
 }
