@@ -1,0 +1,10 @@
+{
+	"nodeModulesDir": "auto",
+	"compilerOptions": {
+		"lib": ["dom", "dom.iterable", "es2021"],
+		"jsx": "react-jsx",
+		"jsxImportSource": "preact",
+		"types": ["vite/client"]
+	},
+	"exclude": ["dist"]
+}
