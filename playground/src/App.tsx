@@ -274,12 +274,43 @@ export function App() {
 				<p class={`status${hasError ? ' error' : ''}`}>{status}</p>
 				<button
 					type='button'
+					class='secondary'
+					onClick={() => {
+						const source = instanceRef.current?.getValue();
+						if (!source) return;
+						const blob = new Blob([source], { type: 'text/plain' });
+						const url = URL.createObjectURL(blob);
+						const a = document.createElement('a');
+						a.href = url;
+						a.download = 'playground.ts';
+						a.click();
+						URL.revokeObjectURL(url);
+					}}
+				>
+					Download .ts
+				</button>
+				<button
+					type='button'
 					disabled={isGenerating}
 					onClick={() => void generateDocx()}
 				>
 					{isGenerating ? 'Generating...' : 'Generate DOCX'}
 				</button>
 			</div>
+
+			<footer class='footer'>
+				<a
+					href='https://github.com/fontoxml/docxml'
+					target='_blank'
+					rel='noopener'
+				>
+					GitHub
+				</a>
+				<span>·</span>
+				<a href='https://fontoxml.com' target='_blank' rel='noopener'>
+					FontoXML
+				</a>
+			</footer>
 		</div>
 	);
 }

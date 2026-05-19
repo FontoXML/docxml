@@ -16,7 +16,7 @@ html,
 body,
 #app {
 	margin: 0;
-	min-height: 100%;
+	height: 100%;
 	font-family: 'IBM Plex Sans', system-ui, sans-serif;
 	background: var(--bg);
 	color: var(--text);
@@ -24,12 +24,16 @@ body,
 
 #app {
 	padding: 1rem;
+	height: 100%;
 }
 
 .layout {
-	max-width: 980px;
+	width: 100%;
+	max-width: 1400px;
+	height: 100%;
 	margin: 0 auto;
 	display: grid;
+	grid-template-rows: auto 1fr auto auto;
 	gap: 0.75rem;
 }
 
@@ -38,6 +42,7 @@ body,
 	align-items: center;
 	justify-content: space-between;
 	gap: 1rem;
+	flex-wrap: wrap;
 }
 
 .header h1 {
@@ -61,9 +66,10 @@ body,
 }
 
 .editor {
-	height: min(65vh, 680px);
+	min-height: 300px;
 	border: 1px solid var(--line);
 	background: var(--surface);
+	overflow: hidden;
 }
 
 .statusRow {
@@ -88,6 +94,11 @@ button:disabled {
 	cursor: not-allowed;
 }
 
+button.secondary {
+	background: var(--surface);
+	color: var(--accent);
+}
+
 .status {
 	margin: 0;
 	flex: 1;
@@ -102,6 +113,25 @@ button:disabled {
 
 .status.error {
 	color: var(--danger);
+}
+
+.footer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 0;
+	font-size: 0.8rem;
+	color: var(--muted);
+}
+
+.footer a {
+	color: var(--accent);
+	text-decoration: none;
+}
+
+.footer a:hover {
+	text-decoration: underline;
 }
 
 @media (max-width: 700px) {
