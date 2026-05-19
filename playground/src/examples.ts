@@ -293,4 +293,142 @@ export default function build() {
 }
 `,
 	},
+	{
+		id: 'track-changes-insertion',
+		label: 'Track Changes: Insertion',
+		source: `import Docx, { Insertion, Paragraph, Section, Text } from 'docxml';
+
+export default function build() {
+	const docx = Docx.fromNothing();
+
+	const date = new Date();
+	const author = 'Editor';
+
+	docx.document.set(
+		new Section({},
+			new Paragraph(
+				{ pilcrow: { insertion: { id: 1, author, date } } },
+				new Insertion({ id: 2, author, date },
+					new Text({}, 'This entire paragraph was inserted.')
+				)
+			),
+			new Paragraph({},
+				new Text({}, 'This text was already here. '),
+				new Insertion({ id: 3, author, date },
+					new Text({}, 'This part was added later.')
+				)
+			)
+		)
+	);
+
+	return docx;
+}
+`,
+	},
+	{
+		id: 'track-changes-deletion',
+		label: 'Track Changes: Deletion',
+		source: `import Docx, { DeletedText, Deletion, Paragraph, Section, Text } from 'docxml';
+
+export default function build() {
+	const docx = Docx.fromNothing();
+
+	const date = new Date();
+	const author = 'Editor';
+
+	docx.document.set(
+		new Section({},
+			new Paragraph(
+				{ pilcrow: { deletion: { id: 1, author, date } } },
+				new Deletion({ id: 2, author, date },
+					new DeletedText({}, 'This paragraph was deleted.')
+				)
+			),
+			new Paragraph({},
+				new Text({}, 'Existing text. '),
+				new Deletion({ id: 3, author, date },
+					new DeletedText({}, 'This part was removed.')
+				)
+			)
+		)
+	);
+
+	return docx;
+}
+`,
+	},
+	{
+		id: 'track-changes-formatting',
+		label: 'Track Changes: Formatting',
+		source: `import Docx, { Paragraph, Section, Text } from 'docxml';
+
+export default function build() {
+	const docx = Docx.fromNothing();
+
+	docx.document.set(
+		new Section({},
+			new Paragraph({},
+				new Text(
+					{
+						isBold: true,
+						change: { author: 'Editor', id: 1, date: new Date() },
+					},
+					'This text was changed to bold.'
+				)
+			),
+			new Paragraph({},
+				new Text(
+					{
+						isItalic: true,
+						change: { author: 'Editor', id: 2, date: new Date(), isBold: true },
+					},
+					'This was bold, changed to italic only.'
+				)
+			)
+		)
+	);
+
+	return docx;
+}
+`,
+	},
+	{
+		id: 'track-changes-move',
+		label: 'Track Changes: Move',
+		source: `import Docx, { MoveFrom, MoveFromRangeStart, MoveFromRangeEnd, MoveTo, MoveToRangeStart, MoveToRangeEnd, Paragraph, Section, Text } from 'docxml';
+
+export default function build() {
+	const docx = Docx.fromNothing();
+
+	const date = new Date();
+	const author = 'Editor';
+
+	docx.document.set(
+		new Section({},
+			new Paragraph(
+				{ pilcrow: { moveFrom: { id: 0, author, date } } },
+				new MoveFromRangeStart({ id: 1, name: 'move_0', author, date }),
+				new MoveFrom({ id: 2, author, date },
+					new Text({}, 'This paragraph was moved from here.')
+				),
+				new MoveFromRangeEnd({ id: 1 })
+			),
+			new Paragraph({},
+				new Text({}, 'This paragraph stays in place.')
+			),
+			new Paragraph(
+				{ pilcrow: { moveTo: { id: 3, author, date } } },
+				new MoveToRangeStart({ id: 4, name: 'move_0', author, date }),
+				new MoveTo({ id: 5, author, date },
+					new Text({}, 'This paragraph was moved from here.')
+				),
+				new MoveToRangeEnd({ id: 4 })
+			)
+		)
+	);
+
+	return docx;
+}
+`,
+	},
 ];
