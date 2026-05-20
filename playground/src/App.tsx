@@ -209,7 +209,7 @@ export function App() {
 	return (
 		<div class='layout'>
 			<header class='header'>
-				<h1>Docxml Playground</h1>
+				<h1 class='headerTitle'>Docxml Playground</h1>
 				<select
 					class='exampleSelect'
 					onChange={(e) => loadExample(e.currentTarget.value)}

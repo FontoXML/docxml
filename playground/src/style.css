@@ -39,15 +39,28 @@ body,
 
 .header {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: space-between;
-	gap: 1rem;
+	gap: 1.2rem;
 	flex-wrap: wrap;
+	padding: 1rem 1.1rem;
+	border: 1px solid var(--line);
+	border-radius: 14px;
+	background:
+		radial-gradient(
+			circle at top right,
+			#c8f3ea 0%,
+			rgba(200, 243, 234, 0) 55%
+		),
+		linear-gradient(135deg, #ffffff 0%, #f7faf9 100%);
+	box-shadow: 0 8px 24px rgba(15, 118, 110, 0.08);
 }
 
-.header h1 {
+.headerTitle {
 	margin: 0;
-	font-size: 1.8rem;
+	font-size: 2rem;
+	line-height: 1.05;
+	color: var(--accent);
 }
 
 .exampleSelect {
@@ -58,6 +71,7 @@ body,
 	font-size: 0.9rem;
 	background: var(--surface);
 	color: var(--text);
+	margin-left: auto;
 }
 
 .editor {
@@ -130,6 +144,19 @@ button.secondary {
 }
 
 @media (max-width: 700px) {
+	.header {
+		padding: 0.85rem;
+	}
+
+	.headerTitle {
+		font-size: 1.65rem;
+	}
+
+	.exampleSelect {
+		width: 100%;
+		margin-left: 0;
+	}
+
 	.statusRow {
 		flex-direction: column;
 		align-items: stretch;
