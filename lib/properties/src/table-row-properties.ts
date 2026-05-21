@@ -31,8 +31,8 @@ export type TableRowProperties = {
 	 *
 	 * - `value`: the height of the row.
 	 * - `rule`: how the height is applied:
-	 *   - `'auto'`: the row height is determined by the content.
-	 *   - `'atLeast'` (default when omitted): the row height is at least the specified value.
+	 *   - `'auto'` (default when omitted): the row height is determined by the content.
+	 *   - `'atLeast'`: the row height is at least the specified value.
 	 *   - `'exact'`: the row height is exactly the specified value regardless of content.
 	 */
 	height?: null | {
@@ -101,7 +101,7 @@ export function tableRowPropertiesFromNode(
 					}
 				}`,
 				node
-		  ) || {}
+			) || {}
 		: {};
 	// Convert the date string to a Date object.
 	if (props.change) {
@@ -178,7 +178,7 @@ export async function tableRowPropertiesToNode(
 							? new Date(trpr.change.date).toISOString()
 							: undefined,
 						node: await tableRowPropertiesToNode(trpr.change),
-				  }
+					}
 				: null,
 			insertion: trpr.insertion
 				? await new Insertion(trpr.insertion).toNode([])
