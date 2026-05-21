@@ -1,17 +1,17 @@
-name: Tests
+name: Publish to JSR
 
 on:
     push:
-    pull_request:
-    workflow_dispatch:
+        tags:
+            - '*.*.*'
 
 permissions:
     contents: read
+    id-token: write
 
 jobs:
-    test:
+    publish:
         runs-on: ubuntu-latest
-
         steps:
             - name: Setup repo
               uses: actions/checkout@v4
@@ -19,10 +19,13 @@ jobs:
             - name: Setup Deno
               uses: denoland/setup-deno@v2
               with:
-                  deno-version: 2.8.0
+                  deno-version: 2.7.2
 
             - name: Run linter
               run: deno task lint
 
             - name: Run tests
               run: deno task test
+
+            - name: Publish package
+              run: deno publish
