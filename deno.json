@@ -25,6 +25,7 @@
 			".github/",
 			".vscode/",
 			".npmrc",
+			"deno.lock",
 			"assets/",
 			"coverage/",
 			"docs/",
