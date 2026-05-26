@@ -11,6 +11,11 @@ const DOCXML_TYPES_URL = new URL('../docxml/docxml.d.ts', import.meta.url);
 
 const INITIAL_SOURCE = examples[0]?.source ?? ''; // The "Hello world" example.
 
+const PERMALINK_KEY = 'code';
+const MAX_PERMALINK_HASH_LENGTH = 1500;
+const MAX_PERMALINK_URL_LENGTH = 1800;
+const PERMALINK_PREFIX_GZIP = 'gz:';
+
 // Workers for Monaco
 (self as unknown as { MonacoEnvironment: unknown }).MonacoEnvironment = {
 	getWorker(_workerId: string, label: string) {
@@ -106,6 +111,129 @@ function downloadDocx(data: Uint8Array, fileName: string) {
 	);
 }
 
+function bytesToBase64(bytes: Uint8Array): string {
+	let binary = '';
+	for (const byte of bytes) {
+		binary += String.fromCharCode(byte);
+	}
+	return btoa(binary);
+}
+
+function base64ToBytes(encoded: string): Uint8Array {
+	const binary = atob(encoded);
+	const bytes = new Uint8Array(binary.length);
+	for (let i = 0; i < binary.length; i++) {
+		bytes[i] = binary.charCodeAt(i);
+	}
+	return bytes;
+}
+
+async function encodePermalinkSource(source: string): Promise<string> {
+	const bytes = new TextEncoder().encode(source);
+	const byteBuffer = bytes.buffer.slice(
+		bytes.byteOffset,
+		bytes.byteOffset + bytes.byteLength
+	) as ArrayBuffer;
+
+	if (!('CompressionStream' in globalThis)) {
+		throw new Error('CompressionStream unavailable');
+	}
+
+	const compressed = await new Response(
+		new Blob([byteBuffer])
+			.stream()
+			.pipeThrough(new CompressionStream('gzip'))
+	).arrayBuffer();
+
+	return PERMALINK_PREFIX_GZIP + bytesToBase64(new Uint8Array(compressed));
+}
+
+async function decodePermalinkSource(encoded: string): Promise<string> {
+	if (encoded.startsWith(PERMALINK_PREFIX_GZIP)) {
+		const compressed = base64ToBytes(
+			encoded.slice(PERMALINK_PREFIX_GZIP.length)
+		);
+		const compressedBuffer = compressed.buffer.slice(
+			compressed.byteOffset,
+			compressed.byteOffset + compressed.byteLength
+		) as ArrayBuffer;
+
+		if (!('DecompressionStream' in globalThis)) {
+			throw new Error('DecompressionStream unavailable');
+		}
+
+		const uncompressed = await new Response(
+			new Blob([compressedBuffer])
+				.stream()
+				.pipeThrough(new DecompressionStream('gzip'))
+		).arrayBuffer();
+
+		return new TextDecoder().decode(uncompressed);
+	}
+
+	return new TextDecoder().decode(base64ToBytes(encoded));
+}
+
+async function readPermalinkSource(): Promise<string | null> {
+	const hash = globalThis.location.hash.startsWith('#')
+		? globalThis.location.hash.slice(1)
+		: globalThis.location.hash;
+	if (!hash) return null;
+
+	const params = new URLSearchParams(hash);
+	const encoded = params.get(PERMALINK_KEY);
+	if (!encoded) return null;
+
+	try {
+		return await decodePermalinkSource(encoded);
+	} catch {
+		return null;
+	}
+}
+
+async function writePermalinkSource(
+	source: string
+): Promise<{ ok: true } | { ok: false; reason: string }> {
+	const url = new URL(globalThis.location.href);
+
+	if (source === INITIAL_SOURCE || source.trim() === '') {
+		url.hash = '';
+		history.replaceState(null, '', url);
+		return { ok: true };
+	} else {
+		const params = new URLSearchParams(url.hash.slice(1));
+		let encodedSource = '';
+		try {
+			encodedSource = await encodePermalinkSource(source);
+		} catch {
+			return {
+				ok: false,
+				reason: 'This browser does not support permalink compression.',
+			};
+		}
+
+		params.set(PERMALINK_KEY, encodedSource);
+		const nextHash = params.toString();
+		if (nextHash.length > MAX_PERMALINK_HASH_LENGTH) {
+			return {
+				ok: false,
+				reason: 'Code is too long for a safe permalink URL, even compressed.',
+			};
+		}
+		url.hash = nextHash;
+
+		if (url.toString().length > MAX_PERMALINK_URL_LENGTH) {
+			return {
+				ok: false,
+				reason: 'Code is too long for a safe permalink URL, even compressed.',
+			};
+		}
+	}
+
+	history.replaceState(null, '', url);
+	return { ok: true };
+}
+
 export function App() {
 	const editorRef = useRef<HTMLDivElement | null>(null);
 	const instanceRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(
@@ -143,6 +271,15 @@ export function App() {
 				);
 				setHasError(true);
 			});
+
+		void readPermalinkSource().then((permalinkSource) => {
+			if (
+				permalinkSource != null &&
+				model.getValue() === INITIAL_SOURCE
+			) {
+				model.setValue(permalinkSource);
+			}
+		});
 
 		return () => {
 			model.dispose();
@@ -227,6 +364,33 @@ export function App() {
 
 			<div class='statusRow'>
 				<p class={`status${hasError ? ' error' : ''}`}>{status}</p>
+				<button
+					type='button'
+					class='secondary'
+					onClick={async () => {
+						const source = instanceRef.current?.getValue();
+						if (!source) return;
+						const permalinkResult =
+							await writePermalinkSource(source);
+						if (!permalinkResult.ok) {
+							setStatus(permalinkResult.reason);
+							setHasError(true);
+							return;
+						}
+						try {
+							await globalThis.navigator.clipboard.writeText(
+								globalThis.location.href
+							);
+							setStatus('Permalink copied.');
+							setHasError(false);
+						} catch {
+							setStatus('Could not copy permalink.');
+							setHasError(true);
+						}
+					}}
+				>
+					Copy permalink
+				</button>
 				<button
 					type='button'
 					class='secondary'
