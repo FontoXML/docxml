@@ -1,6 +1,9 @@
 name: Playground Pages
 
 on:
+    push:
+        branches:
+            - playground
     release:
         types:
             - published
