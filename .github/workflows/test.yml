@@ -21,6 +21,9 @@ jobs:
               with:
                   deno-version: 2.8.0
 
+            - name: Deno CI
+              run: deno ci
+
             - name: Run linter
               run: deno task lint
 
