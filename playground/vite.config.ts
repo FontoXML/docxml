@@ -1,10 +1,14 @@
 import preact from '@preact/preset-vite';
-import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 import { defineConfig } from 'vite';
 
 function getVersion(): string {
 	try {
-		return execSync('git describe --tags --abbrev=0').toString().trim();
+		const denoJsonPath = new URL('../deno.json', import.meta.url);
+		const denoJson = JSON.parse(readFileSync(denoJsonPath, 'utf8')) as {
+			version?: string;
+		};
+		return denoJson.version || 'dev';
 	} catch {
 		return 'dev';
 	}
