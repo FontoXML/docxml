@@ -251,6 +251,8 @@ export function App() {
 			</div>
 
 			<footer class='footer'>
+				<span class='footerVersion'>{__DOCXML_VERSION__}</span>
+				<span>·</span>
 				<a
 					href='https://github.com/fontoxml/docxml'
 					target='_blank'

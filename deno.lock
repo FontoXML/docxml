@@ -524,7 +524,8 @@
       "npm:eslint@10.9.0",
       "npm:fontoxpath@3.34.0",
       "npm:jszip@3.10.1",
-      "npm:slimdom@4.3.5"
+      "npm:slimdom@4.3.5",
+      "npm:typescript@6.0.3"
     ]
   }
 }

@@ -143,6 +143,12 @@ button.secondary {
 	text-decoration: underline;
 }
 
+.footerVersion {
+	font-family: ui-monospace, Menlo, Monaco, monospace;
+	color: var(--muted);
+	opacity: 0.7;
+}
+
 @media (max-width: 700px) {
 	.header {
 		padding: 0.85rem;
