@@ -1,5 +1,5 @@
-import { execSync } from 'node:child_process';
 import preact from '@preact/preset-vite';
+import { execSync } from 'node:child_process';
 import { defineConfig } from 'vite';
 
 function getVersion(): string {
