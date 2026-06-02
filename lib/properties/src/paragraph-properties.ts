@@ -367,8 +367,8 @@ export async function paragraphPropertiesToNode(
 				  }
 				: null,
 			listItem: data.listItem || null,
-			pageBreakBefore: data.pageBreakBefore ?? null,
-			contextualSpacing: data.contextualSpacing ?? null,
+			pageBreakBefore: data.pageBreakBefore || null,
+			contextualSpacing: data.contextualSpacing || null,
 			change: data.change
 				? {
 						id: data.change.id,
