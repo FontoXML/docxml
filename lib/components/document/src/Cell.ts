@@ -266,6 +266,12 @@ export class Cell extends Component<CellProps, CellChild> {
 						"insideH": docxml:ct-border(${QNS.w}insideH),
 						"insideV": docxml:ct-border(${QNS.w}insideV)
 					},
+					"margin": ./${QNS.w}tcPr/${QNS.w}tcMar/map {
+						"top": docxml:length(${QNS.w}top/@${QNS.w}w, 'twip'),
+						"start": docxml:length((${QNS.w}start|${QNS.w}left)[1]/@${QNS.w}w, 'twip'),
+						"bottom": docxml:length(${QNS.w}bottom/@${QNS.w}w, 'twip'),
+						"end": docxml:length((${QNS.w}end|${QNS.w}right)[1]/@${QNS.w}w, 'twip')
+					},
 					"verticalAlignment": ./${QNS.w}tcPr/${QNS.w}vAlign/@${QNS.w}val/string(),
 					"insertion": ./${QNS.w}tcPr/${QNS.w}cellIns/map {
 						"id": @${QNS.w}id/number(),
