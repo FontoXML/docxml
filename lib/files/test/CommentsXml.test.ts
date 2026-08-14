@@ -5,7 +5,7 @@ import { Paragraph } from '../../components/document/src/Paragraph.ts';
 import { Text } from '../../components/document/src/Text.ts';
 import { parse, serialize } from '../../utilities/src/dom.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/src/namespaces.ts';
-import { archive } from '../../utilities/src/tests.ts';
+import { archive, normalizeXml } from '../../utilities/src/tests.ts';
 import { CommentsXml } from '../src/CommentsXml.ts';
 import { ContentTypesXml } from '../src/ContentTypesXml.ts';
 
@@ -33,9 +33,8 @@ describe('Comments', () => {
 
 	it('serializes correctly if there are no comments', async () => {
 		expect(serialize(await comments.$$$toNode())).toBe(
-			`<w:comments xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>`.replace(
-				/\n|\t/g,
-				''
+			normalizeXml(
+				`<w:comments xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"/>`
 			)
 		);
 	});
@@ -49,11 +48,11 @@ describe('Comments', () => {
 		}" w:author="foo" w:date="${date.toISOString()}"/>`;
 
 		expect(serialize(await comments.$$$toNode())).toBe(
-			`
+			normalizeXml(`
 				<w:comments xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 					${expectedComment}
 				</w:comments>	
-			`.replace(/\n|\t/g, '')
+			`)
 		);
 	});
 
@@ -77,12 +76,12 @@ describe('Comments', () => {
 		}" w:author="Foo Bar" w:date="${date.toISOString()}"/>`;
 
 		expect(serialize(await comments.$$$toNode())).toBe(
-			`
+			normalizeXml(`
 				<w:comments xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 					${expectedComment}
 					${expectedComment2}
 				</w:comments>	
-			`.replace(/\n|\t/g, '')
+			`)
 		);
 	});
 
@@ -107,11 +106,11 @@ describe('Comments', () => {
 		`;
 
 		expect(serialize(await comments.$$$toNode())).toBe(
-			`
+			normalizeXml(`
 				<w:comments xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 					${expectedComment}
 				</w:comments>	
-			`.replace(/\n|\t/g, '')
+			`)
 		);
 	});
 
@@ -154,21 +153,21 @@ describe('Comments', () => {
 		const expectedChildCommentExtended = `<w15:commentEx w15:paraId="0000000${child.int}" w15:paraIdParent="0000000${parent.int}"/>`;
 
 		expect(serialize(await comments.$$$toNode())).toBe(
-			`
+			normalizeXml(`
 				<w:comments xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 					${expectedParentComment}
 					${expectedChildComment}
 				</w:comments>	
-			`.replace(/\n|\t/g, '')
+			`)
 		);
 
 		expect(serialize(comments.$$$commentsExtended.$$$toNode())).toBe(
-			`
+			normalizeXml(`
 				<w15:commentsEx xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml">
 					${expectedParentCommentExtended}
 					${expectedChildCommentExtended}
 				</w15:commentsEx>	
-			`.replace(/\n|\t/g, '')
+			`)
 		);
 	});
 });

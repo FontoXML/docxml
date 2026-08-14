@@ -5,7 +5,8 @@ import { Archive } from '../../../classes/src/Archive.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create, serialize } from '../../../utilities/src/dom.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
-import { DeletedText } from "../src/DeletedText.ts";
+import { normalizeXml } from '../../../utilities/src/tests.ts';
+import { DeletedText } from '../src/DeletedText.ts';
 
 const emptyContext: ComponentContext = {
 	archive: new Archive(),
@@ -33,23 +34,21 @@ describe('Deleted Text', () => {
 
 	it('parses children correctly', () => {
 		expect(deletedText.children).toHaveLength(3);
-		expect(deletedText.children.map((child) => child.constructor.name)).toEqual([
-			'String',
-			'Break',
-			'String',
-		]);
+		expect(
+			deletedText.children.map((child) => child.constructor.name)
+		).toEqual(['String', 'Break', 'String']);
 	});
 
 	it('serializes correctly', async () => {
 		expect(serialize(await deletedText.toNode([]))).toBe(
-			`
+			normalizeXml(`
 				<r xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 					<rPr><b/></rPr>
 					<delText xml:space="preserve">This text contains</delText>
 					<br xmlns:ns1="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns1:type="page"/>
 					<delText xml:space="preserve">a page break</delText>
 				</r>
-			`.replace(/\n|\t/g, '')
+			`)
 		);
 	});
 });

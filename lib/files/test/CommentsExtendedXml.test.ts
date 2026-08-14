@@ -4,7 +4,7 @@ import { beforeEach, describe, it } from 'std/testing/bdd';
 import { parse, serialize } from '../../utilities/src/dom.ts';
 import { int } from '../../utilities/src/id.ts';
 import { ALL_NAMESPACE_DECLARATIONS } from '../../utilities/src/namespaces.ts';
-import { archive } from '../../utilities/src/tests.ts';
+import { archive, normalizeXml } from '../../utilities/src/tests.ts';
 import { CommentsExtendedXml } from '../src/CommentsExtendedXml.ts';
 import { ContentTypesXml } from '../src/ContentTypesXml.ts';
 
@@ -31,9 +31,8 @@ describe('CommentsExtended', () => {
 
 	it('serializes correctly if there are no comments', () => {
 		expect(serialize(commentsExtended.$$$toNode())).toBe(
-			`<w15:commentsEx xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml"/>`.replace(
-				/\n|\t/g,
-				''
+			normalizeXml(
+				`<w15:commentsEx xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml"/>`
 			)
 		);
 	});
@@ -43,11 +42,11 @@ describe('CommentsExtended', () => {
 		const expectedComment = `<w15:commentEx w15:paraId="00000001"/>`;
 
 		expect(serialize(commentsExtended.$$$toNode())).toBe(
-			`
+			normalizeXml(`
 				<w15:commentsEx xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml">
 					${expectedComment}
 				</w15:commentsEx>	
-			`.replace(/\n|\t/g, '')
+			`)
 		);
 	});
 
@@ -56,11 +55,11 @@ describe('CommentsExtended', () => {
 		const expectedComment = `<w15:commentEx w15:paraId="FFFFFFFF" w15:paraIdParent="00004CE7"/>`;
 
 		expect(serialize(commentsExtended.$$$toNode())).toBe(
-			`
+			normalizeXml(`
 				<w15:commentsEx xmlns:w15="http://schemas.microsoft.com/office/word/2012/wordml">
 					${expectedComment}
 				</w15:commentsEx>	
-			`.replace(/\n|\t/g, '')
+			`)
 		);
 	});
 });

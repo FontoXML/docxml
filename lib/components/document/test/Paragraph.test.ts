@@ -5,6 +5,7 @@ import { Archive } from '../../../classes/src/Archive.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create, serialize } from '../../../utilities/src/dom.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
+import { normalizeXml } from '../../../utilities/src/tests.ts';
 import { Paragraph } from '../src/Paragraph.ts';
 
 const emptyContext: ComponentContext = {
@@ -44,7 +45,7 @@ describe('Paragraph from XML', () => {
 
 	it('serializes correctly', async () => {
 		expect(serialize(await paragraph.toNode([]))).toBe(
-			`
+			normalizeXml(`
 			<p xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w14}" ns1:paraId="4CE0D358">
 				<pPr>
 					<pStyle xmlns:ns2="${NamespaceUri.w}" ns2:val="Header"/>
@@ -59,7 +60,7 @@ describe('Paragraph from XML', () => {
 					<t xml:space="preserve">My custom template</t>
 				</r>
 			</p>
-			`.replace(/\n|\t/g, '')
+			`)
 		);
 	});
 });
@@ -77,7 +78,7 @@ describe('Paragraph with style change', () => {
 	});
 	it('serializes correctly', async () => {
 		expect(serialize(await paragraph.toNode([]))).toBe(
-			`
+			normalizeXml(`
 				<p xmlns="${NamespaceUri.w}">
 					<pPr>
 						<pStyle xmlns:ns1="${NamespaceUri.w}" ns1:val="StyleNew"/>
@@ -86,11 +87,11 @@ describe('Paragraph with style change', () => {
 						}" ns2:id="0" ns2:date="${now.toISOString()}" ns2:author="Wybe">
 							<pPr>
 								<pStyle ns2:val="StyleOld"/>
+							</pPr>
+							</pPrChange>
 						</pPr>
-						</pPrChange>
-					</pPr>
-				</p>
-			`.replace(/\n|\t/g, '')
+					</p>
+				`)
 		);
 	});
 });

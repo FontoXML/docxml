@@ -5,6 +5,7 @@ import { Archive } from '../../../classes/src/Archive.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create, serialize } from '../../../utilities/src/dom.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
+import { normalizeXml } from '../../../utilities/src/tests.ts';
 import { Text } from '../../document/src/Text.ts';
 
 const emptyContext: ComponentContext = {
@@ -42,14 +43,14 @@ describe('Text', () => {
 
 	it('serializes correctly', async () => {
 		expect(serialize(await text.toNode([]))).toBe(
-			`
+			normalizeXml(`
 				<r xmlns="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 					<rPr><b/></rPr>
 					<t xml:space="preserve">This text contains</t>
 					<br xmlns:ns1="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ns1:type="page"/>
 					<t xml:space="preserve">a page break</t>
 				</r>
-			`.replace(/\n|\t/g, '')
+			`)
 		);
 	});
 

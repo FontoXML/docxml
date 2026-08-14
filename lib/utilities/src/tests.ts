@@ -170,7 +170,7 @@ function localAssert(
  * Succeeding this test means the two functions convert back-and-forth without loss of information.
  */
 export function createXmlRoundRobinTest<
-	ObjectShape extends { [key: string]: unknown }
+	ObjectShape extends { [key: string]: unknown },
 >(
 	fromNode: (n: Node | null) => ObjectShape,
 	toNode: (n: ObjectShape) => Node | Promise<Node | null> | null
@@ -194,7 +194,7 @@ export function createXmlRoundRobinTest<
 }
 
 export function createObjectRoundRobinTest<
-	ObjectShape extends { [key: string]: unknown }
+	ObjectShape extends { [key: string]: unknown },
 >(fromObject: (o: ObjectShape) => Node, toObject: (n: Node) => ObjectShape) {
 	return function test(testObject: ObjectShape, expectedXml: Node | string) {
 		const dom =
@@ -214,4 +214,12 @@ export function createObjectRoundRobinTest<
 			localAssert(prop, ob1, testObject, ob2);
 		}
 	};
+}
+
+/**
+ * Strips newlines and tabs so pretty-printed expected XML can be compared against the single-line
+ * output of `serialize`.
+ */
+export function normalizeXml(xml: string): string {
+	return xml.replace(/\n|\t/g, '');
 }

@@ -8,7 +8,7 @@ import { Table } from '../../components/document/src/Table.ts';
 import { Text } from '../../components/document/src/Text.ts';
 import { serialize } from '../../utilities/src/dom.ts';
 import { cm, pt } from '../../utilities/src/length.ts';
-import { archive } from '../../utilities/src/tests.ts';
+import { archive, normalizeXml } from '../../utilities/src/tests.ts';
 import { ContentTypesXml } from '../src/ContentTypesXml.ts';
 import { FootnotesXml } from '../src/FootnotesXml.ts';
 
@@ -35,7 +35,7 @@ describe('Footnotes', () => {
 
 	it('serializes correctly if there are no footnotes (the two default ones must be there)', async () => {
 		expect(serialize(await footnotes.$$$toNode())).toBe(
-			`<w:footnotes xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+			normalizeXml(`<w:footnotes xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 				<w:footnote w:id="-1" w:type="separator">
 					<w:p>
 						<w:r>
@@ -50,7 +50,7 @@ describe('Footnotes', () => {
 						</w:r>
 					</w:p>
 				</w:footnote>
-			</w:footnotes>`.replace(/\n|\t/g, '')
+			</w:footnotes>`)
 		);
 	});
 
@@ -60,7 +60,7 @@ describe('Footnotes', () => {
 		const expectedFootnote = `<w:footnote w:id="${footnoteId}"><w:p><w:r><w:rPr><w:rStyle w:val="MyStyle"/></w:rPr><w:footnoteRef/></w:r></w:p></w:footnote>`;
 
 		expect(serialize(await footnotes.$$$toNode())).toBe(
-			`<w:footnotes xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+			normalizeXml(`<w:footnotes xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 				<w:footnote w:id="-1" w:type="separator">
 					<w:p>
 						<w:r>
@@ -77,7 +77,7 @@ describe('Footnotes', () => {
 				</w:footnote>
 				${expectedFootnote}
 			</w:footnotes>	
-			`.replace(/\n|\t/g, '')
+			`)
 		);
 	});
 
@@ -103,7 +103,7 @@ describe('Footnotes', () => {
 			</w:footnote>`;
 
 		expect(serialize(await footnotes.$$$toNode())).toBe(
-			`<w:footnotes xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+			normalizeXml(`<w:footnotes xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 				<w:footnote w:id="-1" w:type="separator">
 					<w:p>
 						<w:r>
@@ -120,7 +120,7 @@ describe('Footnotes', () => {
 				</w:footnote>
 				${expectedFootnote}
 			</w:footnotes>	
-			`.replace(/\n|\t/g, '')
+			`)
 		);
 	});
 
@@ -155,7 +155,7 @@ describe('Footnotes', () => {
 			</w:footnote>`;
 
 		expect(serialize(await footnotes.$$$toNode())).toBe(
-			`<w:footnotes xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+			normalizeXml(`<w:footnotes xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 				<w:footnote w:id="-1" w:type="separator">
 					<w:p>
 						<w:r>
@@ -172,7 +172,7 @@ describe('Footnotes', () => {
 				</w:footnote>
 				${expectedFootnote}
 			</w:footnotes>	
-			`.replace(/\n|\t/g, '')
+			`)
 		);
 	});
 
@@ -254,7 +254,7 @@ describe('Footnotes', () => {
 			</w:footnote>`;
 
 		expect(serialize(await footnotes.$$$toNode())).toBe(
-			`<w:footnotes xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+			normalizeXml(`<w:footnotes xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 				<w:footnote w:id="-1" w:type="separator">
 					<w:p>
 						<w:r>
@@ -271,7 +271,7 @@ describe('Footnotes', () => {
 				</w:footnote>
 				${expectedFootnote}
 			</w:footnotes>	
-			`.replace(/\n|\t/g, '')
+			`)
 		);
 	});
 

@@ -1,14 +1,15 @@
-// Import without assignment ensures Deno does not tree-shake this component. To avoid circular
-// definitions, components register themselves in a side-effect of their module.
-// import './Paragraph.ts'; // ?????????????
-
 import {
 	Component,
 	type ComponentAncestor,
+	type ComponentContext,
 } from '../../../classes/src/Component.ts';
-import { registerComponent } from '../../../utilities/src/components.ts';
+import {
+	createChildComponentsFromNodes,
+	registerComponent,
+} from '../../../utilities/src/components.ts';
 import { create } from '../../../utilities/src/dom.ts';
 import { QNS } from '../../../utilities/src/namespaces.ts';
+import { evaluateXPathToMap } from '../../../utilities/src/xquery.ts';
 import type { Deletion } from '../../track-changes/src/Deletion.ts';
 import type { Insertion } from '../../track-changes/src/Insertion.ts';
 import type { MoveFrom } from '../../track-changes/src/MoveFrom.ts';
@@ -77,7 +78,8 @@ export type StructuredDocumentProps = {
 };
 
 /**
- *
+ * A component that represents a structured document tag (content control) in your DOCX
+ * document, which is a container for other content.
  */
 export class StructuredDocument extends Component<
 	StructuredDocumentProps,
@@ -147,8 +149,47 @@ export class StructuredDocument extends Component<
 	/**
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
-	static override fromNode(): StructuredDocument {
-		return new StructuredDocument({});
+	static override fromNode(
+		node: Node,
+		context: ComponentContext
+	): StructuredDocument {
+		const { stdPr, children } = evaluateXPathToMap<{
+			stdPr: StructuredDocumentProps;
+			children: Node[];
+		}>(
+			`map {
+				"stdPr": ./${QNS.w}sdtPr/map {
+					"appearance": ./${QNS.w15}appearance/@${QNS.w15}val/string(),
+					"alias": ./${QNS.w}alias/@${QNS.w}val/string(),
+					"lock": ./${QNS.w}lock/@${QNS.w}val/string()
+				},
+				"children": array{ ./${QNS.w}sdtContent/(
+					${QNS.w}p |
+					${QNS.w}tbl |
+					${QNS.w}bookmarkStart |
+					${QNS.w}bookmarkEnd | 
+					${QNS.w}moveTo | 
+					${QNS.w}moveFrom | 
+					${QNS.w}moveToRangeStart | 
+					${QNS.w}moveToRangeEnd | 
+					${QNS.w}moveFromRangeStart | 
+					${QNS.w}moveFromRangeEnd |
+					${QNS.w}ins |
+					${QNS.w}del |
+					${QNS.w}sdt
+				)}
+			}`,
+			node
+		);
+
+		return new StructuredDocument(
+			stdPr,
+			...createChildComponentsFromNodes<StructuredDocumentChild>(
+				this.children,
+				children,
+				context
+			)
+		);
 	}
 }
 
