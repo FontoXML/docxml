@@ -26,7 +26,7 @@ import type { MoveFrom } from '../../track-changes/src/MoveFrom.ts';
 import type { MoveTo } from '../../track-changes/src/MoveTo.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
-import type { Paragraph } from './Paragraph.ts';
+import { Paragraph } from './Paragraph.ts';
 import type { Table } from './Table.ts';
 
 /**
