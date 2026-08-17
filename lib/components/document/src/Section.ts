@@ -27,6 +27,7 @@ import type { MoveTo } from '../../track-changes/src/MoveTo.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import { Paragraph } from './Paragraph.ts';
+import type { StructuredDocument } from './StructuredDocument.ts';
 import type { Table } from './Table.ts';
 
 /**
@@ -38,7 +39,8 @@ export type SectionChild =
 	| BookmarkRangeStart
 	| BookmarkRangeEnd
 	| MoveTo
-	| MoveFrom;
+	| MoveFrom
+	| StructuredDocument;
 
 export const sectionChildComponentNames = [
 	'Table',
@@ -47,6 +49,7 @@ export const sectionChildComponentNames = [
 	'BookmarkRangeEnd',
 	'MoveTo',
 	'MoveFrom',
+	'StructuredDocument',
 ];
 
 /**

@@ -98,7 +98,7 @@ export class StructuredDocument extends Component<
 		'MoveFromRangeEnd',
 		'Insertion',
 		'Deletion',
-		'StructuredDocument',
+		this.name,
 	];
 	public static override readonly mixed: boolean = false;
 

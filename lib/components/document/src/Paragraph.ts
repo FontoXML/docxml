@@ -39,9 +39,9 @@ import type { Insertion } from '../../track-changes/src/Insertion.ts';
 import type { MoveFrom } from '../../track-changes/src/MoveFrom.ts';
 import type { MoveFromRangeEnd } from '../../track-changes/src/MoveFromRangeEnd.ts';
 import type { MoveFromRangeStart } from '../../track-changes/src/MoveFromRangeStart.ts';
+import type { MoveTo } from '../../track-changes/src/MoveTo.ts';
 import type { MoveToRangeEnd } from '../../track-changes/src/MoveToRangeEnd.ts';
 import type { MoveToRangeStart } from '../../track-changes/src/MoveToRangeStart.ts';
-import type { MoveTo } from '../../track-changes/src/MoveTo.ts';
 import type { BookmarkRangeEnd } from './BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from './BookmarkRangeStart.ts';
 import type { Field } from './Field.ts';
@@ -51,6 +51,7 @@ import type { FieldRangeStart } from './FieldRangeStart.ts';
 import type { FootnoteAnchor } from './FootnoteAnchor.ts';
 import type { FootnoteReference } from './FootnoteReference.ts';
 import type { Hyperlink } from './Hyperlink.ts';
+import type { StructuredDocument } from './StructuredDocument.ts';
 
 /**
  * A type describing the components accepted as children of {@link Paragraph}.
@@ -76,7 +77,8 @@ export type ParagraphChild =
 	| MoveFromRangeEnd
 	| FootnoteAnchor
 	| Insertion
-	| Deletion;
+	| Deletion
+	| StructuredDocument;
 
 /**
  * A type describing the props accepted by {@link Paragraph}.
@@ -115,6 +117,7 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 		'MoveFromRangeEnd',
 		'Insertion',
 		'Deletion',
+		'StructuredDocument',
 	];
 	public static override readonly mixed: boolean = false;
 	#sectionProperties: SectionProperties | null = null;
@@ -207,7 +210,8 @@ export class Paragraph extends Component<ParagraphProps, ParagraphChild> {
 						${QNS.w}moveToRangeStart | 
 						${QNS.w}moveToRangeEnd | 
 						${QNS.w}moveFromRangeStart | 
-						${QNS.w}moveFromRangeEnd
+						${QNS.w}moveFromRangeEnd | 
+						${QNS.w}sdt
 					) }
 				}
 			`,

@@ -19,14 +19,15 @@ import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts'
 import type { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
 import type { FootnoteReference } from '../../document/src/FootnoteReference.ts';
+import type { StructuredDocument } from '../../document/src/StructuredDocument.ts';
 import type { Text } from '../../document/src/Text.ts';
 import type { Deletion } from './Deletion.ts';
 import type { MoveFrom } from './MoveFrom.ts';
 import type { MoveFromRangeEnd } from './MoveFromRangeEnd.ts';
 import type { MoveFromRangeStart } from './MoveFromRangeStart.ts';
+import type { MoveTo } from './MoveTo.ts';
 import type { MoveToRangeEnd } from './MoveToRangeEnd.ts';
 import type { MoveToRangeStart } from './MoveToRangeStart.ts';
-import type { MoveTo } from './MoveTo.ts';
 
 /**
  * A type specifying the children of {@link Insertion}.
@@ -45,7 +46,8 @@ export type InsertionChild =
 	| MoveFromRangeStart
 	| MoveFromRangeEnd
 	| Deletion
-	| FootnoteReference;
+	| FootnoteReference
+	| StructuredDocument;
 
 /**
  * A type describing the props accepted by {@link Insertion}.
@@ -77,6 +79,7 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 		'MoveFromRangeEnd',
 		'Deletion',
 		'FootnoteReference',
+		'StructuredDocument',
 		this.name,
 	];
 
@@ -134,7 +137,8 @@ export class Insertion extends Component<InsertionProps, InsertionChild> {
 						./${QNS.w}moveToRangeEnd,
 						./${QNS.w}moveFrom,
 						./${QNS.w}moveFromRangeStart,
-						./${QNS.w}moveFromRangeEnd
+						./${QNS.w}moveFromRangeEnd,
+						./${QNS.w}sdt
 					}
 				}
 			`,

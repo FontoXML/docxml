@@ -6,6 +6,7 @@ import {
 } from '../../../utilities/src/parameter-checking.ts';
 import './Row.ts';
 
+import type { StructuredDocument } from '@fontoxml/docxml';
 import {
 	Component,
 	type ComponentAncestor,
@@ -31,7 +32,7 @@ import type { Row } from './Row.ts';
 /**
  * A type describing the components accepted as children of {@link Table}.
  */
-export type TableChild = Row;
+export type TableChild = Row | StructuredDocument;
 
 /**
  * A type describing the props accepted by {@link Table}.
@@ -50,7 +51,10 @@ export type TableProps = TableProperties & {
  * A component that represents a table.
  */
 export class Table extends Component<TableProps, TableChild> {
-	public static override readonly children: string[] = ['Row'];
+	public static override readonly children: string[] = [
+		'Row',
+		'StructuredDocument',
+	];
 	public static override readonly mixed: boolean = false;
 
 	/**
@@ -95,7 +99,7 @@ export class Table extends Component<TableProps, TableChild> {
 				columnWidths: this.props.columnWidths?.length
 					? this.props.columnWidths.map((width) =>
 							Math.round(width.twip)
-					  )
+						)
 					: null,
 				columnWidthChange: this.props.columnWidthChange
 					? {
@@ -103,7 +107,7 @@ export class Table extends Component<TableProps, TableChild> {
 							cols: this.props.columnWidthChange.cols.map((col) =>
 								Math.round(col.twip)
 							),
-					  }
+						}
 					: null,
 				children: await this.childrenToNode(ancestry),
 			}
@@ -138,7 +142,7 @@ export class Table extends Component<TableProps, TableChild> {
 						"id": @${QNS.w}id/number(),
 						"cols": array { ./${QNS.w}tblGrid/${QNS.w}gridCol/@${QNS.w}w/number() }
 					}, 
-					"children": array { ./(${QNS.w}tr) }
+					"children": array { ./(${QNS.w}tr | ${QNS.w}sdt) }
 				}
 			`,
 			node
@@ -155,7 +159,7 @@ export class Table extends Component<TableProps, TableChild> {
 							cols: props.columnWidthChange.cols.map(
 								(size: number) => twip(size)
 							),
-					  }
+						}
 					: null,
 			},
 			...createChildComponentsFromNodes<TableChild>(
