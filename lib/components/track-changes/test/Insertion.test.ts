@@ -15,6 +15,7 @@ import { Archive } from '../../../classes/src/Archive.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create, serialize } from '../../../utilities/src/dom.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
+import { StructuredDocument } from '../../document/src/StructuredDocument.ts';
 import { MoveFromRangeEnd } from '../src/MoveFromRangeEnd.ts';
 import { MoveFromRangeStart } from '../src/MoveFromRangeStart.ts';
 import { MoveToRangeEnd } from '../src/MoveToRangeEnd.ts';
@@ -462,14 +463,81 @@ describe('Insertion', () => {
 									<moveToRangeStart xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}" 
 									ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe" ns1:name="Move_to_1" />
 									<moveToRangeEnd xmlns="${NamespaceUri.w}" xmlns:ns2="${
-								NamespaceUri.w
-							}" ns2:id="0" />
+										NamespaceUri.w
+									}" ns2:id="0" />
 									<moveFromRangeStart xmlns="${NamespaceUri.w}" xmlns:ns3="${NamespaceUri.w}" 
 									ns3:id="1" ns3:date="${date.toISOString()}" ns3:author="Angel" ns3:name="Move_from_1" />
 									<moveFromRangeEnd xmlns="${NamespaceUri.w}" xmlns:ns4="${
-								NamespaceUri.w
-							}" ns4:id="1" />
+										NamespaceUri.w
+									}" ns4:id="1" />
 								</ins>	
+							</p>`
+						)
+					)
+				);
+			});
+		});
+
+		describe('StructuredDocument', () => {
+			const insertedSdtNode = create(
+				`<w:p xmlns:w="${NamespaceUri.w}">
+					<w:ins w:id="1" w:author="Luis" w:date="${date.toISOString()}">
+						<w:sdt>
+							<w:sdtPr>
+								<w:alias w:val="My control" />
+							</w:sdtPr>
+							<w:sdtContent>
+								<w:p />
+							</w:sdtContent>
+						</w:sdt>
+					</w:ins>
+				</w:p>
+				`,
+				emptyContext
+			);
+
+			const insertedSdtAsObject = new Paragraph(
+				{},
+				new Insertion(
+					{ author: 'Luis', date: date, id: 1 },
+					new StructuredDocument(
+						{ alias: 'My control' },
+						new Paragraph({})
+					)
+				)
+			);
+
+			const insertedSdtAsNode = Paragraph.fromNode(
+				insertedSdtNode,
+				emptyContext
+			);
+
+			it('Insertion node has a StructuredDocument child', () => {
+				expect(insertedSdtAsNode.children).toHaveLength(1);
+				const insertion = insertedSdtAsNode.children[0];
+				expect(insertion).toBeInstanceOf(Insertion);
+				expect(insertion.children[0]).toBeInstanceOf(
+					StructuredDocument
+				);
+			});
+
+			it('serializes and deserialized correctly', async () => {
+				expect(serialize(await insertedSdtAsObject.toNode([]))).toEqual(
+					serialize(
+						create(
+							`<p xmlns="${NamespaceUri.w}">
+								<ins xmlns:ns1="${
+									NamespaceUri.w
+								}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}">
+									<sdt>
+										<sdtPr>
+											<alias ns1:val="My control"/>
+										</sdtPr>
+										<sdtContent>
+											<p/>
+										</sdtContent>
+									</sdt>
+								</ins>
 							</p>`
 						)
 					)

@@ -138,7 +138,7 @@ export class Table extends Component<TableProps, TableChild> {
 						"id": @${QNS.w}id/number(),
 						"cols": array { ./${QNS.w}tblGrid/${QNS.w}gridCol/@${QNS.w}w/number() }
 					}, 
-					"children": array { ./(${QNS.w}tr | ${QNS.w}sdt) }
+					"children": array { ./(${QNS.w}tr) }
 				}
 			`,
 			node

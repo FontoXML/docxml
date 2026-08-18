@@ -7,6 +7,7 @@ import { create, serialize } from '../../../utilities/src/dom.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
 import { normalizeXml } from '../../../utilities/src/tests.ts';
 import { Paragraph } from '../src/Paragraph.ts';
+import { StructuredDocument } from '../src/StructuredDocument.ts';
 
 const emptyContext: ComponentContext = {
 	archive: new Archive(),
@@ -92,6 +93,52 @@ describe('Paragraph with style change', () => {
 						</pPr>
 					</p>
 				`)
+		);
+	});
+});
+
+describe('Paragraph with a structured document tag', () => {
+	const sdtNode = create(`
+		<w:p xmlns:w="${NamespaceUri.w}">
+			<w:sdt>
+				<w:sdtPr>
+					<w:alias w:val="My control" />
+				</w:sdtPr>
+				<w:sdtContent>
+					<w:p />
+				</w:sdtContent>
+			</w:sdt>
+		</w:p>
+	`);
+
+	const sdtAsObject = new Paragraph(
+		{},
+		new StructuredDocument({ alias: 'My control' }, new Paragraph({}))
+	);
+
+	const sdtAsNode = Paragraph.fromNode(sdtNode, emptyContext);
+
+	it('parses the w:sdt child as a StructuredDocument', () => {
+		expect(sdtAsNode.children).toHaveLength(1);
+		expect(sdtAsNode.children[0]).toBeInstanceOf(StructuredDocument);
+	});
+
+	it('serializes correctly', async () => {
+		expect(serialize(await sdtAsObject.toNode([]))).toEqual(
+			serialize(
+				create(`
+					<p xmlns="${NamespaceUri.w}">
+						<sdt>
+							<sdtPr>
+								<alias xmlns:ns1="${NamespaceUri.w}" ns1:val="My control"/>
+							</sdtPr>
+							<sdtContent>
+								<p/>
+							</sdtContent>
+						</sdt>
+					</p>
+				`)
+			)
 		);
 	});
 });
