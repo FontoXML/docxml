@@ -6,7 +6,6 @@ import {
 } from '../../../utilities/src/parameter-checking.ts';
 import './Row.ts';
 
-import type { StructuredDocument } from '@fontoxml/docxml';
 import {
 	Component,
 	type ComponentAncestor,
@@ -32,7 +31,7 @@ import type { Row } from './Row.ts';
 /**
  * A type describing the components accepted as children of {@link Table}.
  */
-export type TableChild = Row | StructuredDocument;
+export type TableChild = Row;
 
 /**
  * A type describing the props accepted by {@link Table}.
@@ -51,10 +50,7 @@ export type TableProps = TableProperties & {
  * A component that represents a table.
  */
 export class Table extends Component<TableProps, TableChild> {
-	public static override readonly children: string[] = [
-		'Row',
-		'StructuredDocument',
-	];
+	public static override readonly children: string[] = ['Row'];
 	public static override readonly mixed: boolean = false;
 
 	/**
