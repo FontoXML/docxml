@@ -4,11 +4,11 @@
 import Docx, { Paragraph, StructuredDocument, Text } from '../mod.ts';
 
 await Docx.fromJsx([
-	<StructuredDocument alias='test' appearance='hidden'>
+	<StructuredDocument alias='test' appearance='hidden' tag='tag1'>
 		<Paragraph>
 			<Text>Content</Text>
 		</Paragraph>
-		<StructuredDocument alias='nested' lock='sdtLocked'>
+		<StructuredDocument lock='sdtLocked' tag='tag2'>
 			<Paragraph>
 				<Text>More Content</Text>
 			</Paragraph>

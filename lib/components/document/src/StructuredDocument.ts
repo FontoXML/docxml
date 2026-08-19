@@ -75,6 +75,12 @@ export type StructuredDocumentProps = {
 		// No Locking.  Used by Word by default.
 		| 'unlocked'
 		| null;
+	/**
+	 * This element specifies a programmatic tag associated with the current structured document tag.
+	 * A programmatic tag is an arbitrary string which applications may associate with a structured
+	 * document tag in order to identify it without providing a visible friendly name.
+	 */
+	tag?: string | null;
 };
 
 /**
@@ -117,6 +123,9 @@ export class StructuredDocument extends Component<
                     } else (),
                     if (exists($lock)) then element ${QNS.w}lock {
                         attribute ${QNS.w}val { $lock }
+                    } else (),
+                    if (exists($tag)) then element ${QNS.w}tag {
+                        attribute ${QNS.w}val { $tag }
                     } else ()
                 }
             `,
@@ -124,6 +133,7 @@ export class StructuredDocument extends Component<
 				appearance: this.props.appearance || null,
 				alias: this.props.alias || null,
 				lock: this.props.lock || null,
+				tag: this.props.tag || null,
 			}
 		);
 		return create(
@@ -161,7 +171,8 @@ export class StructuredDocument extends Component<
 				"stdPr": ./${QNS.w}sdtPr/map {
 					"appearance": ./${QNS.w15}appearance/@${QNS.w15}val/string(),
 					"alias": ./${QNS.w}alias/@${QNS.w}val/string(),
-					"lock": ./${QNS.w}lock/@${QNS.w}val/string()
+					"lock": ./${QNS.w}lock/@${QNS.w}val/string(),
+					"tag": ./${QNS.w}tag/@${QNS.w}val/string()
 				},
 				"children": array{ ./${QNS.w}sdtContent/(
 					${QNS.w}p |

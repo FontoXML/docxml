@@ -36,6 +36,7 @@ describe('StructuredDocument', () => {
 							<w15:appearance w15:val="tags" />
 							<w:alias w:val="My control" />
 							<w:lock w:val="sdtContentLocked" />
+							<w:tag w:val="My tag" />
 						</w:sdtPr>
 						<w:sdtContent />
 					</w:sdt>
@@ -45,6 +46,7 @@ describe('StructuredDocument', () => {
 			expect(component.props.appearance).toBe('tags');
 			expect(component.props.alias).toBe('My control');
 			expect(component.props.lock).toBe('sdtContentLocked');
+			expect(component.props.tag).toBe('My tag');
 		});
 
 		it('parses children from sdtContent', () => {
@@ -77,6 +79,7 @@ describe('StructuredDocument', () => {
 			expect(component.props.appearance).toBeNull();
 			expect(component.props.alias).toBeNull();
 			expect(component.props.lock).toBeNull();
+			expect(component.props.tag).toBeNull();
 		});
 	});
 
@@ -86,6 +89,7 @@ describe('StructuredDocument', () => {
 				appearance: 'hidden',
 				alias: 'Title',
 				lock: 'sdtLocked',
+				tag: 'My tag',
 			});
 			const output = serialize(await component.toNode([]));
 			expect(normalizeXml(output)).toBe(
@@ -95,6 +99,7 @@ describe('StructuredDocument', () => {
 							<appearance xmlns="${NamespaceUri.w15}" xmlns:ns1="${NamespaceUri.w15}" ns1:val="hidden"/>
 							<alias xmlns:ns2="${NamespaceUri.w}" ns2:val="Title"/>
 							<lock xmlns:ns3="${NamespaceUri.w}" ns3:val="sdtLocked"/>
+							<tag xmlns:ns4="${NamespaceUri.w}" ns4:val="My tag"/>
 						</sdtPr>
 						<sdtContent/>
 					</sdt>
@@ -142,6 +147,7 @@ describe('StructuredDocument', () => {
 							<w15:appearance w15:val="boundingBox" />
 							<w:alias w:val="Roundtrip" />
 							<w:lock w:val="unlocked" />
+							<w:tag w:val="Roundtrip tag" />
 						</w:sdtPr>
 						<w:sdtContent>
 							<w:p />
@@ -158,6 +164,7 @@ describe('StructuredDocument', () => {
 							<appearance xmlns="${NamespaceUri.w15}" xmlns:ns1="${NamespaceUri.w15}" ns1:val="boundingBox"/>
 							<alias xmlns:ns2="${NamespaceUri.w}" ns2:val="Roundtrip"/>
 							<lock xmlns:ns3="${NamespaceUri.w}" ns3:val="unlocked"/>
+							<tag xmlns:ns4="${NamespaceUri.w}" ns4:val="Roundtrip tag"/>
 						</sdtPr>
 						<sdtContent>
 							<p>
