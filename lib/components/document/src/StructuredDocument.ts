@@ -24,7 +24,7 @@ import type { Paragraph } from './Paragraph.ts';
 import type { Table } from './Table.ts';
 
 /**
- * A type describing the components accepted as children of {@link }.
+ * A type describing the components accepted as children of {@link StructuredDocument}.
  */
 export type StructuredDocumentChild =
 	| Paragraph
