@@ -7,6 +7,7 @@ import { Section } from '../../components/document/src/Section.ts';
 import { Text } from '../../components/document/src/Text.ts';
 import { serialize } from '../../utilities/src/dom.ts';
 import { pt } from '../../utilities/src/length.ts';
+import { normalizeXml } from '../../utilities/src/tests.ts';
 import { StylesXml } from '../src/StylesXml.ts';
 
 describe('Styles', () => {
@@ -23,7 +24,7 @@ describe('Styles', () => {
 			},
 		});
 		expect(serialize(await stylesXml.$$$toNode())).toBe(
-			`<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+			normalizeXml(`<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 				<w:latentStyles w:defLockedState="0" w:defUIPriority="99" w:defSemiHidden="0" w:defUnhideWhenUsed="0" w:defQFormat="0" w:count="1"/>
 				<w:style w:type="paragraph" w:styleId="nerf" w:default="1">
 					<w:name w:val="Derp"/>
@@ -33,7 +34,7 @@ describe('Styles', () => {
 					</w:pPr>
 					<w:tblPr/>
 				</w:style>
-			</w:styles>`.replace(/\n|\t/g, '')
+			</w:styles>`)
 		);
 	});
 
@@ -59,7 +60,7 @@ describe('Styles', () => {
 		});
 		const node = await stylesXml.$$$toNode();
 		expect(serialize(node)).toBe(
-			`<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+			normalizeXml(`<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 				<w:latentStyles w:defLockedState="0" w:defUIPriority="99" w:defSemiHidden="0" w:defUnhideWhenUsed="0" w:defQFormat="0" w:count="1"/>
 				<w:style w:type="table" w:styleId="test">
 					<w:tblPr>
@@ -75,7 +76,7 @@ describe('Styles', () => {
 						</w:tcPr>
 					</w:tblStylePr>
 				</w:style>
-			</w:styles>`.replace(/\n|\t/g, '')
+			</w:styles>`)
 		);
 
 		const reparsed = StylesXml.fromDom(node, 'derp').get('test');

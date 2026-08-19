@@ -10,12 +10,13 @@ import { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts';
 import { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
 import { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
 import { Paragraph } from '../../document/src/Paragraph.ts';
+import { StructuredDocument } from '../../document/src/StructuredDocument.ts';
 import { Text } from '../../document/src/Text.ts';
-import { DeletedText } from '../src/DeletedText.ts';
 import { MoveFromRangeEnd } from '../../track-changes/src/MoveFromRangeEnd.ts';
 import { MoveFromRangeStart } from '../../track-changes/src/MoveFromRangeStart.ts';
 import { MoveToRangeEnd } from '../../track-changes/src/MoveToRangeEnd.ts';
 import { MoveToRangeStart } from '../../track-changes/src/MoveToRangeStart.ts';
+import { DeletedText } from '../src/DeletedText.ts';
 import { Deletion } from '../src/Deletion.ts';
 import { MoveFrom } from '../src/MoveFrom.ts';
 import { MoveTo } from '../src/MoveTo.ts';
@@ -522,14 +523,79 @@ describe('Deletion', () => {
 									<moveToRangeStart xmlns="${NamespaceUri.w}" xmlns:ns1="${NamespaceUri.w}" 
 									ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe" ns1:name="Move_to_1" />
 									<moveToRangeEnd xmlns="${NamespaceUri.w}" xmlns:ns2="${
-								NamespaceUri.w
-							}" ns2:id="0" />
+										NamespaceUri.w
+									}" ns2:id="0" />
 									<moveFromRangeStart xmlns="${NamespaceUri.w}" xmlns:ns3="${NamespaceUri.w}" 
 									ns3:id="1" ns3:date="${date.toISOString()}" ns3:author="Angel" ns3:name="Move_from_1" />
 									<moveFromRangeEnd xmlns="${NamespaceUri.w}" xmlns:ns4="${
-								NamespaceUri.w
-							}" ns4:id="1" />
+										NamespaceUri.w
+									}" ns4:id="1" />
 								</del>	
+							</p>`
+						)
+					)
+				);
+			});
+		});
+
+		describe('StructuredDocument', () => {
+			const deletedSdtNode = create(
+				`<w:p xmlns:w="${NamespaceUri.w}">
+					<w:del w:id="1" w:author="Luis" w:date="${date.toISOString()}">
+						<w:sdt>
+							<w:sdtPr>
+								<w:alias w:val="My control" />
+							</w:sdtPr>
+							<w:sdtContent>
+								<w:p />
+							</w:sdtContent>
+						</w:sdt>
+					</w:del>
+				</w:p>
+				`,
+				emptyContext
+			);
+
+			const deletedSdtAsObject = new Paragraph(
+				{},
+				new Deletion(
+					{ author: 'Luis', date: date, id: 1 },
+					new StructuredDocument(
+						{ alias: 'My control' },
+						new Paragraph({})
+					)
+				)
+			);
+
+			const deletedSdtAsNode = Paragraph.fromNode(
+				deletedSdtNode,
+				emptyContext
+			);
+
+			it('Deletion node has a StructuredDocument child', () => {
+				expect(deletedSdtAsNode.children).toHaveLength(1);
+				const deletion = deletedSdtAsNode.children[0];
+				expect(deletion).toBeInstanceOf(Deletion);
+				expect(deletion.children[0]).toBeInstanceOf(StructuredDocument);
+			});
+
+			it('serializes and deserialized correctly', async () => {
+				expect(serialize(await deletedSdtAsObject.toNode([]))).toEqual(
+					serialize(
+						create(
+							`<p xmlns="${NamespaceUri.w}">
+								<del xmlns:ns1="${
+									NamespaceUri.w
+								}" ns1:id="1" ns1:author="Luis" ns1:date="${date.toISOString()}">
+									<sdt>
+										<sdtPr>
+											<alias ns1:val="My control"/>
+										</sdtPr>
+										<sdtContent>
+											<p/>
+										</sdtContent>
+									</sdt>
+								</del>
 							</p>`
 						)
 					)

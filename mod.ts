@@ -136,6 +136,11 @@ export {
 	type SectionProps,
 } from './lib/components/document/src/Section.ts';
 export {
+	StructuredDocument,
+	type StructuredDocumentChild,
+	type StructuredDocumentProps,
+} from './lib/components/document/src/StructuredDocument.ts';
+export {
 	Symbol,
 	type SymbolChild,
 	type SymbolProps,

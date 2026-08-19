@@ -6,6 +6,7 @@ import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create, serialize } from '../../../utilities/src/dom.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
 import { Paragraph } from '../../document/src/Paragraph.ts';
+import { StructuredDocument } from '../../document/src/StructuredDocument.ts';
 import { Text } from '../../document/src/Text.ts';
 import { MoveFrom } from '../src/MoveFrom.ts';
 import { MoveTo } from '../src/MoveTo.ts';
@@ -428,5 +429,103 @@ describe('Move content in track changes...', () => {
 				)
 			)
 		);
+	});
+
+	describe('StructuredDocument children', () => {
+		const moveToSdtNode = create(
+			`<w:moveTo xmlns:w="${
+				NamespaceUri.w
+			}" w:id="0" w:author="Gabe" w:date="${date.toISOString()}">
+				<w:sdt>
+					<w:sdtPr>
+						<w:alias w:val="My control" />
+					</w:sdtPr>
+					<w:sdtContent>
+						<w:p />
+					</w:sdtContent>
+				</w:sdt>
+			</w:moveTo>`,
+			emptyContext
+		);
+
+		const moveToSdtObject = new MoveTo(
+			{ id: 0, date: date, author: 'Gabe' },
+			new StructuredDocument({ alias: 'My control' }, new Paragraph({}))
+		);
+
+		const moveFromSdtNode = create(
+			`<w:moveFrom xmlns:w="${
+				NamespaceUri.w
+			}" w:id="1" w:author="Angel" w:date="${date.toISOString()}">
+				<w:sdt>
+					<w:sdtPr>
+						<w:alias w:val="My control" />
+					</w:sdtPr>
+					<w:sdtContent>
+						<w:p />
+					</w:sdtContent>
+				</w:sdt>
+			</w:moveFrom>`,
+			emptyContext
+		);
+
+		const moveFromSdtObject = new MoveFrom(
+			{ id: 1, date: date, author: 'Angel' },
+			new StructuredDocument({ alias: 'My control' }, new Paragraph({}))
+		);
+
+		it('MoveTo parses a w:sdt child as a StructuredDocument', () => {
+			const moveTo = MoveTo.fromNode(moveToSdtNode, emptyContext);
+			expect(moveTo.children).toHaveLength(1);
+			expect(moveTo.children[0]).toBeInstanceOf(StructuredDocument);
+		});
+
+		it('MoveTo serializes a StructuredDocument child correctly', async () => {
+			expect(serialize(await moveToSdtObject.toNode([]))).toEqual(
+				serialize(
+					create(
+						`<moveTo xmlns="${NamespaceUri.w}" xmlns:ns1="${
+							NamespaceUri.w
+						}" ns1:id="0" ns1:date="${date.toISOString()}" ns1:author="Gabe">
+							<sdt>
+								<sdtPr>
+									<alias ns1:val="My control"/>
+								</sdtPr>
+								<sdtContent>
+									<p/>
+								</sdtContent>
+							</sdt>
+						</moveTo>`
+					)
+				)
+			);
+		});
+
+		it('MoveFrom parses a w:sdt child as a StructuredDocument', () => {
+			const moveFrom = MoveFrom.fromNode(moveFromSdtNode, emptyContext);
+			expect(moveFrom.children).toHaveLength(1);
+			expect(moveFrom.children[0]).toBeInstanceOf(StructuredDocument);
+		});
+
+		it('MoveFrom serializes a StructuredDocument child correctly', async () => {
+			expect(serialize(await moveFromSdtObject.toNode([]))).toEqual(
+				serialize(
+					create(
+						`<moveFrom xmlns="${NamespaceUri.w}" xmlns:ns1="${
+							NamespaceUri.w
+						}" ns1:id="1" ns1:date="${date.toISOString()}" ns1:author="Angel">
+							<sdt>
+								<sdtPr>
+									<alias ns1:val="My control"/>
+								</sdtPr>
+								<sdtContent>
+									<p/>
+								</sdtContent>
+							</sdt>
+						</moveFrom>`
+					)
+				)
+			);
+		});
 	});
 });

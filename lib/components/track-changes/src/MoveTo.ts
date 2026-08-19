@@ -19,6 +19,7 @@ import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts'
 import type { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
 import type { FootnoteReference } from '../../document/src/FootnoteReference.ts';
+import type { StructuredDocument } from '../../document/src/StructuredDocument.ts';
 import type { Text } from '../../document/src/Text.ts';
 import type { Deletion } from './Deletion.ts';
 import type { Insertion } from './Insertion.ts';
@@ -45,7 +46,8 @@ export type MoveToChild =
 	| MoveFromRangeEnd
 	| Insertion
 	| Deletion
-	| FootnoteReference;
+	| FootnoteReference
+	| StructuredDocument;
 
 /**
  * A type describing the props accepted by {@link MoveTo}.
@@ -77,6 +79,7 @@ export class MoveTo extends Component<MoveToProps, MoveToChild> {
 		'Insertion',
 		'Deletion',
 		'FootnoteReference',
+		'StructuredDocument',
 		this.name,
 	];
 
@@ -135,7 +138,8 @@ export class MoveTo extends Component<MoveToProps, MoveToChild> {
 					${QNS.w}moveToRangeStart | 
 					${QNS.w}moveToRangeEnd | 
 					${QNS.w}moveFromRangeStart | 
-					${QNS.w}moveFromRangeEnd
+					${QNS.w}moveFromRangeEnd | 
+					${QNS.w}sdt
 				)}, 
 				"changeProps": map { 
 					"id": @${QNS.w}id/number(),

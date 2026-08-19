@@ -50,6 +50,7 @@ export class MoveFrom extends Component<MoveFromProps, MoveFromChild> {
 		'Insertion',
 		'Deletion',
 		'FootnoteReference',
+		'StructuredDocument',
 		this.name,
 	];
 
@@ -107,7 +108,8 @@ export class MoveFrom extends Component<MoveFromProps, MoveFromChild> {
 					${QNS.w}moveToRangeStart | 
 					${QNS.w}moveToRangeEnd | 
 					${QNS.w}moveFromRangeStart | 
-					${QNS.w}moveFromRangeEnd
+					${QNS.w}moveFromRangeEnd | 
+					${QNS.w}sdt
 				)}, 
 				"changeProps": map { 
 					"id": @${QNS.w}id/number(),

@@ -19,7 +19,8 @@ import type { CommentRangeStart } from '../../comments/src/CommentRangeStart.ts'
 import type { BookmarkRangeEnd } from '../../document/src/BookmarkRangeEnd.ts';
 import type { BookmarkRangeStart } from '../../document/src/BookmarkRangeStart.ts';
 import type { FootnoteReference } from '../../document/src/FootnoteReference.ts';
-import type { DeletedText } from "./DeletedText.ts";
+import type { StructuredDocument } from '../../document/src/StructuredDocument.ts';
+import type { DeletedText } from './DeletedText.ts';
 import type { Insertion } from './Insertion.ts';
 import type { MoveFrom } from './MoveFrom.ts';
 import type { MoveFromRangeEnd } from './MoveFromRangeEnd.ts';
@@ -44,7 +45,8 @@ export type DeletionChild =
 	| MoveFromRangeEnd
 	| Deletion
 	| Insertion
-	| FootnoteReference;
+	| FootnoteReference
+	| StructuredDocument;
 
 /**
  * A type describing the props accepted by {@link Deletion}.
@@ -75,6 +77,7 @@ export class Deletion extends Component<DeletionProps, DeletionChild> {
 		'MoveFromRangeEnd',
 		'Insertion',
 		'FootnoteReference',
+		'StructuredDocument',
 		this.name,
 	];
 
@@ -132,7 +135,8 @@ export class Deletion extends Component<DeletionProps, DeletionChild> {
 						./${QNS.w}moveToRangeEnd,
 						./${QNS.w}moveFrom,
 						./${QNS.w}moveFromRangeStart,
-						./${QNS.w}moveFromRangeEnd
+						./${QNS.w}moveFromRangeEnd,
+						./${QNS.w}sdt
 					}
 				}
 			`,

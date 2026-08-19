@@ -95,7 +95,7 @@ export class Table extends Component<TableProps, TableChild> {
 				columnWidths: this.props.columnWidths?.length
 					? this.props.columnWidths.map((width) =>
 							Math.round(width.twip)
-					  )
+						)
 					: null,
 				columnWidthChange: this.props.columnWidthChange
 					? {
@@ -103,7 +103,7 @@ export class Table extends Component<TableProps, TableChild> {
 							cols: this.props.columnWidthChange.cols.map((col) =>
 								Math.round(col.twip)
 							),
-					  }
+						}
 					: null,
 				children: await this.childrenToNode(ancestry),
 			}
@@ -155,7 +155,7 @@ export class Table extends Component<TableProps, TableChild> {
 							cols: props.columnWidthChange.cols.map(
 								(size: number) => twip(size)
 							),
-					  }
+						}
 					: null,
 			},
 			...createChildComponentsFromNodes<TableChild>(
