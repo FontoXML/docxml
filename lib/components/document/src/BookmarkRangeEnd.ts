@@ -17,9 +17,9 @@ export type BookmarkRangeEndChild = never;
  * A type describing the props accepted by {@link BookmarkRangeEnd}.
  */
 export type BookmarkRangeEndProps =
-	| { bookmark: Bookmark; id?: never }
+	| { bookmark: Bookmark; id?: never; displaced?: 'next' | 'prev' }
 	// Deprecate this way:
-	| { bookmark?: never; id: number };
+	| { bookmark?: never; id: number; displaced?: 'next' | 'prev' };
 
 /**
  * The end of a range associated with a comment.
@@ -39,10 +39,14 @@ export class BookmarkRangeEnd extends Component<
 	public override toNode(_ancestry: ComponentAncestor[]): Node {
 		return create(
 			`element ${QNS.w}bookmarkEnd {
-				attribute ${QNS.w}id { $id }
+				attribute ${QNS.w}id { $id },
+				if (exists($displacedByCustomXml)) then attribute ${QNS.w}displacedByCustomXml { $displacedByCustomXml } else ()
 			}`,
-			this.props.bookmark || {
-				id: this.props.id,
+			{
+				id: this.props.bookmark
+					? this.props.bookmark.id
+					: this.props.id,
+				displacedByCustomXml: this.props.displaced ?? null,
 			}
 		);
 	}
@@ -61,7 +65,8 @@ export class BookmarkRangeEnd extends Component<
 		return new BookmarkRangeEnd(
 			evaluateXPathToMap<BookmarkRangeEndProps>(
 				`map {
-					"id": ./@${QNS.w}id/number()
+					"id": ./@${QNS.w}id/number(),
+					"displaced": ./@${QNS.w}displacedByCustomXml/string()
 				}`,
 				node
 			)

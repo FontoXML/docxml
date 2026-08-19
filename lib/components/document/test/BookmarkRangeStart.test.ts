@@ -99,4 +99,37 @@ describe('BookmarkRangeStart', () => {
 		expect(output).toContain('id="1"');
 		expect(output).toContain('name="test_bm"');
 	});
+
+	it('parses the displaced prop from XML', () => {
+		const bookmarks = new Bookmarks();
+		const context: ComponentContext = {
+			archive: new Archive(),
+			relationships: null,
+			bookmarks,
+		};
+		const node = create(`
+			<w:bookmarkStart xmlns:w="${NamespaceUri.w}" w:id="4" w:name="displaced_bm" w:displacedByCustomXml="next" />
+		`);
+		const component = BookmarkRangeStart.fromNode(node, context);
+		expect(component.props.displaced).toBe('next');
+	});
+
+	it('serializes the displaced prop to XML', () => {
+		const component = new BookmarkRangeStart({
+			id: 2,
+			name: 'displaced_bm',
+			displaced: 'prev',
+		});
+		const output = serialize(component.toNode([]));
+		expect(output).toContain('displacedByCustomXml="prev"');
+	});
+
+	it('omits the displaced attribute when not set', () => {
+		const component = new BookmarkRangeStart({
+			id: 3,
+			name: 'plain_bm',
+		});
+		const output = serialize(component.toNode([]));
+		expect(output).not.toContain('displacedByCustomXml');
+	});
 });
