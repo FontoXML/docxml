@@ -168,7 +168,7 @@ export class Docx<
 					}
 
 					if (relationships !== null) {
-						component.ensureRelationship(relationships);
+						await component.ensureRelationship(relationships);
 					}
 
 					await Promise.all(

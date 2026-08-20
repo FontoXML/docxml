@@ -112,6 +112,8 @@ export {
 } from './lib/components/document/src/Hyperlink.ts';
 export {
 	Image,
+	type ImageBorder,
+	type ImageBorderType,
 	type ImageChild,
 	type ImageProps,
 } from './lib/components/document/src/Image.ts';
