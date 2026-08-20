@@ -22,14 +22,14 @@ export type BookmarkRangeStartProps =
 			bookmark: Bookmark;
 			id?: never;
 			name?: never;
-			displaced?: 'next' | 'prev';
+			displaced?: 'next' | 'prev' | null;
 	  }
 	// Deprecate this way:
 	| {
 			bookmark?: never;
 			id: number;
 			name: string;
-			displaced?: 'next' | 'prev';
+			displaced?: 'next' | 'prev' | null;
 	  };
 
 /**
@@ -52,7 +52,7 @@ export class BookmarkRangeStart extends Component<
 			`element ${QNS.w}bookmarkStart {
 				attribute ${QNS.w}id { $id },
 				attribute ${QNS.w}name { $name },
-				if (exists($displacedByCustomXml)) then attribute ${QNS.w}displacedByCustomXml { $displacedByCustomXml } else ()
+				if (exists($displaced)) then attribute ${QNS.w}displacedByCustomXml { $displaced } else ()
 			}`,
 			{
 				id: this.props.bookmark
@@ -61,7 +61,7 @@ export class BookmarkRangeStart extends Component<
 				name: this.props.bookmark
 					? this.props.bookmark.name
 					: this.props.name,
-				displacedByCustomXml: this.props.displaced ?? null,
+				displaced: this.props.displaced || null,
 			}
 		);
 	}
@@ -85,9 +85,13 @@ export class BookmarkRangeStart extends Component<
 				"id": ./@${QNS.w}id/number(),
 				"name": ./@${QNS.w}name/string(),
 				"displaced": ./@${QNS.w}displacedByCustomXml/string()
-				}`,
+			}`,
 			node
 		);
+
+		if (!props.displaced) {
+			props.displaced = undefined;
+		}
 
 		context.bookmarks?.registerIdentifier(props.id!, props.name);
 		return new BookmarkRangeStart(props);

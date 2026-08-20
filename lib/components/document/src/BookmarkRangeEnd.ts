@@ -1,7 +1,7 @@
 import type { Bookmark } from '../../../classes/src/Bookmarks.ts';
 import {
-	type ComponentAncestor,
 	Component,
+	type ComponentAncestor,
 } from '../../../classes/src/Component.ts';
 import { registerComponent } from '../../../utilities/src/components.ts';
 import { create } from '../../../utilities/src/dom.ts';
@@ -17,12 +17,12 @@ export type BookmarkRangeEndChild = never;
  * A type describing the props accepted by {@link BookmarkRangeEnd}.
  */
 export type BookmarkRangeEndProps =
-	| { bookmark: Bookmark; id?: never; displaced?: 'next' | 'prev' }
+	| { bookmark: Bookmark; id?: never; displaced?: 'next' | 'prev' | null }
 	// Deprecate this way:
-	| { bookmark?: never; id: number; displaced?: 'next' | 'prev' };
+	| { bookmark?: never; id: number; displaced?: 'next' | 'prev' | null };
 
 /**
- * The end of a range associated with a comment.
+ * The end of a range associated with a bookmark.
  */
 export class BookmarkRangeEnd extends Component<
 	BookmarkRangeEndProps,
@@ -40,13 +40,13 @@ export class BookmarkRangeEnd extends Component<
 		return create(
 			`element ${QNS.w}bookmarkEnd {
 				attribute ${QNS.w}id { $id },
-				if (exists($displacedByCustomXml)) then attribute ${QNS.w}displacedByCustomXml { $displacedByCustomXml } else ()
+				if (exists($displaced)) then attribute ${QNS.w}displacedByCustomXml { $displaced } else ()
 			}`,
 			{
 				id: this.props.bookmark
 					? this.props.bookmark.id
 					: this.props.id,
-				displacedByCustomXml: this.props.displaced ?? null,
+				displaced: this.props.displaced || null,
 			}
 		);
 	}
@@ -62,15 +62,19 @@ export class BookmarkRangeEnd extends Component<
 	 * Instantiate this component from the XML in an existing DOCX file.
 	 */
 	static override fromNode(node: Node): BookmarkRangeEnd {
-		return new BookmarkRangeEnd(
-			evaluateXPathToMap<BookmarkRangeEndProps>(
-				`map {
-					"id": ./@${QNS.w}id/number(),
-					"displaced": ./@${QNS.w}displacedByCustomXml/string()
-				}`,
-				node
-			)
+		const props = evaluateXPathToMap<BookmarkRangeEndProps>(
+			`map {
+				"id": ./@${QNS.w}id/number(),
+				"displaced": ./@${QNS.w}displacedByCustomXml/string()
+			}`,
+			node
 		);
+
+		if (!props.displaced) {
+			props.displaced = undefined;
+		}
+
+		return new BookmarkRangeEnd(props);
 	}
 }
 
