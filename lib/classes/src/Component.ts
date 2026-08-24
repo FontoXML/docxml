@@ -156,7 +156,9 @@ export abstract class Component<
 	 *
 	 *     this.#relationshipId = relationships.add(RelationshipType.hyperlink, this.props.url);
 	 */
-	public ensureRelationship(_relationships: RelationshipsXml) {
+	public ensureRelationship(
+		_relationships: RelationshipsXml
+	): void | Promise<void> {
 		// no-op
 	}
 

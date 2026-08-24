@@ -29,8 +29,52 @@ import {
  */
 export type ImageChild = never;
 
+/**
+ * The line width that word processors use when a border does not specify one.
+ */
+const DEFAULT_BORDER_WIDTH_EMU = 9525;
+
+/**
+ * The line color used when a border does not specify one.
+ */
+const DEFAULT_BORDER_COLOR = '000000';
+
 export type DataExtensions = {
 	svg?: Promise<string>;
+};
+
+/**
+ * The dash style of an image border, as defined by DrawingML's `ST_PresetLineDashVal`.
+ */
+export type ImageBorderType =
+	| 'solid'
+	| 'dot'
+	| 'dash'
+	| 'lgDash'
+	| 'dashDot'
+	| 'lgDashDot'
+	| 'lgDashDotDot'
+	| 'sysDash'
+	| 'sysDot'
+	| 'sysDashDot'
+	| 'sysDashDotDot';
+
+/**
+ * A type describing the border drawn around an {@link Image}.
+ */
+export type ImageBorder = {
+	/**
+	 * The thickness of the border line.
+	 */
+	width?: null | Length;
+	/**
+	 * The color of the border line, as a hexadecimal code without leading hash (`"ff0000"`).
+	 */
+	color?: null | string;
+	/**
+	 * The dash style of the border line.
+	 */
+	type?: null | ImageBorderType;
 };
 
 /**
@@ -44,6 +88,11 @@ export type ImageProps = {
 	alt?: null | string;
 	width: Length;
 	height: Length;
+	/**
+	 * The border drawn around this image. Omitting this prop, or any of its options, means that
+	 * the word processor default is used.
+	 */
+	border?: null | ImageBorder;
 	/**
 	 * RelationshipId when the image is imported from an existing DOCX file.
 	 * This is used to preserve the relationship when re-serializing the file,
@@ -219,6 +268,37 @@ export class Image extends Component<ImageProps, ImageChild> {
 			);
 		}
 
+		let borderNode: Node | null = null;
+		const { border } = this.props;
+		if (border) {
+			borderNode = create(
+				`
+					element ${QNS.a}ln {
+						attribute w { $borderWidth },
+						attribute cap { "flat" },
+						attribute cmpd { "sng" },
+						attribute algn { "ctr" },
+						element ${QNS.a}solidFill {
+							element ${QNS.a}srgbClr {
+								attribute val { $borderColor }
+							}
+						},
+						if (exists($borderType)) then element ${QNS.a}prstDash {
+							attribute val { $borderType }
+						} else ()
+					}
+				`,
+				{
+					borderWidth: Math.round(
+						border.width?.emu ?? DEFAULT_BORDER_WIDTH_EMU
+					),
+					// Without an explicit fill a word processor draws no line at all.
+					borderColor: border.color || DEFAULT_BORDER_COLOR,
+					borderType: border.type ?? null,
+				}
+			);
+		}
+
 		return create(
 			`
 				element ${QNS.w}drawing {
@@ -226,6 +306,12 @@ export class Image extends Component<ImageProps, ImageChild> {
 						element ${QNS.wp}extent {
 							attribute cx { $width },
 							attribute cy { $height }
+						},
+						element ${QNS.wp}effectExtent {
+							attribute l { $effectExtent },
+							attribute t { $effectExtent },
+							attribute r { $effectExtent },
+							attribute b { $effectExtent }
 						},
 						element ${QNS.wp}docPr {
 							attribute id { $identifier },
@@ -275,7 +361,8 @@ export class Image extends Component<ImageProps, ImageChild> {
 										element ${QNS.a}prstGeom {
 											attribute prst { "rect" },
 											element ${QNS.a}avLst {}
-										}
+										},
+										$borderNode
 									}
 								}
 							}
@@ -290,7 +377,13 @@ export class Image extends Component<ImageProps, ImageChild> {
 				height: Math.round(this.props.height.emu),
 				name: this.props.title || '',
 				desc: this.props.alt || '',
+				// A border line is drawn on the edge of the image, so it needs room outside the
+				// extent or word processors will clip it.
+				effectExtent: border
+					? Math.round(border.width?.emu ?? DEFAULT_BORDER_WIDTH_EMU)
+					: 0,
 				extensionList,
+				borderNode,
 			}
 		);
 	}
@@ -361,6 +454,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 			title,
 			width,
 			height,
+			border: extractBorderFromPicNode(picNode),
 			relationshipId: main.relationshipId,
 		});
 		image.#meta.location = main.location;
@@ -376,6 +470,33 @@ export class Image extends Component<ImageProps, ImageChild> {
 }
 
 registerComponent(Image);
+
+function extractBorderFromPicNode(picNode: Node | null): ImageBorder | null {
+	if (picNode === null) {
+		return null;
+	}
+	const lineNode = evaluateXPathToFirstNode(
+		`./${QNS.pic}spPr/${QNS.a}ln`,
+		picNode
+	);
+	if (lineNode === null) {
+		return null;
+	}
+	const width = evaluateXPathToString(`./@w/string()`, lineNode);
+	const color = evaluateXPathToString(
+		`./${QNS.a}solidFill/${QNS.a}srgbClr/@val/string()`,
+		lineNode
+	);
+	const type = evaluateXPathToString(
+		`./${QNS.a}prstDash/@val/string()`,
+		lineNode
+	);
+	return {
+		width: width ? emu(Number(width)) : null,
+		color: color || null,
+		type: (type as ImageBorderType) || null,
+	};
+}
 
 type ExtractedBlipNodeData = {
 	main: {
