@@ -380,7 +380,7 @@ export class Image extends Component<ImageProps, ImageChild> {
 				// A border line is drawn on the edge of the image, so it needs room outside the
 				// extent or word processors will clip it.
 				effectExtent: border
-					? (border.width?.emu ?? DEFAULT_BORDER_WIDTH_EMU)
+					? Math.round(border.width?.emu ?? DEFAULT_BORDER_WIDTH_EMU)
 					: 0,
 				extensionList,
 				borderNode,
