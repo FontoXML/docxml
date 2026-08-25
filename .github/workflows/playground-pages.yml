@@ -1,10 +1,17 @@
 name: Playground Pages
 
 on:
-    release:
+    workflow_run:
+        workflows:
+            - Publish to JSR
         types:
-            - published
+            - completed
     workflow_dispatch:
+        inputs:
+            ref:
+                description: Git ref to deploy (branch, tag, or commit SHA)
+                required: false
+                type: string
 
 permissions:
     contents: read
@@ -17,6 +24,8 @@ concurrency:
 
 jobs:
     deploy:
+        # Skip when the publish failed: the pinned docxml version would not exist on JSR.
+        if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
         environment:
             name: github-pages
             url: ${{ steps.deployment.outputs.page_url }}
@@ -25,12 +34,12 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v6
               with:
-                  ref: ${{ inputs.ref || github.ref }}
+                  ref: ${{ inputs.ref || github.event.workflow_run.head_sha || github.ref }}
 
             - name: Setup Deno
               uses: denoland/setup-deno@v2
               with:
-                  deno-version: 2.8.0
+                  deno-version: 2.9.5
 
             - name: Build playground
               run: deno task playground:build
