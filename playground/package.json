@@ -3,11 +3,6 @@
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
-	"scripts": {
-		"dev": "vite",
-		"build": "vite build",
-		"preview": "vite preview"
-	},
 	"dependencies": {
 		"monaco-editor": "0.53.0",
 		"preact": "10.29.2",

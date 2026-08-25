@@ -5,16 +5,17 @@ import 'monaco-editor/esm/vs/language/typescript/monaco.contribution';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import ts from 'typescript';
 import { examples } from './examples.ts';
+import { readPermalink, writePermalink } from './permalink.ts';
 
-const DOCXML_RUNTIME_URL = 'https://esm.sh/jsr/@fontoxml/docxml?bundle';
+// Pinned so the executed code matches the types shipped with this build.
+const DOCXML_RUNTIME_URL = `https://esm.sh/jsr/@fontoxml/docxml@${__DOCXML_VERSION__}?bundle`;
 const DOCXML_TYPES_URL = new URL('../docxml/docxml.d.ts', import.meta.url);
 
-const INITIAL_SOURCE = examples[0]?.source ?? ''; // The "Hello world" example.
+// Matches the module specifier of `from 'docxml'`, `import('docxml')` and friends.
+const DOCXML_SPECIFIER = /(\bfrom\s*|\bimport\s*\(\s*)(['"])docxml\2/g;
 
-const PERMALINK_KEY = 'code';
-const MAX_PERMALINK_HASH_LENGTH = 1500;
-const MAX_PERMALINK_URL_LENGTH = 1800;
-const PERMALINK_PREFIX_GZIP = 'gz:';
+const INITIAL_SOURCE = examples[0]?.source ?? ''; // The "Hello world" example.
+const MODEL_URI = monaco.Uri.parse('file:///playground/main.ts');
 
 // Workers for Monaco
 (self as unknown as { MonacoEnvironment: unknown }).MonacoEnvironment = {
@@ -32,19 +33,22 @@ const PERMALINK_PREFIX_GZIP = 'gz:';
 	},
 };
 
-// Polyfill Deno.cwd for docxml browser compat
+// docxml reads Deno.cwd() even in the browser.
 if (!(globalThis as unknown as { Deno?: unknown }).Deno) {
 	(globalThis as unknown as { Deno: unknown }).Deno = { cwd: () => '/' };
 }
 
-/**
- * Loads the precompiled docxml declaration bundle generated at build time
- * and feeds it to Monaco's TypeScript language service.
- */
-async function loadDocxmlTypes() {
-	const bundledDts = await fetch(DOCXML_TYPES_URL).then((r) => r.text());
+async function fetchText(url: URL | string): Promise<string> {
+	const response = await fetch(url);
+	if (!response.ok) {
+		throw new Error(`${response.status} ${response.statusText}`);
+	}
+	return response.text();
+}
 
-	// Configure TS compiler options in Monaco
+/** Feeds the declaration bundle generated at build time to Monaco. */
+async function loadDocxmlTypes() {
+	const bundledDts = await fetchText(DOCXML_TYPES_URL);
 	const tsDefaults = monaco.languages.typescript.typescriptDefaults;
 
 	tsDefaults.setCompilerOptions({
@@ -58,34 +62,43 @@ async function loadDocxmlTypes() {
 		strict: true,
 		baseUrl: 'file:///',
 	});
-
-	tsDefaults.setDiagnosticsOptions({
-		noSemanticValidation: false,
-		noSyntaxValidation: false,
-	});
-
 	tsDefaults.setEagerModelSync(true);
-
 	tsDefaults.addExtraLib(bundledDts, 'file:///docxml/docxml-bundle.d.ts');
+}
+
+/** Returns the messages Monaco reports for the editor contents. */
+async function getDiagnostics(): Promise<string[]> {
+	const worker = await (
+		await monaco.languages.typescript.getTypeScriptWorker()
+	)(MODEL_URI);
+	const uri = MODEL_URI.toString();
+
+	const diagnostics = [
+		...(await worker.getSyntacticDiagnostics(uri)),
+		...(await worker.getSemanticDiagnostics(uri)),
+	];
+
+	return diagnostics.map((diagnostic) =>
+		typeof diagnostic.messageText === 'string'
+			? diagnostic.messageText
+			: diagnostic.messageText.messageText
+	);
 }
 
 async function normalizeResult(result: unknown): Promise<Uint8Array> {
 	if (result instanceof Uint8Array) return result;
 	if (result instanceof ArrayBuffer) return new Uint8Array(result);
-	if (result instanceof Blob)
+	if (result instanceof Blob) {
 		return new Uint8Array(await result.arrayBuffer());
-
-	const obj = result as Record<string, unknown>;
-	if (typeof obj?.asUint8Array === 'function') {
-		return (obj as { asUint8Array: () => Uint8Array }).asUint8Array();
 	}
+
+	const obj = result as {
+		asUint8Array?: () => Uint8Array;
+		toArchive?: () => Promise<{ asUint8Array: () => Uint8Array }>;
+	};
+	if (typeof obj?.asUint8Array === 'function') return obj.asUint8Array();
 	if (typeof obj?.toArchive === 'function') {
-		const archive = await (
-			obj as {
-				toArchive: () => Promise<{ asUint8Array: () => Uint8Array }>;
-			}
-		).toArchive();
-		return archive.asUint8Array();
+		return (await obj.toArchive()).asUint8Array();
 	}
 
 	throw new Error(
@@ -93,145 +106,20 @@ async function normalizeResult(result: unknown): Promise<Uint8Array> {
 	);
 }
 
-function downloadBlob(blob: Blob, fileName: string) {
+function download(blob: Blob, fileName: string) {
 	const url = URL.createObjectURL(blob);
-	const a = document.createElement('a');
-	a.href = url;
-	a.download = fileName;
-	a.click();
-	URL.revokeObjectURL(url);
+	const anchor = document.createElement('a');
+	anchor.href = url;
+	anchor.download = fileName;
+	document.body.append(anchor);
+	anchor.click();
+	anchor.remove();
+	// Safari aborts the download when the URL is revoked synchronously.
+	setTimeout(() => URL.revokeObjectURL(url));
 }
 
-function downloadDocx(data: Uint8Array, fileName: string) {
-	downloadBlob(
-		new Blob([Uint8Array.from(data)], {
-			type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-		}),
-		fileName
-	);
-}
-
-function bytesToBase64(bytes: Uint8Array): string {
-	let binary = '';
-	for (const byte of bytes) {
-		binary += String.fromCharCode(byte);
-	}
-	return btoa(binary);
-}
-
-function base64ToBytes(encoded: string): Uint8Array {
-	const binary = atob(encoded);
-	const bytes = new Uint8Array(binary.length);
-	for (let i = 0; i < binary.length; i++) {
-		bytes[i] = binary.charCodeAt(i);
-	}
-	return bytes;
-}
-
-async function encodePermalinkSource(source: string): Promise<string> {
-	const bytes = new TextEncoder().encode(source);
-	const byteBuffer = bytes.buffer.slice(
-		bytes.byteOffset,
-		bytes.byteOffset + bytes.byteLength
-	) as ArrayBuffer;
-
-	if (!('CompressionStream' in globalThis)) {
-		throw new Error('CompressionStream unavailable');
-	}
-
-	const compressed = await new Response(
-		new Blob([byteBuffer])
-			.stream()
-			.pipeThrough(new CompressionStream('gzip'))
-	).arrayBuffer();
-
-	return PERMALINK_PREFIX_GZIP + bytesToBase64(new Uint8Array(compressed));
-}
-
-async function decodePermalinkSource(encoded: string): Promise<string> {
-	if (encoded.startsWith(PERMALINK_PREFIX_GZIP)) {
-		const compressed = base64ToBytes(
-			encoded.slice(PERMALINK_PREFIX_GZIP.length)
-		);
-		const compressedBuffer = compressed.buffer.slice(
-			compressed.byteOffset,
-			compressed.byteOffset + compressed.byteLength
-		) as ArrayBuffer;
-
-		if (!('DecompressionStream' in globalThis)) {
-			throw new Error('DecompressionStream unavailable');
-		}
-
-		const uncompressed = await new Response(
-			new Blob([compressedBuffer])
-				.stream()
-				.pipeThrough(new DecompressionStream('gzip'))
-		).arrayBuffer();
-
-		return new TextDecoder().decode(uncompressed);
-	}
-
-	return new TextDecoder().decode(base64ToBytes(encoded));
-}
-
-async function readPermalinkSource(): Promise<string | null> {
-	const hash = globalThis.location.hash.startsWith('#')
-		? globalThis.location.hash.slice(1)
-		: globalThis.location.hash;
-	if (!hash) return null;
-
-	const params = new URLSearchParams(hash);
-	const encoded = params.get(PERMALINK_KEY);
-	if (!encoded) return null;
-
-	try {
-		return await decodePermalinkSource(encoded);
-	} catch {
-		return null;
-	}
-}
-
-async function writePermalinkSource(
-	source: string
-): Promise<{ ok: true } | { ok: false; reason: string }> {
-	const url = new URL(globalThis.location.href);
-
-	if (source === INITIAL_SOURCE || source.trim() === '') {
-		url.hash = '';
-		history.replaceState(null, '', url);
-		return { ok: true };
-	} else {
-		const params = new URLSearchParams(url.hash.slice(1));
-		let encodedSource = '';
-		try {
-			encodedSource = await encodePermalinkSource(source);
-		} catch {
-			return {
-				ok: false,
-				reason: 'This browser does not support permalink compression.',
-			};
-		}
-
-		params.set(PERMALINK_KEY, encodedSource);
-		const nextHash = params.toString();
-		if (nextHash.length > MAX_PERMALINK_HASH_LENGTH) {
-			return {
-				ok: false,
-				reason: 'Code is too long for a safe permalink URL, even compressed.',
-			};
-		}
-		url.hash = nextHash;
-
-		if (url.toString().length > MAX_PERMALINK_URL_LENGTH) {
-			return {
-				ok: false,
-				reason: 'Code is too long for a safe permalink URL, even compressed.',
-			};
-		}
-	}
-
-	history.replaceState(null, '', url);
-	return { ok: true };
+function messageOf(err: unknown): string {
+	return err instanceof Error ? err.message : String(err);
 }
 
 export function App() {
@@ -241,7 +129,12 @@ export function App() {
 	);
 	const [status, setStatus] = useState('Loading types...');
 	const [hasError, setHasError] = useState(false);
-	const [isGenerating, setIsGenerating] = useState(false);
+	const [isBusy, setIsBusy] = useState(false);
+
+	function report(message: string, isFailure = false) {
+		setStatus(message);
+		setHasError(isFailure);
+	}
 
 	useEffect(() => {
 		if (!editorRef.current) return;
@@ -249,98 +142,104 @@ export function App() {
 		const model = monaco.editor.createModel(
 			INITIAL_SOURCE,
 			'typescript',
-			monaco.Uri.parse('file:///playground/main.ts')
+			MODEL_URI
 		);
-
-		instanceRef.current = monaco.editor.create(editorRef.current, {
+		const editor = monaco.editor.create(editorRef.current, {
 			model,
 			theme: 'vs',
 			automaticLayout: true,
 			minimap: { enabled: false },
 			fontSize: 13,
 		});
+		instanceRef.current = editor;
 
-		loadDocxmlTypes()
-			.then(() => {
-				setStatus('Ready.');
-				setHasError(false);
-			})
-			.catch((err) => {
-				setStatus(
-					`Types failed: ${err instanceof Error ? err.message : err}`
-				);
-				setHasError(true);
-			});
-
-		void readPermalinkSource().then((permalinkSource) => {
-			if (
-				permalinkSource != null &&
-				model.getValue() === INITIAL_SOURCE
-			) {
-				model.setValue(permalinkSource);
+		let disposed = false;
+		(async () => {
+			try {
+				await loadDocxmlTypes();
+				const shared = await readPermalink();
+				if (disposed) return;
+				if (shared) model.setValue(shared);
+				report('Ready.');
+			} catch (err) {
+				if (!disposed) report(`Types failed: ${messageOf(err)}`, true);
 			}
-		});
+		})();
 
 		return () => {
+			disposed = true;
 			model.dispose();
-			instanceRef.current?.dispose();
+			editor.dispose();
+			instanceRef.current = null;
 		};
 	}, []);
 
 	async function generateDocx() {
-		const editor = instanceRef.current;
-		if (!editor) return;
+		const source = instanceRef.current?.getValue();
+		if (!source) return;
 
-		setIsGenerating(true);
-		setHasError(false);
-		setStatus('Compiling...');
+		setIsBusy(true);
+		report('Compiling...');
 
 		try {
-			const source = editor.getValue();
+			const [firstError] = await getDiagnostics();
+			if (firstError) throw new Error(firstError);
+
 			const jsSource = ts
 				.transpileModule(source, {
 					compilerOptions: {
 						target: ts.ScriptTarget.ES2020,
 						module: ts.ModuleKind.ES2022,
-						strict: true,
 					},
 				})
-				.outputText.replaceAll(
-					`from 'docxml'`,
-					`from '${DOCXML_RUNTIME_URL}'`
-				)
-				.replaceAll(`from "docxml"`, `from "${DOCXML_RUNTIME_URL}"`);
+				.outputText.replace(
+					DOCXML_SPECIFIER,
+					`$1$2${DOCXML_RUNTIME_URL}$2`
+				);
 
-			const blob = new Blob([jsSource], { type: 'text/javascript' });
-			const url = URL.createObjectURL(blob);
+			const url = URL.createObjectURL(
+				new Blob([jsSource], { type: 'text/javascript' })
+			);
 
 			try {
 				const mod = await import(/* @vite-ignore */ url);
 				if (typeof mod.default !== 'function') {
 					throw new Error('Module must export a default function.');
 				}
-				setStatus('Generating DOCX...');
-				const result = await mod.default();
-				const data = await normalizeResult(result);
-				downloadDocx(data, 'playground-output.docx');
-				setStatus(`Done (${data.byteLength} bytes).`);
-				setHasError(false);
+				report('Generating DOCX...');
+				const data = await normalizeResult(await mod.default());
+				download(
+					new Blob([Uint8Array.from(data)], {
+						type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+					}),
+					'playground-output.docx'
+				);
+				report(`Done (${data.byteLength} bytes).`);
 			} finally {
 				URL.revokeObjectURL(url);
 			}
 		} catch (err) {
-			setStatus(err instanceof Error ? err.message : String(err));
-			setHasError(true);
+			report(messageOf(err), true);
 		} finally {
-			setIsGenerating(false);
+			setIsBusy(false);
+		}
+	}
+
+	async function copyPermalink() {
+		const source = instanceRef.current?.getValue();
+		if (!source) return;
+
+		try {
+			await navigator.clipboard.writeText(await writePermalink(source));
+			report('Permalink copied.');
+		} catch (err) {
+			report(messageOf(err), true);
 		}
 	}
 
 	function loadExample(id: string) {
-		const example = examples.find((e) => e.id === id);
-		if (example && instanceRef.current) {
-			instanceRef.current.getModel()?.setValue(example.source);
-		}
+		const example = examples.find((entry) => entry.id === id);
+		if (example) instanceRef.current?.setValue(example.source);
 	}
 
 	return (
@@ -352,9 +251,9 @@ export function App() {
 					onChange={(e) => loadExample(e.currentTarget.value)}
 				>
 					<option value=''>Load example…</option>
-					{examples.map((ex) => (
-						<option key={ex.id} value={ex.id}>
-							{ex.label}
+					{examples.map((example) => (
+						<option key={example.id} value={example.id}>
+							{example.label}
 						</option>
 					))}
 				</select>
@@ -367,27 +266,7 @@ export function App() {
 				<button
 					type='button'
 					class='secondary'
-					onClick={async () => {
-						const source = instanceRef.current?.getValue();
-						if (!source) return;
-						const permalinkResult =
-							await writePermalinkSource(source);
-						if (!permalinkResult.ok) {
-							setStatus(permalinkResult.reason);
-							setHasError(true);
-							return;
-						}
-						try {
-							await globalThis.navigator.clipboard.writeText(
-								globalThis.location.href
-							);
-							setStatus('Permalink copied.');
-							setHasError(false);
-						} catch {
-							setStatus('Could not copy permalink.');
-							setHasError(true);
-						}
-					}}
+					onClick={() => void copyPermalink()}
 				>
 					Copy permalink
 				</button>
@@ -396,21 +275,22 @@ export function App() {
 					class='secondary'
 					onClick={() => {
 						const source = instanceRef.current?.getValue();
-						if (!source) return;
-						downloadBlob(
-							new Blob([source], { type: 'text/plain' }),
-							'playground.ts'
-						);
+						if (source) {
+							download(
+								new Blob([source], { type: 'text/plain' }),
+								'playground.ts'
+							);
+						}
 					}}
 				>
 					Download .ts
 				</button>
 				<button
 					type='button'
-					disabled={isGenerating}
+					disabled={isBusy}
 					onClick={() => void generateDocx()}
 				>
-					{isGenerating ? 'Generating...' : 'Generate DOCX'}
+					{isBusy ? 'Generating...' : 'Generate DOCX'}
 				</button>
 			</div>
 

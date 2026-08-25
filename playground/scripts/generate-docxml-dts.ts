@@ -31,6 +31,20 @@ function emitSingleDts(): string {
 
 	const program = ts.createProgram([entryFilePath], options, host);
 
+	// Semantic checks are meaningless here: `noLib` hides the globals and bare
+	// specifiers are resolved by Deno's import map, not by tsc.
+	const errors = program.getSyntacticDiagnostics();
+
+	if (errors.length > 0) {
+		throw new Error(
+			errors
+				.map((d) =>
+					ts.flattenDiagnosticMessageText(d.messageText, '\n')
+				)
+				.join('\n')
+		);
+	}
+
 	program.emit();
 
 	if (!outDts) {
