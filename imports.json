@@ -15,7 +15,7 @@
 		"std/path/posix/relative": "jsr:@std/path@1.1.6/posix/relative",
 		"std/path/posix/resolve": "jsr:@std/path@1.1.6/posix/resolve",
 		"std/testing/bdd": "jsr:@std/testing@1.0.20/bdd",
-
+		"typescript": "npm:typescript@6.0.3",
 		"xml_renderer": "./vendor/xml_renderer/mod.ts"
 	}
 }

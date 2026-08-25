@@ -1,0 +1,15 @@
+{
+	"name": "docxml-playground",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"dependencies": {
+		"monaco-editor": "0.53.0",
+		"preact": "10.29.2",
+		"typescript": "5.9.3"
+	},
+	"devDependencies": {
+		"@preact/preset-vite": "2.10.5",
+		"vite": "5.4.21"
+	}
+}
