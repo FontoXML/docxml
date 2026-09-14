@@ -5,12 +5,15 @@ import { Archive } from '../../../classes/src/Archive.ts';
 import { Bookmarks } from '../../../classes/src/Bookmarks.ts';
 import type { ComponentContext } from '../../../classes/src/Component.ts';
 import { create } from '../../../utilities/src/dom.ts';
+import { twip } from '../../../utilities/src/length.ts';
 import { NamespaceUri } from '../../../utilities/src/namespaces.ts';
 import {
+	evaluateXPathToArray,
 	evaluateXPathToFirstNode,
 	evaluateXPathToNodes,
 } from '../../../utilities/src/xquery.ts';
 import { Cell } from '../src/Cell.ts';
+import { Row } from '../src/Row.ts';
 import { Table } from '../src/Table.ts';
 
 const emptyContext: ComponentContext = {
@@ -286,5 +289,126 @@ describe('Cell - with borders', () => {
 		expect(originalBorder?.getAttributeNS(NamespaceUri.w, 'color')).toEqual(
 			newBorder?.getAttributeNS(NamespaceUri.w, 'color')
 		);
+	});
+});
+
+describe('Cell margins of vertically merged rows', () => {
+	// Mirrors a Word template where the merged cell has different margins
+	// in the rows it spans.
+	const dom = create(`<w:tbl xmlns:w="${NamespaceUri.w}">
+		<w:tblGrid>
+			<w:gridCol w:w="2879" />
+			<w:gridCol w:w="7160" />
+		</w:tblGrid>
+		<w:tr>
+			<w:tc xid="merged">
+				<w:tcPr>
+					<w:vMerge w:val="restart"/>
+					<w:tcMar><w:top w:w="43" w:type="dxa"/><w:bottom w:w="43" w:type="dxa"/></w:tcMar>
+				</w:tcPr>
+				<w:p/>
+			</w:tc>
+			<w:tc><w:p/></w:tc>
+		</w:tr>
+		<w:tr>
+			<w:tc>
+				<w:tcPr>
+					<w:vMerge/>
+					<w:tcMar><w:top w:w="14" w:type="dxa"/><w:bottom w:w="14" w:type="dxa"/></w:tcMar>
+				</w:tcPr>
+				<w:p/>
+			</w:tc>
+			<w:tc><w:p/></w:tc>
+		</w:tr>
+		<w:tr>
+			<w:tc>
+				<w:tcPr>
+					<w:vMerge/>
+				</w:tcPr>
+				<w:p/>
+			</w:tc>
+			<w:tc><w:p/></w:tc>
+		</w:tr>
+	</w:tbl>`);
+
+	it('reads the margins of each spanned row', () => {
+		const cell = Cell.fromNode(
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			evaluateXPathToFirstNode('.//*[@xid="merged"]', dom)!,
+			emptyContext
+		);
+
+		expect(cell?.props.rowSpan).toBe(3);
+		expect(cell?.props.margin?.top?.twip).toBe(43);
+		expect(cell?.props.spannedRowMargins).toHaveLength(2);
+		expect(cell?.props.spannedRowMargins?.[0]?.top?.twip).toBe(14);
+		expect(cell?.props.spannedRowMargins?.[0]?.bottom?.twip).toBe(14);
+		expect(cell?.props.spannedRowMargins?.[1]).toBeNull();
+	});
+
+	it('writes the margins of each spanned row', async () => {
+		const table = Table.fromNode(dom, emptyContext);
+		const node = await table.toNode([]);
+
+		expect(
+			evaluateXPathToArray(
+				`array { ./*[local-name() = "tr"]/*[local-name() = "tc"][1]/string(
+					./*[local-name() = "tcPr"]/*[local-name() = "tcMar"]/*[local-name() = "top"]/@*[local-name() = "w"]
+				) }`,
+				node
+			)
+		).toEqual(['43', '14', '']);
+	});
+
+	it('uses the first row margins when spannedRowMargins is not set', async () => {
+		const table = new Table(
+			{ columnWidths: [twip(2879), twip(7160)] },
+			new Row(
+				{},
+				new Cell({
+					rowSpan: 2,
+					margin: { top: twip(43), bottom: twip(43) },
+				}),
+				new Cell({})
+			),
+			new Row({}, new Cell({}))
+		);
+
+		const node = await table.toNode([]);
+
+		expect(
+			evaluateXPathToArray(
+				`array { ./*[local-name() = "tr"]/*[local-name() = "tc"][1]/string(
+					./*[local-name() = "tcPr"]/*[local-name() = "tcMar"]/*[local-name() = "top"]/@*[local-name() = "w"]
+				) }`,
+				node
+			)
+		).toEqual(['43', '43']);
+	});
+
+	it('does not set spannedRowMargins when no spanned row has its own margins', () => {
+		const noMarginsDom = create(`<w:tbl xmlns:w="${NamespaceUri.w}">
+			<w:tblGrid>
+				<w:gridCol w:w="2879" />
+			</w:tblGrid>
+			<w:tr>
+				<w:tc xid="merged">
+					<w:tcPr><w:vMerge w:val="restart"/></w:tcPr>
+					<w:p/>
+				</w:tc>
+			</w:tr>
+			<w:tr>
+				<w:tc><w:tcPr><w:vMerge/></w:tcPr><w:p/></w:tc>
+			</w:tr>
+		</w:tbl>`);
+
+		const cell = Cell.fromNode(
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			evaluateXPathToFirstNode('.//*[@xid="merged"]', noMarginsDom)!,
+			emptyContext
+		);
+
+		expect(cell?.props.rowSpan).toBe(2);
+		expect(cell && 'spannedRowMargins' in cell.props).toBe(false);
 	});
 });
