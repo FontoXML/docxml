@@ -39,9 +39,34 @@ export type CellChild =
 	| Deletion;
 
 /**
+ * The margins of one table cell, as in {@link TableCellProperties.margin}.
+ */
+export type CellMargin = NonNullable<TableCellProperties['margin']>;
+
+/**
  * A type describing the props accepted by {@link Cell}.
  */
-export type CellProps = Omit<TableCellProperties, 'width'>;
+export type CellProps = Omit<TableCellProperties, 'width'> & {
+	/**
+	 * Margins for the rows spanned by a vertically merged cell,
+	 * one entry per spanned row after the first.
+	 *
+	 * `null` means that the row has no own margins. If omitted, all spanned rows
+	 * use {@link TableCellProperties.margin}.
+	 *
+	 * @example
+	 * // A cell spanning three rows with smaller margins in rows 2 and 3:
+	 * {
+	 *   rowSpan: 3,
+	 *   margin: { top: twip(43), bottom: twip(43) },
+	 *   spannedRowMargins: [
+	 *     { top: twip(14), bottom: twip(14) },
+	 *     { top: twip(14), bottom: twip(14) }
+	 *   ]
+	 * }
+	 */
+	spannedRowMargins?: null | Array<CellMargin | null>;
+};
 
 /**
  * A component that represents a table cell.
@@ -125,11 +150,10 @@ export class Cell extends Component<CellProps, CellChild> {
 		);
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	public toRepeatingNode(
 		ancestry: ComponentAncestor[],
 		column: number,
-		_row: number
+		row: number
 	): Node | null {
 		const table = ancestry.find(
 			(ancestor): ancestor is Table => ancestor instanceof Table
@@ -146,6 +170,11 @@ export class Cell extends Component<CellProps, CellChild> {
 			return null;
 		}
 
+		// Each spanned row keeps its own margins, which MS Word uses for the row height.
+		const { spannedRowMargins, ...cellProps } = this.props;
+		// This is the margin of the merged cell in this row
+		const spannedRowMargin = spannedRowMargins?.[row - info.row - 1];
+
 		return create(
 			`element ${QNS.w}tc {
 				$tcPr,
@@ -157,7 +186,13 @@ export class Cell extends Component<CellProps, CellChild> {
 						width: this.getCellWidth(table),
 						colSpan: this.getColSpan(),
 						rowSpan: this.getRowSpan(),
-						...this.props,
+						...cellProps,
+						// If `spannedRowMargins` has no entry for a row,
+						// that row falls back to the first row's margins, preserving the previous behavior.
+						margin:
+							spannedRowMargin === undefined
+								? cellProps.margin
+								: spannedRowMargin,
 					},
 					true
 				),
@@ -225,10 +260,15 @@ export class Cell extends Component<CellProps, CellChild> {
 		 * We should consider aligning both.
 		 */
 
-		const { mergedAway, children, ...props } = evaluateXPathToMap<
-			CellProps & { mergedAway: boolean; children: Node[] }
-		>(
-			`
+		const { mergedAway, children, spannedRowCells, ...props } =
+			evaluateXPathToMap<
+				CellProps & {
+					mergedAway: boolean;
+					children: Node[];
+					spannedRowCells: Array<CellMargin | { isNull: true }>;
+				}
+			>(
+				`
 				let $colStart := docxml:cell-column(.)
 
 				let $rowStart := count(../preceding-sibling::${QNS.w}tr)
@@ -254,6 +294,48 @@ export class Cell extends Component<CellProps, CellChild> {
 						then ./${QNS.w}tcPr/${QNS.w}gridSpan/@${QNS.w}val/number()
 						else 1,
 					"rowSpan": $rowEnd - $rowStart,
+					(: The margins of the continuation cells still affect row height in Word,
+   					so they are preserved in spannedRowMargins. :)
+					"spannedRowCells": array {
+
+						(: Rows below this one that are still covered by the merged cell.
+						For example, the next 2 rows when rowSpan is 3. :)
+						for $row in ../following-sibling::${QNS.w}tr[
+							position() lt ($rowEnd - $rowStart)
+						]
+
+						(: Find the cell in the same column as the merged cell,
+						then get its margins. :)
+						let $tcMar :=
+							$row/${QNS.w}tc[
+								docxml:spans-cell-column(., $colStart)
+							]/${QNS.w}tcPr/${QNS.w}tcMar
+
+						return
+							if (exists($tcMar)) then
+								$tcMar/map {
+									"top": docxml:length(
+										${QNS.w}top/@${QNS.w}w,
+										'twip'
+									),
+									(: Support both w:start and w:left for compatibility. :)
+									"start": docxml:length(
+										($tcMar/${QNS.w}start | $tcMar/${QNS.w}left)[1]/@${QNS.w}w,
+										'twip'
+									),
+									"bottom": docxml:length(
+										${QNS.w}bottom/@${QNS.w}w,
+										'twip'
+									),
+									(: Support both w:end and w:right for compatibility. :)
+									"end": docxml:length(
+										($tcMar/${QNS.w}end | $tcMar/${QNS.w}right)[1]/@${QNS.w}w,
+										'twip'
+									)
+								}
+							else
+								map { "isNull": true() }
+					},
 					"children": array{ ./(${QNS.w}p) },
 					"shading": ./${QNS.w}tcPr/${QNS.w}shd/docxml:ct-shd(.),
 					"borders": ./${QNS.w}tcPr/${QNS.w}tcBorders/map {
@@ -285,10 +367,19 @@ export class Cell extends Component<CellProps, CellChild> {
 					}
 				}
 			`,
-			node
-		);
+				node
+			);
 		if (mergedAway) {
 			return null;
+		}
+
+		const hasSpannedRowMargins = spannedRowCells.some(
+			(margin) => !('isNull' in margin)
+		);
+		if (hasSpannedRowMargins) {
+			props.spannedRowMargins = spannedRowCells.map((margin) =>
+				'isNull' in margin ? null : margin
+			);
 		}
 
 		// Convert the date string to a Date object.

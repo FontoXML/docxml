@@ -56,6 +56,7 @@ export {
 export {
 	Cell,
 	type CellChild,
+	type CellMargin,
 	type CellProps,
 } from './lib/components/document/src/Cell.ts';
 export {
